@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CheckBoxXIB" customModule="cafm" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="135" height="135"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="100" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="un_check_image" translatesAutoresizingMaskIntoConstraints="NO" id="SqA-Qj-G3F">
+                    <rect key="frame" x="10" y="10" width="115" height="115"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="SqA-Qj-G3F" secondAttribute="height" id="SxW-lA-q4N"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="SqA-Qj-G3F" secondAttribute="bottom" constant="10" id="RMR-rq-h88"/>
+                <constraint firstItem="SqA-Qj-G3F" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="YW8-J4-pMC"/>
+                <constraint firstItem="SqA-Qj-G3F" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kjq-7F-ThL"/>
+                <constraint firstItem="SqA-Qj-G3F" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="p2P-zl-7CX"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="SqA-Qj-G3F" secondAttribute="trailing" constant="10" id="twZ-pk-QUx"/>
+                <constraint firstItem="SqA-Qj-G3F" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="vRf-Ww-T2Q"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="checkImageView" destination="SqA-Qj-G3F" id="iVZ-N8-5Iy"/>
+            </connections>
+            <point key="canvasLocation" x="26.717557251908396" y="-196.12676056338029"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="un_check_image" width="256" height="256"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

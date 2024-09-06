@@ -1,0 +1,68 @@
+PODS:
+  - Alamofire (5.9.1)
+  - CocoaLumberjack (3.8.5):
+    - CocoaLumberjack/Core (= 3.8.5)
+  - CocoaLumberjack/Core (3.8.5)
+  - FSCalendar (2.8.4)
+  - Highcharts (11.4.6)
+  - ImageScrollView (1.9.3)
+  - IQKeyboardManager (6.5.19)
+  - ObjectMapper (4.4.2)
+  - SCLAlertView (0.8)
+  - SDWebImage (5.19.2):
+    - SDWebImage/Core (= 5.19.2)
+  - SDWebImage/Core (5.19.2)
+  - SearchTextField (1.2.4)
+  - SkeletonView (1.30.4)
+  - SpreadsheetView (0.9.1)
+  - SVGKit (3.0.0):
+    - CocoaLumberjack (~> 3.0)
+
+DEPENDENCIES:
+  - Alamofire
+  - FSCalendar
+  - Highcharts (~> 11.4.6)
+  - ImageScrollView
+  - IQKeyboardManager
+  - ObjectMapper
+  - SCLAlertView
+  - SDWebImage
+  - SearchTextField
+  - SkeletonView
+  - SpreadsheetView
+  - SVGKit
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - CocoaLumberjack
+    - FSCalendar
+    - Highcharts
+    - ImageScrollView
+    - IQKeyboardManager
+    - ObjectMapper
+    - SCLAlertView
+    - SDWebImage
+    - SearchTextField
+    - SkeletonView
+    - SpreadsheetView
+    - SVGKit
+
+SPEC CHECKSUMS:
+  Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
+  CocoaLumberjack: 6a459bc897d6d80bd1b8c78482ec7ad05dffc3f0
+  FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
+  Highcharts: 6ce68ade31d10b6da480f8ac8f73e5a52674f751
+  ImageScrollView: d3ce8371e0d44299b2b638410db45387e18aa83f
+  IQKeyboardManager: c8665b3396bd0b79402b4c573eac345a31c7d485
+  ObjectMapper: e6e4d91ff7f2861df7aecc536c92d8363f4c9677
+  SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
+  SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
+  SearchTextField: 40dc3cc57def5a211f263cac263622c163bbc25a
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
+  SpreadsheetView: 688dbd19f2b355df0eb09e486266fd913a013449
+  SVGKit: 1ad7513f8c74d9652f94ed64ddecda1a23864dea
+
+PODFILE CHECKSUM: da2aa4364ac02904e34d1b581bd53067e7f45f38
+
+COCOAPODS: 1.15.2

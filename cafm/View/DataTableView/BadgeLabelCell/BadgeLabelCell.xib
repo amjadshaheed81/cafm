@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BadgeLabelCell" customModule="cafm" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="120" height="60"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qgs-W2-hFY">
+                    <rect key="frame" x="0.0" y="0.0" width="120" height="60"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O5c-NX-ydH">
+                            <rect key="frame" x="11.999999999999996" y="16.333333333333336" width="46.666666666666657" height="27.333333333333336"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" textAlignment="center" lineBreakMode="middleTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g3E-ab-Jfc" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
+                                    <rect key="frame" x="8.0000000000000018" y="4" width="30.666666666666671" height="19.333333333333332"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                    <color key="textColor" name="AppTintColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" name="AppTintBGColor"/>
+                            <constraints>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="O5c-NX-ydH" secondAttribute="height" multiplier="1:1" id="Foo-tC-lFv"/>
+                                <constraint firstItem="g3E-ab-Jfc" firstAttribute="top" secondItem="O5c-NX-ydH" secondAttribute="top" constant="4" id="VuL-zL-Ouy"/>
+                                <constraint firstAttribute="bottom" secondItem="g3E-ab-Jfc" secondAttribute="bottom" constant="4" id="YZS-2b-iXt"/>
+                                <constraint firstAttribute="trailing" secondItem="g3E-ab-Jfc" secondAttribute="trailing" constant="8" id="wZK-XX-ayZ"/>
+                                <constraint firstItem="g3E-ab-Jfc" firstAttribute="leading" secondItem="O5c-NX-ydH" secondAttribute="leading" constant="8" id="xkr-tQ-Z82"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="O5c-NX-ydH" firstAttribute="leading" secondItem="qgs-W2-hFY" secondAttribute="leading" constant="12" id="Jwh-UF-n83"/>
+                        <constraint firstItem="O5c-NX-ydH" firstAttribute="top" relation="greaterThanOrEqual" secondItem="qgs-W2-hFY" secondAttribute="top" constant="10" id="LuH-ec-lGz"/>
+                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="O5c-NX-ydH" secondAttribute="bottom" constant="10" id="N83-cA-fC3"/>
+                        <constraint firstItem="O5c-NX-ydH" firstAttribute="centerY" secondItem="qgs-W2-hFY" secondAttribute="centerY" id="W1T-re-8dh"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="O5c-NX-ydH" secondAttribute="trailing" constant="12" id="raX-xR-Qed"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="qgs-W2-hFY" secondAttribute="trailing" id="74K-2h-XvN"/>
+                <constraint firstAttribute="bottom" secondItem="qgs-W2-hFY" secondAttribute="bottom" id="8gs-oz-Hln"/>
+                <constraint firstItem="qgs-W2-hFY" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="FGp-ui-Dkb"/>
+                <constraint firstItem="qgs-W2-hFY" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="JD4-g7-mku"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="badgeView" destination="O5c-NX-ydH" id="0A3-ks-MQC"/>
+                <outlet property="mainLbl" destination="g3E-ab-Jfc" id="XvY-zx-GUQ"/>
+            </connections>
+            <point key="canvasLocation" x="20" y="0.0"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="AppTintBGColor">
+            <color red="0.90600001811981201" green="0.91399997472763062" blue="0.98400002717971802" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="AppTintColor">
+            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

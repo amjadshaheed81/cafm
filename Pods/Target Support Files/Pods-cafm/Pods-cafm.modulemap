@@ -1,0 +1,6 @@
+framework module Pods_cafm {
+  umbrella header "Pods-cafm-umbrella.h"
+
+  export *
+  module * { export * }
+}
