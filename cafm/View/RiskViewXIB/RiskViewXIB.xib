@@ -17,10 +17,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="VIm-eV-jft">
-                    <rect key="frame" x="10" y="0.0" width="187" height="43"/>
+                    <rect key="frame" x="10" y="1.6666666666666679" width="175" height="40"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTq-HH-wyX">
-                            <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
+                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
                             <color key="backgroundColor" name="RedRiskScoreColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="JTq-HH-wyX" secondAttribute="height" id="YHV-vF-KoR"/>
@@ -30,7 +30,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u2S-Ck-Lyu">
-                            <rect key="frame" x="48" y="0.0" width="43" height="43"/>
+                            <rect key="frame" x="45" y="0.0" width="40" height="40"/>
                             <color key="backgroundColor" name="AmberRiskScoreColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="u2S-Ck-Lyu" secondAttribute="height" multiplier="1:1" id="eeo-Nc-1kW"/>
@@ -40,7 +40,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XSi-z6-TsS">
-                            <rect key="frame" x="96" y="0.0" width="43" height="43"/>
+                            <rect key="frame" x="90" y="0.0" width="40" height="40"/>
                             <color key="backgroundColor" name="YellowRiskScoreColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="XSi-z6-TsS" secondAttribute="height" multiplier="1:1" id="0i3-jG-v5C"/>
@@ -50,7 +50,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V0R-iH-Lp1">
-                            <rect key="frame" x="144" y="0.0" width="43" height="43"/>
+                            <rect key="frame" x="135" y="0.0" width="40" height="40"/>
                             <color key="backgroundColor" name="GreenRiskScoreColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="V0R-iH-Lp1" secondAttribute="height" multiplier="1:1" id="HO9-gg-Xli"/>
@@ -60,13 +60,16 @@
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="IKj-Y8-PU9"/>
+                    </constraints>
                 </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="W8P-7w-rlC"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="VIm-eV-jft" firstAttribute="leading" secondItem="W8P-7w-rlC" secondAttribute="leading" constant="10" id="PJf-hk-6gb"/>
-                <constraint firstItem="W8P-7w-rlC" firstAttribute="trailing" secondItem="VIm-eV-jft" secondAttribute="trailing" constant="10" id="VTh-B1-dcI"/>
+                <constraint firstItem="W8P-7w-rlC" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="VIm-eV-jft" secondAttribute="trailing" constant="10" id="VTh-B1-dcI"/>
                 <constraint firstItem="VIm-eV-jft" firstAttribute="centerY" secondItem="Ew0-PV-d1y" secondAttribute="centerY" id="XJ7-oM-aUz"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

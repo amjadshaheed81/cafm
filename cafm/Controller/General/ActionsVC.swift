@@ -60,6 +60,7 @@ class ActionsVC: UIViewController {
             "Description",
             "Observation",
             "Required Action",
+            "Due Date",
             "Risk Score",
             "Status"
         ]
@@ -159,7 +160,7 @@ class ActionsVC: UIViewController {
                         strongSelf.hideLoadingAndShowError(newStatus: newStatus)
                     }
                 case .array(let array):
-                    strongSelf.itemArray = array
+                    strongSelf.itemArray = array.sorted(by: { $0.status != .completed && $1.status == .completed })
                     strongSelf.searchItemArray = strongSelf.itemArray
                     strongSelf.loadingStatus = strongSelf.itemArray.isEmpty ? .noResponse : .default
                     if newStatus != nil {
@@ -258,6 +259,10 @@ class ActionsVC: UIViewController {
         }
     }
     
+    func frozenRows(in spreadsheetView: SpreadsheetView) -> Int {
+        return 1
+    }
+    
 }
 
 extension ActionsVC: EmptyViewDelegate {
@@ -271,14 +276,24 @@ extension ActionsVC: EmptyViewDelegate {
 extension ActionsVC {
     
     @objc func completedBtnClicked(_ sender: ActionButton) {
-        self.callSiteActionsPut(index: sender.tag, newStatus: .completed)
+        self.saveSiteAction(index: sender.tag, newStatus: .completed)
+    }
+    
+    @objc func viewBtnClicked(_ sender: ActionButton) {
+        let vc = generalSB.instantiateViewController(withIdentifier: "ViewActionVC") as! ViewActionVC
+        if self.searchItemArray.indices.contains(sender.tag) {
+            if let actionId = self.searchItemArray[sender.tag].actionId {
+                vc.actionId = actionId
+            }
+        }
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func reassessedBtnClicked(_ sender: ActionButton) {
-        self.callSiteActionsPut(index: sender.tag, newStatus: .reassessed)
+        self.saveSiteAction(index: sender.tag, newStatus: .reassessed)
     }
     
-    func callSiteActionsPut(index: Int, newStatus: ActionModel.Status) {
+    func saveSiteAction(index: Int, newStatus: ActionModel.Status) {
         if self.searchItemArray.count > index {
             let item = self.searchItemArray[index]
             item.status = newStatus
@@ -309,7 +324,7 @@ extension ActionsVC {
     func hideLoadingAndShowError(newStatus: ActionModel.Status, message: String? = nil) {
         self.loadingSCLAlertView.hideView()
         let subTitle = message ?? "Failed to Mark as \(newStatus)!"
-        SCLAlertView.showLoading(title: "Error", message: subTitle, cancelButtonTitle: "OK")
+        SCLAlertView.showErrorAlert(title: "Error", message: subTitle, cancelButtonTitle: "OK")
     }
     
 }
@@ -390,31 +405,67 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                         cell.mainLbl.text = item.requiredAction
                     }
                     return cell
-                }else if column == 4 || column == 5 {
+                }else if column == 4 {
+                    let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: BadgeLabelCell.className(), for: indexPath) as! BadgeLabelCell
+                    if let createdAt = item.createdAt {
+                        cell.mainLbl.text = calculateDueDays(createdAt: createdAt, dueInDays: item.dueDate, riskScore: item.riskScore ?? 0)
+                    }else {
+                        cell.mainLbl.text = ""
+                    }
+                    cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
+                    
+                    cell.backgroundColor = UIColor.white
+                    cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
+                    let riskScore = item.riskScore ?? 0
+
+                    if riskScore > 16 {
+                        // 17-25
+                        cell.badgeView.backgroundColor = UIColor(appColor: .RedStatus)
+                    }else if riskScore > 9 {
+                        // 10-16
+                        cell.badgeView.backgroundColor = UIColor(appColor: .AmberStatus)
+                    }else if riskScore > 4 {
+                        // 5-9
+                        cell.badgeView.backgroundColor = UIColor(appColor: .YellowRiskScore)
+                    }else {
+                        // 1-4
+                        cell.badgeView.backgroundColor = UIColor(appColor: .GreenStatus)
+                    }
+
+                    
+                    cell.badgeView.addCorner(value: 5)
+                    
+                    cell.mainLbl.textColor = UIColor.white
+                    return cell
+                }else if column == 5 || column == 6 {
                     let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: BadgeLabelCell.className(), for: indexPath) as! BadgeLabelCell
                     cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
                     
                     cell.backgroundColor = UIColor.white
                     cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
                     
-                    if column == 4 {
+                    if column == 5 {
                         cell.badgeView.addCorner()
                         cell.mainLbl.textColor = UIColor.white
                         let riskScore = item.riskScore ?? 0
                         
-                        if riskScore > 17 {
+                        if riskScore > 16 {
+                            // 17-25
                             cell.badgeView.backgroundColor = UIColor(appColor: .RedStatus)
-                        }else if riskScore > 10 {
+                        }else if riskScore > 9 {
+                            // 10-16
                             cell.badgeView.backgroundColor = UIColor(appColor: .AmberStatus)
-                        }else if riskScore > 5 {
+                        }else if riskScore > 4 {
+                            // 5-9
                             cell.badgeView.backgroundColor = UIColor(appColor: .YellowRiskScore)
                         }else {
+                            // 1-4
                             cell.badgeView.backgroundColor = UIColor(appColor: .GreenStatus)
                         }
                         
                         cell.mainLbl.text = "\(riskScore)"
-                    }else if column == 5 {
-                        cell.badgeView.addCorner(value: cell.badgeView.frame.height/2)
+                    }else if column == 6 {
+                        cell.badgeView.addCorner(value: 5)
                         
                         cell.badgeView.backgroundColor = item.status?.textBGColor()
                         cell.mainLbl.textColor = item.status?.textColor()
@@ -422,17 +473,19 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                         cell.mainLbl.text = item.status?.rawValue
                     }
                     return cell
-                }else if column == 6 {
+                }else if column == 7 {
                     let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: ActionButtonsCell.className(), for: indexPath) as! ActionButtonsCell
                     cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
                     
                     let refHeight = cell.stackView.frame.height
+                    let viewBtn = getActionButton(size: CGSize(width: refHeight, height: refHeight), tag: index, image: UIImage(systemName: "eye.fill"), target: self, action: #selector(self.viewBtnClicked(_:)))
                     let completedBtn = getActionButton(size: CGSize(width: refHeight, height: refHeight), tag: index, image: UIImage(systemName: "checkmark.square.fill"), target: self, action: #selector(self.completedBtnClicked(_:)))
                     let reassessedBtn = getActionButton(size: CGSize(width: refHeight, height: refHeight), tag: index, image: UIImage(systemName: "xmark.square.fill"), target: self, action: #selector(self.reassessedBtnClicked(_:)))
                     cell.stackView.arrangedSubviews.forEach { view in
                         cell.stackView.removeArrangedSubview(view)
                         view.removeFromSuperview()
                     }
+                    cell.stackView.addArrangedSubview(viewBtn)
                     cell.stackView.addArrangedSubview(completedBtn)
                     cell.stackView.addArrangedSubview(reassessedBtn)
                     return cell
@@ -448,11 +501,18 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
             let totalColumn = self.headerColumnNames.count
             return [CellRange(from: IndexPath(row: 1, column: 0), to: IndexPath(row: 1, column: totalColumn-1))]
         }else {
-            return []
+            var data = [CellRange(from: IndexPath(row: 0, column: 2), to: IndexPath(row: 0, column: 3))]
+            for (ind, value) in searchItemArray.enumerated() {
+                data.append(CellRange(from: IndexPath(row: ind+1, column: 2), to: IndexPath(row: ind+1, column: 3)))
+            }
+            return data
         }
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, widthForColumn column: Int) -> CGFloat {
+        if column == 2 || column == 3 {
+            return 0
+        }
         if self.headerColumnNames.count > column {
             let headerText = self.headerColumnNames[column]
             
@@ -480,21 +540,31 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                     }
                     let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
                     return max(headerWidth, maxColumnWidth)
-                }else if column == 4 || column == 5 {
+                }else if column == 4 {
+                    var textArray: [String] = []
+                    let createAt = self.searchItemArray.compactMap({ $0.createdAt })
+                    let dueDate = self.searchItemArray.map({ $0.dueDate })
+                    let riskScore = self.searchItemArray.map({ $0.riskScore })
+                    for item in searchItemArray {
+                        textArray.append(calculateDueDays(createdAt: item.createdAt ?? "", dueInDays: item.dueDate ?? "", riskScore: item.riskScore ?? 0))
+                    }
+                    let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
+                    return max(headerWidth, maxColumnWidth)+10.0+10.0
+                }else if column == 5 || column == 6 {
                     let refSize = CGSize(width: 12+8+10+8+12, height: 10+4+18+4+10)
                     let widthAddition: CGFloat = 12+8+8+12
                     let minWidth = refSize.width-widthAddition
                     
                     var textArray: [String] = []
-                    if column == 4 {
+                    if column == 5 {
                         textArray = self.searchItemArray.compactMap({ "\($0.riskScore ?? 0)" })
-                    }else if column == 5 {
+                    }else if column == 6 {
                         textArray = self.searchItemArray.compactMap({ $0.status?.rawValue })
                     }
                     let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
                     return max(headerWidth, maxColumnWidth)
-                }else if column == 6 {
-                    return max(headerWidth, 12+40+8+40+12)
+                }else if column == 7 {
+                    return max(headerWidth, 12+40+8+40+12+40)
                 }
             }
         }
@@ -522,20 +592,28 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                 if self.searchItemArray.count > index {
                     let item = self.searchItemArray[index]
                     
-                    let textArray = [
+                    var textArray = [
                         item.type,
                         item.desc,
-                        item.observation,
-                        item.requiredAction,
+//                        item.observation,
+//                        item.requiredAction,
                     ]
                     let textArray1 = [
                         "\(item.riskScore ?? 0)",
                         item.status?.rawValue,
                     ]
                     
+                    var textArray2: [String] = []
+                    let createAt = self.searchItemArray.compactMap({ $0.createdAt })
+                    let dueDate = self.searchItemArray.map({ $0.dueDate })
+                    for (inx, date) in createAt.enumerated() {
+                        textArray2.append(calculateDueDays(createdAt: date, dueInDays: dueDate[inx], riskScore: item.riskScore ?? 0))
+                    }
+                    
                     let maxHeight = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
-                    let maxHeight1 = getMaxLabelSize(textArray: textArray1, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height
-                    return max(maxHeight, maxHeight1, 10+40+10)
+                    let maxHeight1 = getMaxLabelSize(textArray: textArray1, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height + 40
+                    let maxHeight2 = getMaxLabelSize(textArray: textArray2, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height
+                    return max(maxHeight, maxHeight1, maxHeight2, 10+40+10)
                 }
             }
         }

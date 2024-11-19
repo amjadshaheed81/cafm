@@ -164,37 +164,49 @@ class LoginVC: UIViewController, UITextFieldDelegate {
             return
         }
         
-        let loginService = ApiService.loginApi(email: tfEmail.text ?? "", password: tfPassword.text ?? "")
+        let requestModel = LoginRequestModel()
+        requestModel.password = password
+        requestModel.email = email
         
+        let loginService = ApiService.loginApi(model: requestModel)
+                
         let appearance = SCLAlertView.SCLAppearance(
             showCloseButton: false // if you dont want the close button use false
         )
         let sclAlert = SCLAlertView(appearance: appearance)
         sclAlert.showWait("", subTitle: "Getting Everything Ready...", closeButtonTitle: "")
-        APIClient.request(loginService) { (result: Result<APIClient.MappableResult<UserModel>, Error>) in
+        APIClient.loginRequest(loginService) { (result: Result<APIClient.MappableResult<LoginUserDetail>, Error>) in
             switch result {
             case .success(let mappableResult):
                 switch mappableResult {
-                case .single(let user):
-                    userEmailId = self.tfEmail.text
-                    userPassword = self.tfPassword.text
-                    UserConstants.shared.currentUserID = user.id
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(0.2))) {
+                case .single(let loginDetail):
+                    if let status = loginDetail.status, status == 401 {
                         sclAlert.hideView()
-                        if let userRole = user.role {
-                            UserDefaults.standard.setValue(userRole, forKey: "UserRole")
+                        SCLAlertView().showError("Error", subTitle: "Please enter valid email and password.")
+                    }else {
+                        userEmailId = self.tfEmail.text
+                        userPassword = self.tfPassword.text
+                        UserConstants.shared.currentUserID = loginDetail.user?.id
+                        jwtToken = "JWTSESSIONID="+(loginDetail.jwtToken ?? "")
+                        sasToken = loginDetail.sasToken
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(0.2))) {
+                            sclAlert.hideView()
+                            if let userRole = loginDetail.user?.role {
+                                UserDefaults.standard.setValue(userRole, forKey: "UserRole")
+                            }
+                            let sclAlertView = SCLAlertView()
+                            sclAlertView.showSuccess("", subTitle: "Success! Thanks for your effort, everything is complete.")
+                            self.handleLoginSuccess()
                         }
-                        let sclAlertView = SCLAlertView()
-                        sclAlertView.showSuccess("", subTitle: "Success! Thanks for your effort, everything is complete.")
-                        self.handleLoginSuccess()
                     }
                 case .array:
+                    sclAlert.hideView()
+                    SCLAlertView().showError("Error", subTitle: "Oops! It looks like you're not logged in. Please sign in to continue.")
                     break
                 }
             case .failure(let error):
                 sclAlert.hideView()
-                let sclAlertView = SCLAlertView()
-                sclAlertView.showInfo("", subTitle: "Oops! It looks like you're not logged in. Please sign in to continue.")
+                SCLAlertView().showError("Error", subTitle: "Oops! It looks like you're not logged in. Please sign in to continue.")
                 print("Error: \(error.localizedDescription)")
             }
         }

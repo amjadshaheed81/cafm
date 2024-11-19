@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CheckboxLabelXIB" customModule="cafm" customModuleProvider="target">
+            <connections>
+                <outlet property="actionBtn" destination="DNz-x8-ho9" id="LaA-PL-qmW"/>
+                <outlet property="checkBoxHeight" destination="y8r-Es-0ok" id="D3O-fW-bWa"/>
+                <outlet property="checkBtn" destination="6Pl-uE-fVy" id="Mhi-21-aK5"/>
+                <outlet property="checkmarkImageView" destination="zXK-D3-Yyi" id="DSN-m8-QuU"/>
+                <outlet property="mainLbl" destination="mSQ-Nv-BpU" id="Niw-GR-nem"/>
+                <outlet property="mianView" destination="4M6-2c-3Sn" id="hUv-Nq-1Rm"/>
+                <outlet property="squareImageView" destination="pNJ-Cg-MlN" id="2FO-XR-Txf"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4M6-2c-3Sn">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mSQ-Nv-BpU" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
+                            <rect key="frame" x="37" y="5" width="346" height="18"/>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="pNJ-Cg-MlN">
+                            <rect key="frame" x="10" y="4.6666666666666643" width="22" height="19.000000000000004"/>
+                            <color key="tintColor" name="ViewBorder2Color"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="pNJ-Cg-MlN" secondAttribute="height" multiplier="1:1" id="hWd-kb-1L5"/>
+                                <constraint firstAttribute="height" constant="22" id="y8r-Es-0ok"/>
+                            </constraints>
+                        </imageView>
+                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checkmark.square.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="zXK-D3-Yyi">
+                            <rect key="frame" x="10" y="4.6666666666666643" width="22" height="19.000000000000004"/>
+                            <color key="tintColor" name="AppTintColor"/>
+                        </imageView>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Pl-uE-fVy">
+                            <rect key="frame" x="5" y="-2" width="32" height="32"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <connections>
+                                <action selector="checkBtnClicked:" destination="-1" eventType="touchUpInside" id="LC1-dD-mHk"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DNz-x8-ho9">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <connections>
+                                <action selector="checkBtnClicked:" destination="-1" eventType="touchUpInside" id="iea-XH-him"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="DNz-x8-ho9" secondAttribute="trailing" id="4aL-Vc-wNs"/>
+                        <constraint firstItem="6Pl-uE-fVy" firstAttribute="trailing" secondItem="pNJ-Cg-MlN" secondAttribute="trailing" constant="5" id="5it-8h-mo5"/>
+                        <constraint firstItem="mSQ-Nv-BpU" firstAttribute="leading" secondItem="pNJ-Cg-MlN" secondAttribute="trailing" constant="5" id="B3c-f0-Qld"/>
+                        <constraint firstItem="6Pl-uE-fVy" firstAttribute="leading" secondItem="pNJ-Cg-MlN" secondAttribute="leading" constant="-5" id="Bnr-6c-WMl"/>
+                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="6Pl-uE-fVy" secondAttribute="bottom" id="EAp-nJ-fGr"/>
+                        <constraint firstItem="DNz-x8-ho9" firstAttribute="leading" secondItem="4M6-2c-3Sn" secondAttribute="leading" id="EWn-9p-erA"/>
+                        <constraint firstItem="zXK-D3-Yyi" firstAttribute="top" secondItem="pNJ-Cg-MlN" secondAttribute="top" id="NZA-rt-zbj"/>
+                        <constraint firstItem="DNz-x8-ho9" firstAttribute="top" secondItem="4M6-2c-3Sn" secondAttribute="top" id="OAa-Qi-f9D"/>
+                        <constraint firstItem="6Pl-uE-fVy" firstAttribute="top" secondItem="pNJ-Cg-MlN" secondAttribute="top" constant="-5" id="P0p-Vv-7kP"/>
+                        <constraint firstItem="pNJ-Cg-MlN" firstAttribute="centerY" secondItem="mSQ-Nv-BpU" secondAttribute="centerY" id="Rsy-iZ-mFH"/>
+                        <constraint firstAttribute="trailing" secondItem="mSQ-Nv-BpU" secondAttribute="trailing" constant="10" id="ctJ-Dr-GdT"/>
+                        <constraint firstItem="mSQ-Nv-BpU" firstAttribute="top" secondItem="4M6-2c-3Sn" secondAttribute="top" constant="5" id="eeM-2K-rDK"/>
+                        <constraint firstAttribute="bottom" secondItem="DNz-x8-ho9" secondAttribute="bottom" id="hfs-Tk-Jfs"/>
+                        <constraint firstItem="6Pl-uE-fVy" firstAttribute="bottom" secondItem="pNJ-Cg-MlN" secondAttribute="bottom" constant="5" id="nIL-G7-Sxd"/>
+                        <constraint firstItem="zXK-D3-Yyi" firstAttribute="trailing" secondItem="pNJ-Cg-MlN" secondAttribute="trailing" id="oAx-HZ-uuy"/>
+                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="mSQ-Nv-BpU" secondAttribute="bottom" constant="5" id="tSg-9b-nnX"/>
+                        <constraint firstItem="zXK-D3-Yyi" firstAttribute="leading" secondItem="pNJ-Cg-MlN" secondAttribute="leading" id="uhP-jX-KyD"/>
+                        <constraint firstItem="pNJ-Cg-MlN" firstAttribute="leading" secondItem="4M6-2c-3Sn" secondAttribute="leading" constant="10" id="x0N-55-YhY"/>
+                        <constraint firstItem="zXK-D3-Yyi" firstAttribute="bottom" secondItem="pNJ-Cg-MlN" secondAttribute="bottom" id="zCd-8g-HaG"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="4M6-2c-3Sn" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="EEz-Pc-FEH"/>
+                <constraint firstAttribute="bottom" secondItem="4M6-2c-3Sn" secondAttribute="bottom" id="Fgb-wU-jV2"/>
+                <constraint firstItem="4M6-2c-3Sn" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="WDJ-Ry-imd"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="4M6-2c-3Sn" secondAttribute="trailing" id="h6B-pm-Jbu"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-7" y="-1"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="checkmark.square.fill" catalog="system" width="128" height="114"/>
+        <image name="square" catalog="system" width="128" height="114"/>
+        <namedColor name="AppTintColor">
+            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="ViewBorder2Color">
+            <color red="0.78431372549019607" green="0.80784313725490198" blue="0.85490196078431369" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

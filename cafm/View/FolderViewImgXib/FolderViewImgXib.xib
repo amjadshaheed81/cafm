@@ -17,11 +17,11 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="eye" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="t3R-Ad-Ttv">
-                    <rect key="frame" x="76.5" y="10" width="35" height="31.5"/>
+                    <rect key="frame" x="78" y="11.5" width="32" height="28.5"/>
                     <color key="tintColor" name="GrayStatusColor"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="t3R-Ad-Ttv" secondAttribute="height" id="Xda-X3-Vua"/>
-                        <constraint firstAttribute="height" constant="35" id="zPR-eT-hdZ"/>
+                        <constraint firstAttribute="height" constant="32" id="zPR-eT-hdZ"/>
                     </constraints>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bsd-Q8-o3b">
@@ -42,8 +42,10 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="btnPreview" destination="bsd-Q8-o3b" id="jmo-Pr-9AA"/>
+                <outlet property="imgView" destination="t3R-Ad-Ttv" id="Eef-Lz-1Mt"/>
+                <outlet property="imgViewHeight" destination="zPR-eT-hdZ" id="Y2E-yX-QqW"/>
             </connections>
-            <point key="canvasLocation" x="-178.62595419847327" y="207.04225352112678"/>
+            <point key="canvasLocation" x="-180" y="207.04225352112675"/>
         </view>
     </objects>
     <resources>

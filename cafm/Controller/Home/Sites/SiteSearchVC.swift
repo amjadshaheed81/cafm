@@ -24,7 +24,7 @@ class SiteSearchVC: UIViewController {
     
     weak var delegate: SiteSearchDelegate?
     
-    var filterSiteArray: [SiteModel] = []
+    var filterSiteArray: [CreateSiteRequestModel] = []
     var favoriteSiteIDs: [Int] = []
     
     let userRole: UserEnum = UserDefaults.standard.userRole
@@ -95,10 +95,10 @@ class SiteSearchVC: UIViewController {
         }else {
             subTitle = message ?? "Something went wrong, Please try again!"
         }
-        SCLAlertView.showLoading(title: "Error", message: subTitle, cancelButtonTitle: "OK")
+        SCLAlertView.showErrorAlert(title: "Error", message: subTitle, cancelButtonTitle: "OK")
     }
     
-    func getUserDetails(sites: [SiteModel]? = nil, afterManage: Bool, addToFavorite: Int?, removeFromFavorite: Int?) {
+    func getUserDetails(sites: [CreateSiteRequestModel]? = nil, afterManage: Bool, addToFavorite: Int?, removeFromFavorite: Int?) {
         guard let userID = UserConstants.shared.currentUserID else {
             self.hideLoadingAndShowError(addToFavorite: addToFavorite != nil, removeFromFavorite: removeFromFavorite != nil)
             return
@@ -106,7 +106,7 @@ class SiteSearchVC: UIViewController {
         let apiService = ApiService.userDetailsAPI(userId: userID)
         
         self.loadingSCLAlertView.showLoading()
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<UserModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<User>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
@@ -163,7 +163,7 @@ class SiteSearchVC: UIViewController {
             }
             let apiService = ApiService.userManageAPI(userModel: manageUserDetail)
             
-            APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<UserModel>, Error>) in
+            APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<User>, Error>) in
                 guard let strongSelf = self else { return }
                 switch result {
                 case .success(let mappableResult):
@@ -185,9 +185,9 @@ class SiteSearchVC: UIViewController {
     }
     
     func getAllSites(addToFavorite: Int?, removeFromFavorite: Int?) {
-        let apiService = ApiService.siteAllDetails
+        let apiService = ApiService.siteAllDetails(sort: "asc", sortName: "siteName")
         
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
@@ -213,11 +213,18 @@ extension SiteSearchVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let text = searchText.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).lowercased()
         if text.isEmpty {
-            self.filterSiteArray = UserConstants.shared.allSites
+            self.filterSiteArray = UserConstants.shared.allSites.filter({ user in
+                (user.status?.lowercased() ?? "") == "Open".lowercased()
+            })
             self.tableView.reloadData()
             self.tableView.setContentOffset(CGPoint.zero, animated: true)
         }else {
-            self.filterSiteArray = UserConstants.shared.allSites.filter({ $0.siteName?.lowercased().contains(text) ?? false })
+            self.filterSiteArray = UserConstants.shared.allSites.filter({
+                if ($0.status?.lowercased() ?? "") != "Open".lowercased() {
+                    return false
+                }
+                return $0.siteName?.lowercased().contains(text) ?? false
+            })
             self.tableView.reloadData()
             self.tableView.setContentOffset(CGPoint.zero, animated: true)
         }
@@ -272,14 +279,6 @@ extension SiteSearchVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if self.filterSiteArray.count > indexPath.row {
             let item = self.filterSiteArray[indexPath.row]
-            
-            //TODO: NKS
-            //let vc = generalSB.instantiateViewController(withIdentifier: "SiteInformationVC") as! SiteInformationVC
-            //let vc = generalSB.instantiateViewController(withIdentifier: "FloorLayoutPlanVC") as! FloorLayoutPlanVC
-            //vc.selectedSiteID = item.siteId
-            //vc.isViewModeEdit = true
-            //self.navigationController?.pushViewController(vc, animated: true)
-            
             self.delegate?.siteSearchDidSelectSite(item)
             self.navigationController?.popViewController(animated: true)
         }
@@ -288,5 +287,5 @@ extension SiteSearchVC: UITableViewDataSource, UITableViewDelegate {
 }
 
 protocol SiteSearchDelegate: AnyObject {
-    func siteSearchDidSelectSite(_ site: SiteModel)
+    func siteSearchDidSelectSite(_ site: CreateSiteRequestModel)
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -33,7 +33,7 @@ Property Management Suite</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qXZ-kI-ipQ">
-                                        <rect key="frame" x="0.0" y="299.66666666666669" width="35.666666666666664" height="17"/>
+                                        <rect key="frame" x="0.0" y="299.66666666666669" width="36" height="17"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -155,7 +155,7 @@ Property Management Suite</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i33-dm-jz1">
-                                <rect key="frame" x="21.666666666666657" y="191" width="350" height="470"/>
+                                <rect key="frame" x="21.666666666666657" y="176" width="350" height="500"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_screen_union" translatesAutoresizingMaskIntoConstraints="NO" id="lOm-3V-sJo">
                                         <rect key="frame" x="102" y="0.0" width="146" height="180"/>
@@ -173,7 +173,7 @@ Property Management Suite</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dET-ea-ekO">
-                                        <rect key="frame" x="0.0" y="317.33333333333331" width="35.666666666666664" height="17"/>
+                                        <rect key="frame" x="0.0" y="317.33333333333331" width="36" height="17"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -193,33 +193,43 @@ Property Management Suite</string>
                                             <constraint firstAttribute="width" secondItem="ndB-CT-YJ1" secondAttribute="height" id="vxt-kn-Qju"/>
                                         </constraints>
                                     </imageView>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter otp" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ilQ-wY-0A3">
+                                        <rect key="frame" x="0.0" y="395.33333333333337" width="350" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="VI1-Hv-VBY"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pzw-sG-eeq">
-                                        <rect key="frame" x="0.0" y="415.33333333333337" width="350" height="45"/>
+                                        <rect key="frame" x="0.0" y="445.33333333333337" width="350" height="45"/>
                                         <color key="backgroundColor" name="AppTintColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="YdL-Ee-kAZ"/>
                                         </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Send Password Reset Link">
-                                            <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                        </buttonConfiguration>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Send Password Reset Link"/>
                                         <connections>
                                             <action selector="resetPasswordClick:" destination="6k6-OT-Edc" eventType="touchUpInside" id="b23-Qg-xqJ"/>
-                                            <action selector="signInButtonTapped:" destination="AaZ-3v-yOi" eventType="touchUpInside" id="ax1-3G-hGb"/>
                                         </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="pzw-sG-eeq" secondAttribute="trailing" id="02v-Dx-DEN"/>
+                                    <constraint firstItem="GyZ-vy-NKu" firstAttribute="leading" secondItem="ilQ-wY-0A3" secondAttribute="leading" id="3AV-GE-Z0Q"/>
                                     <constraint firstItem="GyZ-vy-NKu" firstAttribute="top" secondItem="dET-ea-ekO" secondAttribute="bottom" constant="11" id="9lU-lY-HvF"/>
+                                    <constraint firstItem="ilQ-wY-0A3" firstAttribute="trailing" secondItem="pzw-sG-eeq" secondAttribute="trailing" id="JWS-WH-mvB"/>
+                                    <constraint firstItem="pzw-sG-eeq" firstAttribute="top" secondItem="ilQ-wY-0A3" secondAttribute="bottom" constant="10" id="Mdd-eH-onr"/>
                                     <constraint firstItem="jBP-5a-UXK" firstAttribute="top" secondItem="I5o-Am-KeC" secondAttribute="bottom" constant="25" id="RiO-W5-yjN"/>
-                                    <constraint firstAttribute="height" constant="470" id="T5U-fZ-BCi"/>
+                                    <constraint firstAttribute="height" constant="500" id="T5U-fZ-BCi"/>
+                                    <constraint firstItem="ilQ-wY-0A3" firstAttribute="leading" secondItem="pzw-sG-eeq" secondAttribute="leading" id="VTL-Db-IDB"/>
                                     <constraint firstItem="lOm-3V-sJo" firstAttribute="centerX" secondItem="i33-dm-jz1" secondAttribute="centerX" id="WGx-PP-tRX"/>
                                     <constraint firstItem="GyZ-vy-NKu" firstAttribute="leading" secondItem="i33-dm-jz1" secondAttribute="leading" id="WWj-0u-tZ1"/>
                                     <constraint firstAttribute="trailing" secondItem="GyZ-vy-NKu" secondAttribute="trailing" id="ZdV-kQ-g72"/>
                                     <constraint firstItem="I5o-Am-KeC" firstAttribute="top" secondItem="lOm-3V-sJo" secondAttribute="bottom" constant="50" id="ZvT-4O-Vpf"/>
+                                    <constraint firstItem="GyZ-vy-NKu" firstAttribute="trailing" secondItem="ilQ-wY-0A3" secondAttribute="trailing" id="aa7-JT-qR7"/>
                                     <constraint firstItem="dET-ea-ekO" firstAttribute="leading" secondItem="i33-dm-jz1" secondAttribute="leading" id="e6O-ib-M6r"/>
                                     <constraint firstItem="I5o-Am-KeC" firstAttribute="leading" secondItem="i33-dm-jz1" secondAttribute="leading" id="ecQ-tx-chF"/>
                                     <constraint firstItem="dET-ea-ekO" firstAttribute="top" secondItem="jBP-5a-UXK" secondAttribute="bottom" constant="25" id="evz-NN-KG8"/>
@@ -228,25 +238,53 @@ Property Management Suite</string>
                                     <constraint firstItem="lOm-3V-sJo" firstAttribute="top" secondItem="i33-dm-jz1" secondAttribute="top" id="mHZ-o1-nxt"/>
                                     <constraint firstAttribute="trailing" secondItem="jBP-5a-UXK" secondAttribute="trailing" id="mOU-83-MUU"/>
                                     <constraint firstItem="jBP-5a-UXK" firstAttribute="leading" secondItem="i33-dm-jz1" secondAttribute="leading" id="rYv-vT-MXW"/>
-                                    <constraint firstItem="pzw-sG-eeq" firstAttribute="leading" secondItem="i33-dm-jz1" secondAttribute="leading" id="vWM-RD-5QB"/>
-                                    <constraint firstItem="pzw-sG-eeq" firstAttribute="top" secondItem="GyZ-vy-NKu" secondAttribute="bottom" constant="30" id="wNd-am-xKG"/>
+                                    <constraint firstItem="ilQ-wY-0A3" firstAttribute="top" secondItem="GyZ-vy-NKu" secondAttribute="bottom" constant="10" id="uj7-cL-nFY"/>
                                     <constraint firstAttribute="trailing" secondItem="I5o-Am-KeC" secondAttribute="trailing" id="z0p-6b-vbN"/>
                                     <constraint firstItem="GyZ-vy-NKu" firstAttribute="centerY" secondItem="ndB-CT-YJ1" secondAttribute="centerY" id="zqD-qB-6Xm"/>
                                 </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1UX-q7-0IF" customClass="UIControl">
+                                <rect key="frame" x="0.0" y="59" width="45" height="45"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="xmark.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="DP9-oL-PQa">
+                                        <rect key="frame" x="8.6666666666666643" y="9.3333333333333375" width="28" height="26.666666666666671"/>
+                                        <color key="tintColor" name="AppTintColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="DP9-oL-PQa" secondAttribute="height" id="TsP-SK-zeT"/>
+                                            <constraint firstAttribute="height" constant="28" id="muI-yR-yi4"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="5my-PI-PPb"/>
+                                    <constraint firstItem="DP9-oL-PQa" firstAttribute="centerX" secondItem="1UX-q7-0IF" secondAttribute="centerX" id="6mj-ns-dou"/>
+                                    <constraint firstItem="DP9-oL-PQa" firstAttribute="centerY" secondItem="1UX-q7-0IF" secondAttribute="centerY" id="wc0-sn-lTh"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="btnClose:" destination="6k6-OT-Edc" eventType="touchUpInside" id="fpf-Fz-mDN"/>
+                                </connections>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="uSa-Br-vrz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="1UX-q7-0IF" firstAttribute="width" secondItem="1UX-q7-0IF" secondAttribute="height" multiplier="1:1" id="0RH-NR-tjv"/>
                             <constraint firstItem="i33-dm-jz1" firstAttribute="centerY" secondItem="Tf2-Q9-XdT" secondAttribute="centerY" id="JlX-VO-KUY"/>
+                            <constraint firstItem="1UX-q7-0IF" firstAttribute="top" secondItem="uSa-Br-vrz" secondAttribute="top" id="TN5-my-HrD"/>
+                            <constraint firstItem="1UX-q7-0IF" firstAttribute="leading" secondItem="uSa-Br-vrz" secondAttribute="leading" id="aQK-Xj-FRq"/>
                             <constraint firstItem="i33-dm-jz1" firstAttribute="centerX" secondItem="Tf2-Q9-XdT" secondAttribute="centerX" id="pEU-qi-LCk"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="descBottomLbl" destination="evz-NN-KG8" id="zSL-ad-g5b"/>
                         <outlet property="descLbl" destination="jBP-5a-UXK" id="meS-Z9-nEE"/>
+                        <outlet property="descTopLbl" destination="RiO-W5-yjN" id="MDW-VA-BWc"/>
                         <outlet property="emailLbl" destination="dET-ea-ekO" id="KNX-hI-eVE"/>
                         <outlet property="resetBtn" destination="pzw-sG-eeq" id="cXg-Xd-KnO"/>
                         <outlet property="tfEmail" destination="GyZ-vy-NKu" id="9Ze-tM-AT0"/>
+                        <outlet property="tfOtp" destination="ilQ-wY-0A3" id="h2P-z6-i9L"/>
+                        <outlet property="tfOtpHeight" destination="VI1-Hv-VBY" id="Cvz-Uo-LvD"/>
                         <outlet property="titleLbl" destination="I5o-Am-KeC" id="C0c-NJ-elx"/>
                     </connections>
                 </viewController>
@@ -259,8 +297,9 @@ Property Management Suite</string>
         <image name="lock_icon" width="22" height="22"/>
         <image name="login_screen_union" width="146" height="180"/>
         <image name="mail_icon" width="22" height="21"/>
+        <image name="xmark.circle.fill" catalog="system" width="128" height="123"/>
         <namedColor name="AppTintColor">
-            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.2196078431372549" green="0.29411764705882354" blue="0.82745098039215681" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="GrayTextColor">
             <color red="0.39215686274509803" green="0.45490196078431372" blue="0.54509803921568623" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

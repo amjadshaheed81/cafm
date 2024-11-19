@@ -12,4 +12,7 @@ class MoreEditOption : Cell {
     
     @IBOutlet weak var btnAction: UIButton!
     
+    @IBOutlet weak var moreIconImgWidthCons: NSLayoutConstraint!
+    
+    @IBOutlet weak var imgView: UIImageView!
 }

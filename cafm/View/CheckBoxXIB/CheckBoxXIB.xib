@@ -18,22 +18,20 @@
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="100" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="un_check_image" translatesAutoresizingMaskIntoConstraints="NO" id="SqA-Qj-G3F">
                     <rect key="frame" x="10" y="10" width="115" height="115"/>
                     <constraints>
-                        <constraint firstAttribute="width" secondItem="SqA-Qj-G3F" secondAttribute="height" id="SxW-lA-q4N"/>
+                        <constraint firstAttribute="width" secondItem="SqA-Qj-G3F" secondAttribute="height" id="mKU-dG-9Vp"/>
+                        <constraint firstAttribute="height" constant="115" id="spw-8s-tJJ"/>
                     </constraints>
                 </imageView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="SqA-Qj-G3F" secondAttribute="bottom" constant="10" id="RMR-rq-h88"/>
                 <constraint firstItem="SqA-Qj-G3F" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="YW8-J4-pMC"/>
                 <constraint firstItem="SqA-Qj-G3F" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kjq-7F-ThL"/>
-                <constraint firstItem="SqA-Qj-G3F" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="p2P-zl-7CX"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="SqA-Qj-G3F" secondAttribute="trailing" constant="10" id="twZ-pk-QUx"/>
-                <constraint firstItem="SqA-Qj-G3F" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="vRf-Ww-T2Q"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
+                <outlet property="checkImageHeight" destination="spw-8s-tJJ" id="3It-Mi-Jvi"/>
                 <outlet property="checkImageView" destination="SqA-Qj-G3F" id="iVZ-N8-5Iy"/>
             </connections>
             <point key="canvasLocation" x="26.717557251908396" y="-196.12676056338029"/>

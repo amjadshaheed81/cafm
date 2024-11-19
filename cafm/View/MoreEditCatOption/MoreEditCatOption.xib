@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="NBn-H6-y4o" customClass="MoreEditCatOption" customModule="cafm" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="309" height="60"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ellipsis.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Bp1-Cy-Zmh">
+                    <rect key="frame" x="138.5" y="15.5" width="32" height="31"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="Bp1-Cy-Zmh" secondAttribute="height" multiplier="1:1" id="BuI-4y-YEu"/>
+                        <constraint firstAttribute="width" constant="32" id="VfJ-OX-Ewi"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fSG-74-fNs">
+                    <rect key="frame" x="0.0" y="0.0" width="309" height="60"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="EQD-l6-n6g"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="fSG-74-fNs" firstAttribute="leading" secondItem="EQD-l6-n6g" secondAttribute="leading" id="3w3-vW-mBw"/>
+                <constraint firstItem="Bp1-Cy-Zmh" firstAttribute="centerX" secondItem="NBn-H6-y4o" secondAttribute="centerX" id="7ke-h1-DM2"/>
+                <constraint firstItem="fSG-74-fNs" firstAttribute="bottom" secondItem="EQD-l6-n6g" secondAttribute="bottom" id="NkD-PJ-Gih"/>
+                <constraint firstItem="Bp1-Cy-Zmh" firstAttribute="top" secondItem="NBn-H6-y4o" secondAttribute="top" constant="15" id="P4t-3k-s4S"/>
+                <constraint firstItem="fSG-74-fNs" firstAttribute="top" secondItem="NBn-H6-y4o" secondAttribute="top" id="VMW-Rl-erG"/>
+                <constraint firstItem="fSG-74-fNs" firstAttribute="trailing" secondItem="EQD-l6-n6g" secondAttribute="trailing" id="uFV-jS-68f"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btnAction" destination="fSG-74-fNs" id="Jnu-7R-rMx"/>
+                <outlet property="imgView" destination="Bp1-Cy-Zmh" id="FiQ-GB-Mzn"/>
+                <outlet property="moreIconImgWidthCons" destination="VfJ-OX-Ewi" id="OsX-Vc-KeM"/>
+            </connections>
+            <point key="canvasLocation" x="194.0625" y="236.09154929577466"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -11,16 +11,6 @@ import SpreadsheetView
 
 class ChooseImageCell: Cell {
     
-    @IBOutlet weak var mainView: UIView!
-    @IBOutlet weak var fileImageView: UIImageView!
-    @IBOutlet weak var fileImageViewWidth: NSLayoutConstraint!
-    @IBOutlet weak var fileNameLbl: UILabel!
-    @IBOutlet weak var chooseFileBtn: UIButton!
-    
-    var chooseFileBtnAction: ((UIButton) -> Void)?
-    
-    @IBAction func chooseFileBtnClicked(_ sender: UIButton) {
-        self.chooseFileBtnAction?(sender)
-    }
+    @IBOutlet weak var xib: ChooseFileCapsuleXIB!
     
 }

@@ -33,14 +33,15 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
     
     var riskScoreArray: RiskScoreResponse?
     
+    let userRole: UserEnum = UserDefaults.standard.userRole
+    
     enum Status: String {
         case status = "Status"
         case open = "Open"
         case closed = "Closed"
         case sold = "Sold"
     }
-    var searchStatus: Status = .status
-    
+    var searchStatus: Status = .open
     
     var isDataNotRecive : Bool {
         return (loadingStatus == .loading || loadingStatus == .failed || loadingStatus == .noResponse || loadingStatus == .noInternet)
@@ -60,7 +61,7 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
         fetchData()
         viewCityXib.lblText.text = "City"
         viewAreaXib.lblText.text = "Area"
-        viewStatusXib.lblText.text = "Status"
+        viewStatusXib.lblText.text = "Open"
         setUpCityXib()
         setUpAreaXib()
         setStatusXib()
@@ -202,7 +203,7 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
     }
     
     func loadSiteDetailsData() {
-        let apiService = ApiService.siteAllDetails
+        let apiService = ApiService.siteAllDetails(sort: "asc", sortName: "siteName")
         
         APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteModel>, Error>) in
             switch result {
@@ -214,14 +215,24 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
                         self.viewAreaXib.lblText.text = "Area"
                         self.viewCityXib.lblText.text = "City"
                         self.siteDetailsArray = siteDetailsArray
+                        if !(self.userRole == .admin) {
+                            self.siteDetailsArray = siteDetailsArray.filter({ siteModel in
+                                UserConstants.shared.userDetail?.taggedSites?.contains(where: {$0.id == siteModel.siteId}) ?? false
+                            })
+                        }
                         self.searchSiteAndCity = 0
                         self.setUpCityXib()
                         self.setUpAreaXib()
                         self.mergeRiskDataToSiteDetails()
                         self.searchFilter(searchText: self.tfSearchUser.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
                     }
+                }else {
+                    self?.loadingStatus = .failed
+                    self?.viewSpred.reloadData()
                 }
             case .failure(let error):
+                self?.loadingStatus = .failed
+                self?.viewSpred.reloadData()
                 print("Error: \(error.localizedDescription)")
             }
         }
@@ -507,6 +518,13 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
             cell.gridlines.left = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             cell.gridlines.right = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             
+            if !(self.userRole == .admin) {
+                cell.btnDelete.isHidden = true
+                cell.btnEditView.isHidden = true
+                cell.editView.alpha = 0
+                cell.deleteView.alpha = 0
+            }
+            
             cell.btnDelete.addAction { [weak self] in
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
@@ -569,7 +587,7 @@ extension PortfolioManagementVC {
         scl.showWait("", subTitle: "please wait...", closeButtonTitle: "")
         let apiService = ApiService.getAllSiteDetailsBySiteID(userId: id)
         
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteResponseModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
             DispatchQueue.main.async { [weak self] in
                 scl.hideView()
                 guard let self else {return}

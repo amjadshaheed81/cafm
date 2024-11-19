@@ -283,11 +283,11 @@ class FloorLayoutPlanVC: UIViewController {
         self.nodeNameTextField.endEditing(true)
         let nodeName = (self.nodeNameTextField.text ?? "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         if nodeName.isEmpty {
-            SCLAlertView.showLoading(title: "Error", message: "Please enter node name", cancelButtonTitle: "OK")
+            SCLAlertView.showErrorAlert(title: "Error", message: "Please enter node name", cancelButtonTitle: "OK")
         }else if self.selectedNodeType == .default {
-            SCLAlertView.showLoading(title: "Error", message: "Please select node type", cancelButtonTitle: "OK")
+            SCLAlertView.showErrorAlert(title: "Error", message: "Please select node type", cancelButtonTitle: "OK")
         }else if self.selectedParentNode == nil {
-            SCLAlertView.showLoading(title: "Error", message: "Please select parent node", cancelButtonTitle: "OK")
+            SCLAlertView.showErrorAlert(title: "Error", message: "Please select parent node", cancelButtonTitle: "OK")
         }else {
             let nodeModel = SiteLayoutModel()
             nodeModel.siteId = self.selectedSiteID
@@ -324,7 +324,7 @@ class FloorLayoutPlanVC: UIViewController {
         }else {
             subTitle = message ?? "Something went wrong, Please try again!"
         }
-        SCLAlertView.showLoading(title: "Error", message: subTitle, cancelButtonTitle: "OK")
+        SCLAlertView.showErrorAlert(title: "Error", message: subTitle, cancelButtonTitle: "OK")
     }
     
 }
@@ -346,22 +346,22 @@ extension FloorLayoutPlanVC: HIChartViewDelegate {
         var organizationData: [[String]] = []
         var nodesArray: [HINodes] = []
         
-        guard let mainNode = self.siteLayoutDataArray.first(where: { $0.nodeType == .master }) else {
+        guard let mainNode = self.siteLayoutDataArray.first(where: { $0.nodeType == .MasterNode || $0.nodeType == .building }) else {
             return
         }
         
-        let positionNodes = self.siteLayoutDataArray.filter({ $0.nodeType == .position }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
+        let positionNodes = self.siteLayoutDataArray.filter({ ($0.nodeType == .position || $0.nodeType == .type) && ($0.nodeName == "Exterior" || $0.nodeName == "Interior") }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
         //guard !positionNodes.isEmpty else { return }
         
         var floorNodes: [SiteLayoutModel] = []
         for positionNode in positionNodes {
-            let positionFloors = self.siteLayoutDataArray.filter({ $0.nodeType == .floor && $0.parentNode == positionNode.id }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
+            let positionFloors = self.siteLayoutDataArray.filter({ $0.parentNode == positionNode.id }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
             floorNodes.append(contentsOf: positionFloors)
         }
         
         var roomNodes: [SiteLayoutModel] = []
         for floorNode in floorNodes {
-            let floorRooms = self.siteLayoutDataArray.filter({ $0.nodeType == .room && $0.parentNode == floorNode.id }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
+            let floorRooms = self.siteLayoutDataArray.filter({ $0.parentNode == floorNode.id }).sorted(by: { $0.id ?? 0 < $1.id ?? 0 })
             roomNodes.append(contentsOf: floorRooms)
         }
         
@@ -550,7 +550,7 @@ extension FloorLayoutPlanVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate 
     @IBAction func uploadAllBtnClicked(_ sender: PrimaryButton) {
         let toBeUploadModels =  self.floorSiteLayoutDataArray.filter({ $0.selectedFloorPlanImage != nil || $0.selectedFloorPlanFileURL != nil })
         if toBeUploadModels.isEmpty {
-            SCLAlertView.showLoading(title: "Error", message: "Please select atleast one floor plan file to proceed.", cancelButtonTitle: "OK")
+            SCLAlertView.showErrorAlert(title: "Error", message: "Please select atleast one floor plan file to proceed.", cancelButtonTitle: "OK")
         }else {
             self.uploadSiteFloorPlan(for: toBeUploadModels)
         }
@@ -564,7 +564,7 @@ extension FloorLayoutPlanVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate 
             for model in models {
                 if let fileName = model.selectedFloorPlanFileName {
                     if let planImage = model.selectedFloorPlanImage {
-                        if let data = planImage.jpegData(compressionQuality: 1.0) {
+                        if let data = planImage.jpegData(compressionQuality: 0.8) {
                             multipartFormData.append(data, withName: "files", fileName: fileName, mimeType: "image/jpeg")
                         }
                     }else if let fileURL = model.selectedFloorPlanFileURL {
@@ -662,16 +662,12 @@ extension FloorLayoutPlanVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate 
                     cell.setGridLines(width: 0, color: UIColor.clear)
                     cell.gridlines.bottom = .solid(width: 1, color: UIColor(appColor: .Separator2))
                     
-                    cell.chooseFileBtn.menu = self.chooseFileMenu(for: row)
-                    cell.chooseFileBtn.showsMenuAsPrimaryAction = true
-                    
-                    cell.fileImageViewWidth.constant = 0
-                    cell.fileImageView.frame.size.width = 0
+                    CAFMFilePicker(delegate: self).configureFileMenu(on: self, sender: cell.xib.chooseFileBtn, tag: row, allowPhotos: true, supportedTypes: [.image, .pdf])
                     
                     if let fileName = item.selectedFloorPlanFileName {
-                        cell.fileNameLbl.text = fileName
+                        cell.xib.fileNameLbl.text = fileName
                     }else {
-                        cell.fileNameLbl.text = "No file chosen"
+                        cell.xib.fileNameLbl.text = "No file chosen"
                     }
                     
                     return cell
@@ -800,87 +796,23 @@ extension FloorLayoutPlanVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate 
     
 }
 
-extension FloorLayoutPlanVC: PHPickerViewControllerDelegate, UIDocumentPickerDelegate {
+//MARK: - CAFMFilePickerDelegate
+extension FloorLayoutPlanVC: CAFMFilePickerDelegate {
     
-    func chooseFileMenu(for index: Int) -> UIMenu {
-        let photosMenu = UIAction(title: "Photos", image: UIImage(systemName: "photo.fill.on.rectangle.fill")) { [weak self] _ in
-            guard let strongSelf = self else { return }
-            strongSelf.openPhotosPicker(for: index)
-            
-        }
-        let filesMenu = UIAction(title: "Files", image: UIImage(systemName: "folder.fill")) { [weak self] _ in
-            guard let strongSelf = self else { return }
-            strongSelf.openDocumentPicker(for: index)
-        }
-        return UIMenu(title: "Select", children: [photosMenu, filesMenu])
-    }
-    
-    func openPhotosPicker(for index: Int) {
-        var configuration = PHPickerConfiguration()
-        configuration.filter = .images
-        configuration.selectionLimit = 1
-        
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        picker.view.tag = index
-        self.present(picker, animated: true, completion: nil)
-    }
-    
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true, completion: nil)
-        
-        guard let result = results.first else { return }
-        
-        let itemProvider = result.itemProvider
-        if itemProvider.canLoadObject(ofClass: UIImage.self) {
-            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                guard let image = image as? UIImage else { return }
-                
-                if let registeredTypeIdentifier = itemProvider.registeredTypeIdentifiers.first {
-                    itemProvider.loadFileRepresentation(forTypeIdentifier: registeredTypeIdentifier) { [weak self] url, error in
-                        DispatchQueue.main.async { [weak self] in
-                            guard let strongSelf = self else { return }
-                            let index = picker.view.tag
-                            if strongSelf.floorSiteLayoutDataArray.count > index {
-                                let item = strongSelf.floorSiteLayoutDataArray[index]
-                                
-                                if let url = url {
-                                    item.selectedFloorPlanFileName = url.lastPathComponent
-                                }
-                                item.selectedFloorPlanImage = image
-                                strongSelf.setEnableUploadAllBtn()
-                                strongSelf.reloadUpdateFloorPlanSpreadsheetView()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func openDocumentPicker(for index: Int) {
-        let supportedTypes: [UTType] = [UTType.image, UTType.pdf]
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
-        documentPicker.delegate = self
-        documentPicker.allowsMultipleSelection = false
-        documentPicker.view.tag = index
-        self.present(documentPicker, animated: true, completion: nil)
-    }
-    
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let selectedFileURL = urls.first else { return }
-        let index = controller.view.tag
+    func filePickerDidSelectFile(_ fileData: FilePickerModel, tag: Int) {
+        let index = tag
         if self.floorSiteLayoutDataArray.count > index {
             let item = self.floorSiteLayoutDataArray[index]
-            item.selectedFloorPlanFileName = selectedFileURL.lastPathComponent
-            item.selectedFloorPlanFileURL = selectedFileURL
+            item.selectedFloorPlanFileName = fileData.fileName
+            item.selectedFloorPlanImage = fileData.image
+            item.selectedFloorPlanFileURL = fileData.fileURL
             self.setEnableUploadAllBtn()
             self.reloadUpdateFloorPlanSpreadsheetView()
         }
     }
     
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        let index = controller.view.tag
+    func filePickerDidClose(tag: Int) {
+        let index = tag
         if self.floorSiteLayoutDataArray.count > index {
             let item = self.floorSiteLayoutDataArray[index]
             item.selectedFloorPlanFileName = nil

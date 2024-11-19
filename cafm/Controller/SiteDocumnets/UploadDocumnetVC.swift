@@ -13,6 +13,7 @@ import PhotosUI
 class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate {
     
     
+    @IBOutlet weak var selectFolderBtn: UIButton!
     @IBOutlet weak var viewFolderTFXib: TextFiledDataXib!
     @IBOutlet weak var viewFileNameTFXib: TextFiledDataXib!
     @IBOutlet weak var viewVersionTFXib: TextFiledDataXib!
@@ -64,8 +65,11 @@ class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerCont
             fileRequest.referenceNumber = ""
         }
         fileRequest.fileVersion = 1
-        fileRequest.siteId = 1
-        fileRequest.originalFileName = originalName
+        guard let siteID = UserConstants.shared.selectedSiteID else {
+            return
+        }
+        fileRequest.siteId = siteID
+        fileRequest.originalFileName = selectedImageFile?.lastPathComponent
         fileRequest.uploaderUserId = UserConstants.shared.currentUserID
         fileRequest.reviewerUserId = UserConstants.shared.currentUserID
         req.files = [fileRequest]
@@ -101,6 +105,8 @@ class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerCont
     }
     
     func setUpTextFiled() {
+        CAFMFilePicker(delegate: self).configureFileMenu(on: self, sender: self.selectFolderBtn, tag: 1, allowPhotos: true, supportedTypes: [.image])
+
         viewFolderTFXib.lblTFName.text = "Folder"
         viewFolderTFXib.tfData.text = folderName
         viewFolderTFXib.tfData.backgroundColor = UIColor(.separator)
@@ -226,14 +232,14 @@ class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerCont
         print("Selected image name: \(fileName)")
         
         // Check the image size and proceed similarly to your original code
-        if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+        if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
             let imageSize = imageData.count
-            let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+            let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
             DispatchQueue.main.async { [weak self] in
                 guard let self else {return}
                 if imageSize > maxFileSize {
                     // Image size exceeds 1 MB, show an alert
-                    showAlert(message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                    showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                 } else {
                     print("Image size is within the limit: \(imageSize) bytes")
                     let name = (fileName as NSString).deletingPathExtension
@@ -275,14 +281,14 @@ class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerCont
                     
                     print("Selected the correct image!")
                     // Check if the image size exceeds 1 MB
-                    if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+                    if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
                         let imageSize = imageData.count
-                        let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+                        let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
                         DispatchQueue.main.async { [weak self] in
                             guard let self else {return}
                             if imageSize > maxFileSize {
                                 // Image size exceeds 1 MB, show an alert
-                                showAlert(message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                                showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                             } else {
                                 print("Image size is within the limit: \(imageSize) bytes")
                                 let name = (fileName as NSString).deletingPathExtension
@@ -317,17 +323,51 @@ class UploadDocumnetVC: UIViewController, UITextFieldDelegate, UIImagePickerCont
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-    
-    // Function to show an alert with a message
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
 
     @IBAction func btnCancelClick(_ sender: Any) {
         self.dismiss(animated: true)
+    }
+    
+}
+
+extension UploadDocumnetVC: CAFMFilePickerDelegate {
+    
+    func filePickerDidSelectFile(_ fileData: FilePickerModel, tag: Int) {
+        let fileName = fileData.fileName ?? ""
+        if let imageData = fileData.image?.jpegData(compressionQuality: 0.8) {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+                let name = (fileName as NSString).deletingPathExtension
+                let newfileName = (name.isEmpty ? UUID().uuidString : name) + ".png"
+                let fileURL = documentDirectory().appendingPathComponent(newfileName)
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    do {
+                        try FileManager.default.removeItem(at: fileURL)
+                    } catch {
+                        showAlert(message: "Please try again")
+                        return
+                    }
+                }
+                do {
+                    try imageData.write(to: fileURL, options: .atomic)
+                    self.lblDataName.text = " \(fileURL.lastPathComponent)"
+                    self.selectedImageFile = fileURL
+                    self.originalName = fileName
+                } catch {
+                    showAlert(message: "Please try again")
+                    print("Error saving image: \(error)")
+                }
+            }
+        }else if let fileURL = fileData.fileURL {
+            self.lblDataName.text = " \(fileURL.lastPathComponent)"
+            self.selectedImageFile = fileURL
+            self.originalName = fileName
+        }
+        
+    }
+    
+    func filePickerDidClose(tag: Int) {
+        
     }
     
 }

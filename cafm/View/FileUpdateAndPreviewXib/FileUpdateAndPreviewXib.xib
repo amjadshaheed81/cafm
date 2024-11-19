@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="FileUpdateAndPreviewXib" customModule="cafm" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="107"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u9A-Dt-v72" customClass="DesignableCornerView" customModule="cafm" customModuleProvider="target">
+                    <rect key="frame" x="113.33333333333333" y="21.666666666666671" width="166.33333333333337" height="64"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View or Upload New File" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CSw-12-p06">
+                            <rect key="frame" x="15.000000000000014" y="8" width="136.33333333333337" height="48"/>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6uW-66-e0a">
+                            <rect key="frame" x="0.0" y="0.0" width="166.33333333333334" height="64"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" name="AppTintColor"/>
+                    <constraints>
+                        <constraint firstItem="6uW-66-e0a" firstAttribute="leading" secondItem="u9A-Dt-v72" secondAttribute="leading" id="BAg-vg-TdM"/>
+                        <constraint firstItem="CSw-12-p06" firstAttribute="leading" secondItem="u9A-Dt-v72" secondAttribute="leading" constant="15" id="Fdz-f8-Eaj"/>
+                        <constraint firstItem="CSw-12-p06" firstAttribute="top" secondItem="u9A-Dt-v72" secondAttribute="top" constant="8" id="GzM-cf-e0O"/>
+                        <constraint firstAttribute="trailing" secondItem="CSw-12-p06" secondAttribute="trailing" constant="15" id="NX3-ld-1iZ"/>
+                        <constraint firstAttribute="trailing" secondItem="6uW-66-e0a" secondAttribute="trailing" id="OO3-5a-rKr"/>
+                        <constraint firstAttribute="bottom" secondItem="6uW-66-e0a" secondAttribute="bottom" id="iJf-ft-qpk"/>
+                        <constraint firstAttribute="bottom" secondItem="CSw-12-p06" secondAttribute="bottom" constant="8" id="kkM-gn-bBS"/>
+                        <constraint firstItem="6uW-66-e0a" firstAttribute="top" secondItem="u9A-Dt-v72" secondAttribute="top" id="uZT-Gp-oCE"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="u9A-Dt-v72" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="79C-2V-2Lm"/>
+                <constraint firstItem="u9A-Dt-v72" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="cfw-cA-dfd"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btnDocument" destination="6uW-66-e0a" id="aCD-0u-LvL"/>
+                <outlet property="lblBtntext" destination="CSw-12-p06" id="VEM-hG-KWr"/>
+            </connections>
+            <point key="canvasLocation" x="130.53435114503816" y="229.92957746478874"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="AppTintColor">
+            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -8,6 +8,7 @@
 
 import UIKit
 import FSCalendar
+import SCLAlertView
 
 class EventCalendarVC: UIViewController {
     
@@ -27,6 +28,7 @@ class EventCalendarVC: UIViewController {
     var calendarEventsDict: [Date: [CalendarEvent]] = [:]
     
     var didViewLayoutSubviews: Bool = false
+    var isForSite: Bool = false
     private var myContext = 0
     
     var loadingStatus: LoadingStatus = .default {
@@ -152,13 +154,20 @@ class EventCalendarVC: UIViewController {
     }
     
     func loadData() {
-        self.fetchUserCalendarEvents()
+        if self.isForSite {
+            self.fetchSiteCalendarEvents()
+        }else {
+            self.fetchUserCalendarEvents()
+        }
     }
     
     func fetchUserCalendarEvents() {
-        let apiService = ApiService.userCalendarEventsAPI
+        guard let userId = UserConstants.shared.currentUserID else {
+            return
+        }
         
         self.loadingStatus = .loading
+        let apiService = ApiService.userCalendarEventsAPI(userId: userId.stringValue, siteId: nil)
         APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CalendarEvent>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
@@ -167,7 +176,8 @@ class EventCalendarVC: UIViewController {
                 case .single:
                     strongSelf.loadingStatus = .failed
                     break
-                case .array(let array):
+                case .array(var array):
+                    array = self?.getUniqueEvents(events: array) ?? array
                     strongSelf.loadingStatus = .default
                     array.forEach({ calendarEvent in
                         calendarEvent.start_date = calendarEvent.startDate?.transformToDate(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -175,7 +185,7 @@ class EventCalendarVC: UIViewController {
                     })
                     let cal = strongSelf.cal
                     let startOfDay = cal.startOfDay(for: Date())
-                    strongSelf.calendarEventsDict = Dictionary(grouping: array, by: { cal.startOfDay(for: $0.start_date ?? $0.end_date ?? startOfDay) })
+                    strongSelf.calendarEventsDict = Dictionary(grouping: array, by: { cal.startOfDay(for: $0.end_date ?? $0.start_date ?? startOfDay) })
                     strongSelf.selectDate(startOfDay)
                     break
                 }
@@ -185,6 +195,65 @@ class EventCalendarVC: UIViewController {
             }
         }
     }
+    
+    func fetchSiteCalendarEvents() {
+        guard let siteId = UserConstants.shared.selectedSiteID else {
+            return
+        }
+        
+        self.loadingStatus = .loading
+        let apiService = ApiService.userCalendarEventsAPI(userId: nil, siteId: "undefined")
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CalendarEvent>, Error>) in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let mappableResult):
+                switch mappableResult {
+                case .single:
+                    strongSelf.loadingStatus = .failed
+                    break
+                case .array(var array):
+                    array = self?.getUniqueEvents(events: array) ?? array
+                    strongSelf.loadingStatus = .default
+                    print(array.toJSONString())
+                    array.forEach({ calendarEvent in
+                        calendarEvent.start_date = calendarEvent.startDate?.transformToDate(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                        calendarEvent.end_date = calendarEvent.endDate?.transformToDate(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                    })
+                    let cal = strongSelf.cal
+                    let startOfDay = cal.startOfDay(for: Date())
+                    strongSelf.calendarEventsDict = Dictionary(grouping: array, by: { cal.startOfDay(for: $0.end_date ?? $0.start_date ?? startOfDay) })
+                    strongSelf.selectDate(startOfDay)
+                    break
+                }
+            case .failure(let error):
+                print(apiService.api(), "Error:", error.localizedDescription)
+                strongSelf.loadingStatus = .failed
+            }
+        }
+    }
+    
+    func getUniqueEvents(events: [CalendarEvent]) -> [CalendarEvent] {
+        var seenKeys = Set<String>()
+        return events.filter { event in
+            // Create the unique key using section, eventType, siteId, startDate, endDate, and shortText
+            guard let section = event.section,
+                  let eventType = event.eventType,
+                  let siteId = event.siteId,
+                  let startDate = event.startDate,
+                  let endDate = event.endDate,
+                  let shortText = event.shortText else { return false }
+            
+            let key = "\(section)-\(eventType)-\(siteId)-\(startDate)-\(endDate)-\(shortText)"
+            
+            if seenKeys.contains(key) {
+                return false
+            } else {
+                seenKeys.insert(key)
+                return true
+            }
+        }
+    }
+
     
     func selectDate(_ date: Date) {
         let startOfDay = cal.startOfDay(for: Date())
@@ -216,6 +285,110 @@ class EventCalendarVC: UIViewController {
         }
         self.tableView.reloadData()
     }
+    
+    func getSiteCheckByCheckId(checkId: Int) {
+        guard let siteID = UserConstants.shared.selectedSiteID else {
+            return
+        }
+        let appearance = SCLAlertView.SCLAppearance(
+            showCloseButton: false // if you dont want the close button use false
+        )
+        let scl = SCLAlertView(appearance: appearance)
+        scl.showWait("", subTitle: "please wait...", closeButtonTitle: "")
+        let api = ApiService.uploadFileInFolder
+
+        let apiService = ApiService.get_siteCheckBy(checkId: checkId)
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteCheckModel>, Error>) in
+            guard let self else { return }
+            switch result {
+            case .success(let mappableResult):
+                switch mappableResult {
+                case .single(let item):
+                    if item.checkId != nil {
+                        let apiService = ApiService.getAllUserBy(siteId: siteID)
+                        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<UsersList>, Error>) in
+                            guard let self else { return }
+                            switch result {
+                            case .success(let mappableResult):
+                                switch mappableResult {
+                                case .single(let single):
+                                    let userBySiteIdItemArray = single.users ?? []
+                                    let apiService = ApiService.lovAPI(lovType: .SITE_CHECK_TYPE)
+                                    APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<LOV_Model>, Error>) in
+                                        guard let self else { return }
+                                        switch result {
+                                        case .success(let mappableResult):
+                                            switch mappableResult {
+                                            case .single:
+                                                DispatchQueue.main.async {
+                                                    scl.hideView()
+                                                    SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                                                }
+                                                break
+                                            case .array(let SITE_CHECK_TYPE_ItemArray):
+                                                DispatchQueue.main.async {
+                                                    scl.hideView()
+                                                    self.getData(item: item, userBySiteIdItemArray: userBySiteIdItemArray, SITE_CHECK_TYPE_ItemArray: SITE_CHECK_TYPE_ItemArray)
+                                                }
+                                                break
+                                            }
+                                        case .failure(let error):
+                                            print(apiService.api(), "Error:", error.localizedDescription)
+                                            self.loadingStatus = .failed
+                                        }
+                                    }
+                                    break
+                                case .array:
+                                    DispatchQueue.main.async {
+                                        scl.hideView()
+                                        SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                                    }
+                                    break
+                                }
+                            case .failure(let error):
+                                DispatchQueue.main.async {
+                                    scl.hideView()
+                                    SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                                }
+                            }
+                        }
+                    }else {
+                        DispatchQueue.main.async {
+                            scl.hideView()
+                            SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                        }
+                    }
+                    break
+                case .array:
+                    DispatchQueue.main.async {
+                        scl.hideView()
+                        SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                    }
+                    break
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    scl.hideView()
+                    print(apiService.api(), "Error:", error.localizedDescription)
+                    SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                }
+                break
+            }
+        }
+    }
+        
+    func getData(item: SiteCheckModel, userBySiteIdItemArray: [User], SITE_CHECK_TYPE_ItemArray: [LOV_Model]/*, SITE_CHECK_SUB_TYPE_ItemDict: [String: [LOV_Model]]*/) {
+        let vc = siteCheckSB.instantiateViewController(withIdentifier: "AddSiteCheckVC") as! AddSiteCheckVC
+        //        vc.delegate = self
+        vc.isForCreateNew = false
+        vc.isViewModeEdit = true
+        vc.siteCheckModel = item
+        vc.userBySiteIdItemArray = userBySiteIdItemArray
+        vc.SITE_CHECK_TYPE_ItemArray = SITE_CHECK_TYPE_ItemArray
+        //        vc.SITE_CHECK_SUB_TYPE_ItemDict = SITE_CHECK_SUB_TYPE_ItemDict
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+
     
 }
 
@@ -362,9 +535,86 @@ extension EventCalendarVC: UITableViewDataSource, UITableViewDelegate {
             cell.bgView.isHidden = false
             let item = self.itemArray[indexPath.row]
             cell.mainLbl.text = item.shortText
-            cell.mainLbl.textColor = UIColor(appColor: .AppTint)
+            
+            //let bgColor: UIColor
+            let textColor: UIColor
+            if item.eventType?.contains("Audit") ?? false {
+                textColor = UIColor(red: 52/255, green: 89/255, blue: 230/255, alpha: 1)
+            }else if item.eventType?.contains("Assessment") ?? false {
+                textColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1)
+            }else if item.eventType?.contains("Inspection") ?? false {
+                textColor = UIColor(red: 47/255, green: 179/255, blue: 128/255, alpha: 1)
+            }else if item.eventType?.contains("Survey") ?? false {
+                textColor = UIColor(red: 218/255, green: 41/255, blue: 46/255, alpha: 1)
+            }else if item.eventType?.contains("Asbestos") ?? false {
+                textColor = UIColor(red: 244/255, green: 189/255, blue: 97/255, alpha: 1)
+            }else if item.eventType?.contains("Document") ?? false {
+                textColor = UIColor(red: 40/255, green: 123/255, blue: 181/255, alpha: 1)
+            }else if item.eventType?.contains("Contract") ?? false {
+                textColor = UIColor(red: 40/255, green: 123/255, blue: 181/255, alpha: 1)
+            }else {
+                textColor = UIColor(appColor: .AppTint)
+            }
+            cell.bgView.backgroundColor = textColor.withAlphaComponent(0.1)
+            cell.mainLbl.textColor = textColor
         }
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if self.itemArray.isEmpty {
+        }else if self.itemArray.count > indexPath.row {
+            let item = self.itemArray[indexPath.row]
+            print("LogLog", "shortText:", item.shortText ?? "NULL", "eventType:", item.eventType ?? "NULL", "section:", item.section ?? "NULL")
+            guard let type = extractTypeAndID(from: item.section ?? "").type, let id = extractTypeAndID(from: item.section ?? "").id else {return}
+            if type == "site-checks" {
+                getSiteCheckByCheckId(checkId: id)
+            }else if type == "subfolder" {
+                let vc = documnetSB.instantiateViewController(withIdentifier: "DocumnetsVC") as! DocumnetsVC
+                vc.fromCalenderID = id
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+    
 }
+
+func extractTypeAndID(from path: String) -> (type: String?, id: Int?) {
+    // Define the regex patterns for both formats
+    let siteCheckPattern = "^/site-checks/(\\d+)/update$" // Pattern for the first format
+    let subfolderPattern = "^/subfolder/\\?id=(\\d+)$" // Pattern for the second format
+    
+    // Check for site-checks format
+    if let siteCheckMatch = path.range(of: siteCheckPattern, options: .regularExpression) {
+        // Extract the ID from the path
+        let siteCheckID = path.matchingString(for: siteCheckPattern)
+        return ("site-checks", Int(siteCheckID ?? ""))
+    }
+    
+    // Check for subfolder format
+    if let subfolderMatch = path.range(of: subfolderPattern, options: .regularExpression) {
+        // Extract the ID from the path
+        let subfolderID = path.matchingString(for: subfolderPattern)
+        return ("subfolder", Int(subfolderID ?? ""))
+    }
+    
+    return (nil, nil)
+}
+
+
+
+extension String {
+    func matchingString(for pattern: String) -> String? {
+        if let regex = try? NSRegularExpression(pattern: pattern, options: []) {
+            let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
+            if let match = regex.firstMatch(in: self, options: [], range: nsrange) {
+                // Extract the first capture group (ID in this case)
+                if let range = Range(match.range(at: 1), in: self) {
+                    return String(self[range])
+                }
+            }
+        }
+        return nil
+    }
+}
+

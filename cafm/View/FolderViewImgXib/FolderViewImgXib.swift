@@ -11,5 +11,7 @@ import SpreadsheetView
 class FolderViewImgXib : Cell {
     
     @IBOutlet weak var btnPreview: UIButton!
+    @IBOutlet weak var imgViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var imgView: UIImageView!
     
 }

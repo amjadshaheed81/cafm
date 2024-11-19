@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -56,7 +56,13 @@
                         <constraint firstItem="nJ8-D3-l7a" firstAttribute="centerY" secondItem="uoQ-yd-cqI" secondAttribute="centerY" id="HO7-cR-GAq"/>
                         <constraint firstItem="nJ8-D3-l7a" firstAttribute="top" relation="greaterThanOrEqual" secondItem="uoQ-yd-cqI" secondAttribute="top" constant="4" id="R0r-t3-ez3"/>
                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nJ8-D3-l7a" secondAttribute="trailing" constant="12" id="b0k-EI-0r6"/>
+                        <constraint firstItem="nJ8-D3-l7a" firstAttribute="centerX" secondItem="uoQ-yd-cqI" secondAttribute="centerX" id="dJi-QO-P6g"/>
                     </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="dJi-QO-P6g"/>
+                        </mask>
+                    </variation>
                 </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="HYs-o9-H2C"/>
@@ -71,6 +77,8 @@
             <connections>
                 <outlet property="mainView" destination="uoQ-yd-cqI" id="daP-dm-TfY"/>
                 <outlet property="stackView" destination="nJ8-D3-l7a" id="Ecp-9L-jIX"/>
+                <outlet property="stackViewCenterX" destination="dJi-QO-P6g" id="w6d-yX-Uj4"/>
+                <outlet property="stackViewLeading" destination="8Jj-zh-vuK" id="zdH-YT-Vcc"/>
             </connections>
             <point key="canvasLocation" x="61.068702290076331" y="-1.4084507042253522"/>
         </view>

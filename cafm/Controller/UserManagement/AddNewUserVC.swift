@@ -90,12 +90,23 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
     weak var delegate: AddAndUpdateUserDelegate?
     weak var user: User?
     
+    var availableSite: [Int] = []
+    
+    var isOnlyView = false
+    var isEditProfile = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if user == nil {
             self.title = "Add User"
         }else {
-            self.title = "Update User"
+            if isOnlyView {
+                self.title = "View User Details"
+            }else if isEditProfile {
+                self.title = "Edit Profile"
+            }else {
+                self.title = "Update User"
+            }
         }
         self.cvTagSite.delegate = self
         self.cvTagSite.dataSource = self
@@ -130,8 +141,41 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
             self.selectedCompany = nil
             self.tfSearchCompany.text = ""
         }
-        let rightBarButton = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(buttonTapped))
-        self.navigationItem.rightBarButtonItem = rightBarButton
+        if isOnlyView {
+            setUpView()
+        }else {
+            let rightBarButton = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(buttonTapped))
+            self.navigationItem.rightBarButtonItem = rightBarButton
+        }
+    }
+    
+    func setUpView() {
+        self.viewNameXib.tfData.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewNameXib.isUserInteractionEnabled = false
+        self.viewLastNXib.tfData.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewLastNXib.isUserInteractionEnabled = false
+
+        self.viewEmailXib.tfData.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewEmailXib.isUserInteractionEnabled = false
+
+        self.viewPasswordXib.tfData.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewPasswordXib.isUserInteractionEnabled = false
+
+        self.viewPhoneXib.tfData.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewPhoneXib.isUserInteractionEnabled = false
+
+        self.viewRoleXib.dummyTF.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewRoleXib.isUserInteractionEnabled = false
+
+        self.viewTypeIOEXib.dummyTF.backgroundColor = UIColor(appColor: .GrayStatusBG)
+        self.viewTypeIOEXib.isUserInteractionEnabled = false
+
+        self.viewTradeXib.isUserInteractionEnabled = false
+//        self.cvTagSite.isUserInteractionEnabled = false
+        self.searchTextFiled.isUserInteractionEnabled = false
+        self.viewStatusXib.isUserInteractionEnabled = false
+        self.switchCompany.isUserInteractionEnabled = false
+        self.tfSearchCompany.isUserInteractionEnabled = false
     }
     
     func setUpForUpdateUserDetails() {
@@ -246,7 +290,7 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
         print("rk: request \(request.toJSON())")
         APIClient.request(api) { [weak self] (result: Result<APIClient.MappableResult<User>, Error>) in
             DispatchQueue.main.async { [weak self] in
-                scl.hideView()
+//                scl.hideView()
                 guard let self else {return}
                 switch result {
                 case .success(let responseResult):
@@ -255,23 +299,72 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
                             print("rk: responseResult \(user.toJSON())")
                             guard let self else {return}
                             if user.error != nil || user.error != "" {
-                                if self.user == nil {
-                                    self.delegate?.sucessFullyAddUser()
-                                }else {
-                                    self.delegate?.sucessFullyUpdateUser()
-                                }
+                                self.upDateTheSiteId(currentUser: user, scl: scl)
+//                                if self.user == nil {
+//                                    self.delegate?.sucessFullyAddUser()
+//                                }else {
+//                                    self.delegate?.sucessFullyUpdateUser()
+//                                }
                             }else if let message = user.message {
+                                scl.hideView()
                                 SCLAlertView().showError("Error", subTitle: message)
                             }
                         }
+                    }else {
+                        scl.hideView()
                     }
                 case .failure(let error):
+                    scl.hideView()
                     SCLAlertView().showError("Error", subTitle: "Oops! please try again")
                     print("Error: \(error.localizedDescription)")
                 }
             }
         }
         
+    }
+    
+    func upDateTheSiteId(currentUser: User, scl: SCLAlertView) {
+        //rk-pd not passs in the web
+        var currecntSiteID = [Int]()
+        if !selectedSiteDetailsArray.isEmpty {
+            for item in selectedSiteDetailsArray {
+                currecntSiteID.append(item.siteId ?? 0)
+            }
+        }
+        // Find removed site IDs
+        let removedSites = availableSite.filter {!currecntSiteID.contains($0)}
+        
+        if Set(currecntSiteID) == Set(availableSite) {
+            scl.hideView()
+            if isEditProfile {
+                let sclAlertView = SCLAlertView()
+                sclAlertView.showSuccess("", subTitle: "User has been updated successfully.")
+            }else if self.user == nil {
+                self.delegate?.sucessFullyAddUser()
+            }else {
+                self.delegate?.sucessFullyUpdateUser()
+            }
+        }else {
+            let api = ApiService.userManagerAddSite(userID: currentUser.id ?? 0, addedSites: currecntSiteID, removedSites: removedSites)
+            APIClient.requestWithCode(api) { isSucess, code in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else {return}
+                    scl.hideView()
+                    if code == 200 {
+                        if isEditProfile {
+                            let sclAlertView = SCLAlertView()
+                            sclAlertView.showSuccess("", subTitle: "User has been updated successfully.")
+                        }else if self.user == nil {
+                            self.delegate?.sucessFullyAddUser()
+                        }else {
+                            self.delegate?.sucessFullyUpdateUser()
+                        }
+                    }else {
+                        SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                    }
+                }
+            }
+        }
     }
 
     
@@ -280,11 +373,13 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
             for siteDeail in siteDeails {
                 if !selectedSiteDetailsArray.contains(where: {$0.siteId == siteDeail.id}), let ind = siteDetailsArray.firstIndex(where: {$0.siteId == siteDeail.id}) {
                     selectedSiteDetailsArray.append(siteDetailsArray[ind])
+                    self.availableSite.append(siteDeail.id ?? 0)
                 }else if !selectedSiteDetailsArray.contains(where: {$0.siteId == siteDeail.id}) {
                     let siteModel = SiteModel()
                     siteModel.siteName = siteDeail.name
                     siteModel.siteId = siteDeail.id
                     selectedSiteDetailsArray.append(siteModel)
+                    self.availableSite.append(siteDeail.id ?? 0)
                 }
             }
         }
@@ -390,7 +485,7 @@ class AddNewUserVC: UIViewController, UITextFieldDelegate {
     func loadSiteDetailsData() {
         loadComapnysDetails()
         
-        let siteAllDetails = ApiService.siteAllDetails
+        let siteAllDetails = ApiService.siteAllDetails(sort: "asc", sortName: "siteName")
         
         APIClient.request(siteAllDetails) { [weak self] (result: Result<APIClient.MappableResult<SiteModel>, Error>) in
             switch result {
@@ -571,18 +666,20 @@ extension AddNewUserVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SiteTagCell", for: indexPath) as! SiteTagCell
         let item = selectedSiteDetailsArray[indexPath.row].siteName?.trimmingCharacters(in: .whitespacesAndNewlines)
         cell.lblSiteName.text = item
-        cell.btnRemoveSite.addAction { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                guard let self else {return}
-                let item = self.selectedSiteDetailsArray.remove(at: indexPath.row)
-                var suggetion = [String]()
-                for item in siteDetailsArray {
-                    if !selectedSiteDetailsArray.contains(where: {$0.siteName?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == item.siteName?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)}) {
-                        suggetion.append(item.siteName ?? "")
+        if !isOnlyView {
+            cell.btnRemoveSite.addAction { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else {return}
+                    let item = self.selectedSiteDetailsArray.remove(at: indexPath.row)
+                    var suggetion = [String]()
+                    for item in siteDetailsArray {
+                        if !selectedSiteDetailsArray.contains(where: {$0.siteName?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == item.siteName?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)}) {
+                            suggetion.append(item.siteName ?? "")
+                        }
                     }
+                    self.searchTextFiled.filterStrings(suggetion)
+                    self.setUpSiteCollection(siteName: nil)
                 }
-                self.searchTextFiled.filterStrings(suggetion)
-                self.setUpSiteCollection(siteName: nil)
             }
         }
         return cell
@@ -602,6 +699,8 @@ class SiteTagCell: UICollectionViewCell {
     
     @IBOutlet weak var lblSiteName: UILabel!
     @IBOutlet weak var btnRemoveSite: UIButton!
+    @IBOutlet weak var closeImageView: UIImageView!
+    @IBOutlet weak var closeImageViewWidth: NSLayoutConstraint!
     
 }
 
@@ -619,9 +718,30 @@ extension UIButton {
             closure()
         }
     }
+    
+    func removeAction(for event: UIControl.Event = .touchUpInside) {
+        removeTarget(self, action: #selector(handleAction), for: event)
+    }
 }
 
 protocol AddAndUpdateUserDelegate: AnyObject {
     func sucessFullyUpdateUser()
     func sucessFullyAddUser()
+    func passwordResteSucessFully()
+}
+
+private var switchActionKey: UInt8 = 0
+
+extension UISwitch {
+    
+    func addAction(for event: UIControl.Event = .valueChanged, _ closure: @escaping (Bool) -> Void) {
+        objc_setAssociatedObject(self, &switchActionKey, closure, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        addTarget(self, action: #selector(handleSwitchAction(_:)), for: event)
+    }
+    
+    @objc private func handleSwitchAction(_ sender: UISwitch) {
+        if let closure = objc_getAssociatedObject(self, &switchActionKey) as? (Bool) -> Void {
+            closure(sender.isOn)
+        }
+    }
 }

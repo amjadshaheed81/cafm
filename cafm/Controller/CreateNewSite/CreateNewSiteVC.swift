@@ -21,7 +21,7 @@ class CreateNewSiteVC: UIViewController, UIScrollViewDelegate {
     
     var isForViewOnly: Bool = false
     
-    var siteResponseDetail: SiteResponseModel?
+    var siteResponseDetail: CreateSiteRequestModel?
     var selectedSiteID: Int? {
         return self.siteResponseDetail?.siteId ?? vc1?.siteResponseModel?.siteId
     }

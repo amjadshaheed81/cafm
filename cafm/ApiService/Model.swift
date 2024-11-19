@@ -7,54 +7,10 @@
 
 import ObjectMapper
 
-class UserModel: Mappable {
-    var favorite: String?
-    var id: Int?
-    var name: String?
-    var role: String?
-    var email: String?
-    var companyId: Int?
-    var companyName: String?
-    var phone: String?
-    var status: String?
-    var defaultSiteId: Int?
-    var defaultSiteName: String?
-    var trade: String?
-    var userType: String?
-    var creationDate: String?
-    var taggedSites: [TaggedSite]?
-    
-    var userId: Int?
-    var firstName: String?
-    var lastName: String?
-    
-    required init?(map: Map) {}
-    
-    func mapping(map: Map) {
-        favorite        <- map["favorite"]
-        id              <- map["id"]
-        name            <- map["name"]
-        role            <- map["role"]
-        email           <- map["email"]
-        companyId       <- map["companyId"]
-        companyName     <- map["companyName"]
-        phone           <- map["phone"]
-        status          <- map["status"]
-        defaultSiteId   <- map["defaultSiteId"]
-        defaultSiteName <- map["defaultSiteName"]
-        trade           <- map["trade"]
-        userType        <- map["userType"]
-        creationDate    <- map["creationDate"]
-        taggedSites     <- map["taggedSites"]
-        userId          <- map["userId"]
-        firstName       <- map["firstName"]
-        lastName        <- map["lastName"]
-    }
-}
-
 class TaggedSite: Mappable {
     var id: Int?
     var name: String?
+    var siteImageUrl: String?
     
     required init?(map: Map) {}
     
@@ -65,6 +21,7 @@ class TaggedSite: Mappable {
     func mapping(map: Map) {
         id   <- map["id"]
         name <- map["name"]
+        siteImageUrl <- map["siteImageUrl"]
     }
 }
 
@@ -89,6 +46,17 @@ class ProjectContract: Mappable {
     var endDate: String?
     var cost: String?
     var status: String?
+    var siteId: Int?
+    var contractorCompanyId: Int?
+    var budget: String?
+    var projectManagerUserId: Int?
+    var description: String?
+    var siteEntity: String?
+    var companyEntity: CompanyEntity?
+    var userEntity: User?
+    var siteProjectContractsFoldersEntity: [SiteProjectContractsFoldersEntity]?
+    var siteProjectContractsAssetEntity: [SiteProjectContractsFoldersEntity]?
+    var siteScheduleVisitEntity: [SiteScheduleVisitEntity]?
     
     required init?(map: Map) { }
     
@@ -103,6 +71,17 @@ class ProjectContract: Mappable {
         endDate <- map["endDate"]
         cost <- map["cost"]
         status <- map["status"]
+        siteId <- map["siteId"]
+        contractorCompanyId <- map["contractorCompanyId"]
+        budget <- map["budget"]
+        projectManagerUserId <- map["projectManagerUserId"]
+        description <- map["description"]
+        siteEntity <- map["siteEntity"]
+        companyEntity <- map["companyEntity"]
+        userEntity <- map["userEntity"]
+        siteProjectContractsFoldersEntity <- map["siteProjectContractsFoldersEntity"]
+        siteProjectContractsAssetEntity <- map["siteProjectContractsAssetEntity"]
+        siteScheduleVisitEntity <- map["siteScheduleVisitEntity"]
     }
 }
 
@@ -150,7 +129,16 @@ class PreAction: Mappable {
     var description: String?
     var raisedByUserId: Int?
     var raisedByUserName: String?
-    var status: Status?
+    var status: String?
+    
+    var siteId: Int?
+    var closedDate: String?
+    var actionTaken: String?
+    var approverNotes: String?
+    var evidence: String?
+    var siteEntity: String?
+    var raisedUserEntity: User?
+    var preActionAssetsEntity: [String]?
     
     required init?(map: Map) { }
     
@@ -166,6 +154,15 @@ class PreAction: Mappable {
         raisedByUserId <- map["raisedByUserId"]
         raisedByUserName <- map["raisedByUserName"]
         status <- map["status"]
+        
+        siteId <- map["siteId"]
+        closedDate <- map["closedDate"]
+        actionTaken <- map["actionTaken"]
+        approverNotes <- map["approverNotes"]
+        evidence <- map["evidence"]
+        siteEntity <- map["siteEntity"]
+        raisedUserEntity <- map["raisedUserEntity"]
+        preActionAssetsEntity <- map["preActionAssetsEntity"]
     }
 }
 
@@ -181,9 +178,12 @@ class CalendarEvent: Mappable {
     var eventType: String?
     var userId: String?
     var userName: String?
+    var includeCompanyUsers: Bool?
     
     var start_date: Date?
     var end_date: Date?
+    
+    init() { }
     
     required init?(map: Map) { }
     
@@ -199,76 +199,10 @@ class CalendarEvent: Mappable {
         eventType <- map["eventType"]
         userId <- map["userId"]
         userName <- map["userName"]
-        start_date <- (map["start_date"], DateTransform())
-        end_date <- (map["end_date"], DateTransform())
-    }
-}
-
-class SiteModel: Mappable {
-    var siteId: Int?
-    var siteName: String?
-    var address1: String?
-    var address2: String?
-    var postCode: String?
-    var status: String?
-    var area: String?
-    var city: String?
-    var riskScores: [Int] = [0,0,0,0]
-    
-    required init?(map: Map) { }
-    
-    init() {
+        includeCompanyUsers <- map["includeCompanyUsers"]
         
-    }
-    
-    func mapping(map: Map) {
-        siteId <- map["siteId"]
-        siteName <- map["siteName"]
-        address1 <- map["address1"]
-        address2 <- map["address2"]
-        postCode <- map["postCode"]
-        status <- map["status"]
-        area <- map["area"]
-        city <- map["city"]
-        riskScores <- map["riskScores"]
-    }
-}
-
-class SiteCheckModel: Mappable {
-    var checkId: Int?
-    var siteId: Int?
-    var type: String?
-    var subType: String?
-    var category: String?
-    var dueDate: String?
-    var leadUserID: String?
-    var assistantUserID: String?
-    var repeatFrequency: String?
-    var status: String?
-    var riskScoreRed: Int?
-    var riskScoreAmber: Int?
-    var riskScoreYellow: Int?
-    var riskScoreGreen: Int?
-    
-    required init?(map: Map) {
-        // Initialize if needed
-    }
-    
-    func mapping(map: Map) {
-        checkId <- map["checkId"]
-        siteId <- map["siteId"]
-        type <- map["type"]
-        subType <- map["subType"]
-        category <- map["category"]
-        dueDate <- map["dueDate"]
-        leadUserID <- map["leadUserID"]
-        assistantUserID <- map["assistantUserID"]
-        repeatFrequency <- map["repeatFrequency"]
-        status <- map["status"]
-        riskScoreRed <- map["riskScoreRed"]
-        riskScoreAmber <- map["riskScoreAmber"]
-        riskScoreYellow <- map["riskScoreYellow"]
-        riskScoreGreen <- map["riskScoreGreen"]
+        //start_date <- (map["start_date"], DateTransform())
+        //end_date <- (map["end_date"], DateTransform())
     }
 }
 
@@ -344,6 +278,21 @@ class ActionModel: Mappable {
     var dueDate: String?
     var siteId: Int?
     var userId: Int?
+    var competentPersons: Int?
+    var serviceProvider: Int?
+    var stakeholder: Int?
+    var assignedTo: Int?
+    var comments: String?
+    var internalExternal: String?
+    var floor: String?
+    var actionImage: String?
+    var room: String?
+    var taggedAsset: String?
+    var createdAt: String?
+    var completedAt: String?
+    var completedBy: Int?
+    
+    init() { }
     
     required init?(map: Map) { }
     
@@ -358,10 +307,24 @@ class ActionModel: Mappable {
         dueDate <- map["dueDate"]
         siteId <- map["siteId"]
         userId <- map["userId"]
+        competentPersons <- map["competentPersons"]
+        serviceProvider <- map["serviceProvider"]
+        stakeholder <- map["stakeholder"]
+        assignedTo <- map["assignedTo"]
+        comments <- map["comments"]
+        internalExternal <- map["internalExternal"]
+        floor <- map["floor"]
+        actionImage <- map["actionImage"]
+        room <- map["room"]
+        taggedAsset <- map["taggedAsset"]
+        createdAt <- map["createdAt"]
+        completedAt <- map["completedAt"]
+        completedBy <- map["completedBy"]
     }
 }
 
 class CreateSiteRequestModel: Mappable {
+    var buildingCode: String?
     var siteId: Int?
     var siteName: String?
     var address1: String?
@@ -393,7 +356,19 @@ class CreateSiteRequestModel: Mappable {
     var siteImageUrl: String?
     var clientResponsibility: String?
     var siteImage: String?
-
+    var clientResponsiblity: Bool?
+    var siteDocumentsEntity: [SiteDocumentsEntity]?
+    var userEntity: User?
+    var documentsEntity: [CreateFolderReq]?
+    var userSitesEntity: [UserSitesEntity]?
+    var siteChecks: [String]?
+    var siteProjectContractsEntity: [ProjectContract]?
+    var siteEnergySurvey: [SiteEnergySurvey]?
+    var assetEntity: [AssetDetailsResponse]?
+    var riskScores: [Int] = [0,0,0,0]
+    
+    var riskScoreModel: RiskScore?
+    
     required init?(map: Map) {
         // Initialize if needed
     }
@@ -401,6 +376,7 @@ class CreateSiteRequestModel: Mappable {
     init() { }
     
     func mapping(map: Map) {
+        buildingCode        <- map["buildingCode"]
         siteId              <- map["siteId"]
         siteName            <- map["siteName"]
         address1            <- map["address1"]
@@ -432,6 +408,16 @@ class CreateSiteRequestModel: Mappable {
         siteImage           <- map["siteImage"]
         latitude           <- map["latitude"]
         longitude           <- map["longitude"]
+        clientResponsiblity <- map["clientResponsiblity"]
+        siteDocumentsEntity <- map["siteDocumentsEntity"]
+        userEntity <- map["userEntity"]
+        documentsEntity <- map["documentsEntity"]
+        userSitesEntity <- map["userSitesEntity"]
+        siteChecks <- map["siteChecks"]
+        siteProjectContractsEntity <- map["siteProjectContractsEntity"]
+        siteEnergySurvey <- map["siteEnergySurvey"]
+        assetEntity <- map["assetEntity"]
+        riskScores <- map["riskScores"]
     }
 }
 
@@ -514,129 +500,19 @@ class AddressResponse: Mappable {
     }
 }
 
-class SiteResponseModel: Mappable {
-    
-    var siteId: Int?
-    var siteName: String?
-    var address1: String?
-    var address2: String?
-    var area: String?
-    var city: String?
-    var postCode: String?
-    var country: String?
-    var status: String?
-    var mapViewUrl: String?
-    var streetViewUrl: String?
-    
-    var monStartTime: String?
-    var tuesStartTime: String?
-    var wedStartTime: String?
-    var thurStartTime: String?
-    var friStartTime: String?
-    var satStartTime: String?
-    var sunStartTime: String?
-    
-    var monEndTime: String?
-    var tuesEndTime: String?
-    var wedEndTime: String?
-    var thurEndTime: String?
-    var friEndTime: String?
-    var satEndTime: String?
-    var sunEndTime: String?
-    
-    var localAuthority: String?
-    var siteImageUrl: String?
-    var clientResponsiblity: Bool?
-    
-    var siteDocumentsEntity: [Any]?
-    var userEntity: [Any]?
-    var documentsEntity: [Any]?
-    var userSitesEntity: [Any]?
-    var siteChecks: [Any]?
-    
-    // Required initializer for ObjectMapper
-    required init?(map: Map) {}
-    
-    // Mapping function to map JSON keys to model properties
-    func mapping(map: Map) {
-        siteId              <- map["siteId"]
-        siteName            <- map["siteName"]
-        address1            <- map["address1"]
-        address2            <- map["address2"]
-        area                <- map["area"]
-        city                <- map["city"]
-        postCode            <- map["postCode"]
-        country             <- map["country"]
-        status              <- map["status"]
-        mapViewUrl          <- map["mapViewUrl"]
-        streetViewUrl       <- map["streetViewUrl"]
-        
-        monStartTime        <- map["monStartTime"]
-        tuesStartTime       <- map["tuesStartTime"]
-        wedStartTime        <- map["wedStartTime"]
-        thurStartTime       <- map["thurStartTime"]
-        friStartTime        <- map["friStartTime"]
-        satStartTime        <- map["satStartTime"]
-        sunStartTime        <- map["sunStartTime"]
-        
-        monEndTime          <- map["monEndTime"]
-        tuesEndTime         <- map["tuesEndTime"]
-        wedEndTime          <- map["wedEndTime"]
-        thurEndTime         <- map["thurEndTime"]
-        friEndTime          <- map["friEndTime"]
-        satEndTime          <- map["satEndTime"]
-        sunEndTime          <- map["sunEndTime"]
-        
-        localAuthority      <- map["localAuthority"]
-        siteImageUrl        <- map["siteImageUrl"]
-        clientResponsiblity <- map["clientResponsiblity"]
-        
-        siteDocumentsEntity <- map["siteDocumentsEntity"]
-        userEntity          <- map["userEntity"]
-        documentsEntity     <- map["documentsEntity"]
-        userSitesEntity     <- map["userSitesEntity"]
-        siteChecks          <- map["siteChecks"]
-    }
-}
-
 class keyContacts: Mappable {
-    var updateKeyContactRequestModel: [UpdateKeyContactRequestModel]?
+    var updateKeyContactRequestModel: [GetKeyContactsDetailResponse]?
     
     // Default initializer
     init() {}
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {}
     
     func mapping(map: Map) {
         updateKeyContactRequestModel             <- map["updateKeyContactRequestModel"]
     }
-
-}
-
-class UpdateKeyContactRequestModel: Mappable {
-    var id: String?
-    var siteId: Int?
-    var contactName: String?
-    var phone: String?
-    var email: String?
-    var actionManager: String?
-
-    // Default initializer
-    init() {}
-
-    // Required initializer for ObjectMapper
-    required init?(map: Map) {}
-
-    // Mapping function to map JSON keys to properties
-    func mapping(map: Map) {
-        id             <- map["id"]
-        siteId         <- map["siteId"]
-        contactName    <- map["contactName"]
-        phone          <- map["phone"]
-        email          <- map["email"]
-        actionManager  <- map["actionManager"]
-    }
+    
 }
 
 class GetKeyContactsDetailResponse: Mappable {
@@ -646,13 +522,13 @@ class GetKeyContactsDetailResponse: Mappable {
     var phone: String?
     var email: String?
     var actionManager: String?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to properties
     func mapping(map: Map) {
         id             <- map["id"]
@@ -669,13 +545,13 @@ class UpdateCreateSiteLocalDetailsRequestModel: Mappable {
     var localAuthority: String?
     var status: String?
     var clientResponsibility: Bool?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to properties
     func mapping(map: Map) {
         siteId              <- map["siteId"]
@@ -701,13 +577,13 @@ class SiteScheduleRequestModel: Mappable {
     var friEndTime: String? = nil
     var satEndTime: String? = nil
     var sunEndTime: String? = nil
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to properties
     func mapping(map: Map) {
         siteId         <- map["siteId"]
@@ -725,91 +601,6 @@ class SiteScheduleRequestModel: Mappable {
         friEndTime     <- map["friEndTime"]
         satEndTime     <- map["satEndTime"]
         sunEndTime     <- map["sunEndTime"]
-    }
-}
-
-class SiteScheduleResponseModel: Mappable {
-    var siteId: Int?
-    var siteName: String?
-    var address1: String?
-    var address2: String?
-    var area: String?
-    var city: String?
-    var postCode: String?
-    var country: String?
-    var status: String?
-    var mapViewUrl: String?
-    var streetViewUrl: String?
-    var monStartTime: String?
-    var tuesStartTime: String?
-    var wedStartTime: String?
-    var thurStartTime: String?
-    var friStartTime: String?
-    var satStartTime: String?
-    var sunStartTime: String?
-    var monEndTime: String?
-    var tuesEndTime: String?
-    var wedEndTime: String?
-    var thurEndTime: String?
-    var friEndTime: String?
-    var satEndTime: String?
-    var sunEndTime: String?
-    var localAuthority: String?
-    var siteImageUrl: String?
-    var clientResponsibility: Bool?
-    var siteDocumentsEntity: [String] = []
-    var userEntity: [String] = []
-    var documentsEntity: [String] = []
-    var userSitesEntity: [String] = []
-    var siteChecks: [String] = []
-    var siteProjectContractsEntity: [String] = []
-    var siteEnergySurvey: [String] = []
-    var assetEntity: [String] = []
-
-    // Default initializer
-    init() {}
-
-    // Required initializer for ObjectMapper
-    required init?(map: Map) {}
-
-    // Mapping function to map JSON keys to properties
-    func mapping(map: Map) {
-        siteId                    <- map["siteId"]
-        siteName                  <- map["siteName"]
-        address1                  <- map["address1"]
-        address2                  <- map["address2"]
-        area                      <- map["area"]
-        city                      <- map["city"]
-        postCode                  <- map["postCode"]
-        country                   <- map["country"]
-        status                    <- map["status"]
-        mapViewUrl                <- map["mapViewUrl"]
-        streetViewUrl             <- map["streetViewUrl"]
-        monStartTime              <- map["monStartTime"]
-        tuesStartTime             <- map["tuesStartTime"]
-        wedStartTime              <- map["wedStartTime"]
-        thurStartTime             <- map["thurStartTime"]
-        friStartTime              <- map["friStartTime"]
-        satStartTime              <- map["satStartTime"]
-        sunStartTime              <- map["sunStartTime"]
-        monEndTime                <- map["monEndTime"]
-        tuesEndTime               <- map["tuesEndTime"]
-        wedEndTime                <- map["wedEndTime"]
-        thurEndTime               <- map["thurEndTime"]
-        friEndTime                <- map["friEndTime"]
-        satEndTime                <- map["satEndTime"]
-        sunEndTime                <- map["sunEndTime"]
-        localAuthority            <- map["localAuthority"]
-        siteImageUrl              <- map["siteImageUrl"]
-        clientResponsibility      <- map["clientResponsibility"]
-        siteDocumentsEntity       <- map["siteDocumentsEntity"]
-        userEntity                <- map["userEntity"]
-        documentsEntity           <- map["documentsEntity"]
-        userSitesEntity           <- map["userSitesEntity"]
-        siteChecks                <- map["siteChecks"]
-        siteProjectContractsEntity <- map["siteProjectContractsEntity"]
-        siteEnergySurvey          <- map["siteEnergySurvey"]
-        assetEntity               <- map["assetEntity"]
     }
 }
 
@@ -832,18 +623,21 @@ class SiteLayoutModel: Mappable {
     
     enum NodeType: String {
         case `default` = "default"
-        case master = "MasterNode"
+        case MasterNode = "MasterNode"
         case position = "position"
         case floor = "floor"
         case room = "room"
+        
+        case building = "building"
+        case type = "type"
         
         var title: String {
             switch self {
             case .default:
                 return "Select Node Type"
-            case .master:
+            case .MasterNode, .building:
                 return "Main Building"
-            case .position, .floor, .room:
+            case .position, .floor, .room, .type:
                 return self.rawValue.capitalized
             }
         }
@@ -1050,5 +844,1318 @@ class SiteInformationModel: Mappable {
         carParkSpaceBelowGround <- map["carParkSpaceBelowGround"]
         numOfBasementLevels <- map["numOfBasementLevels"]
         meetingClients <- map["meetingClients"]
+    }
+}
+
+class ParentFolder: Mappable {
+    var id: Int?
+    var name: String?
+    var required: String?
+    var status: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+        required <- map["required"]
+        status <- map["status"]
+    }
+}
+
+class ParentFoldersResponse: Mappable {
+    var parentFolders: [ParentFolder]?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        parentFolders <- map["parentFolders"]
+    }
+}
+
+class AssetPATItem: Mappable {
+    var patId: Int?
+    var assetId: Int?
+    var assetName: String?
+    var patUserId: Int?
+    var patUserName: String?
+    var patDate: String?
+    var patNextDate: String?
+    var patStatus: String?
+    
+    init() { }
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        patId <- map["patId"]
+        assetId <- map["assetId"]
+        assetName <- map["assetName"]
+        patUserId <- map["patUserId"]
+        patUserName <- map["patUserName"]
+        patDate <- map["patDate"]
+        patNextDate <- map["patNextDate"]
+        patStatus <- map["patStatus"]
+    }
+}
+
+class AssetPFPItem: Mappable {
+    var assetId: Int?
+    var product: String?
+    var material: String?
+    var access: String?
+    var service: String?
+    var dimension: String?
+    var quantity: String?
+    var area: String?
+    
+    init() {}
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        assetId <- map["assetId"]
+        product <- map["product"]
+        material <- map["material"]
+        access <- map["access"]
+        service <- map["service"]
+        dimension <- map["dimension"]
+        quantity <- map["quantity"]
+        area <- map["area"]
+    }
+}
+
+// Sub-model for Door Specifications
+class AssetDoorSpecifications: Mappable {
+    var assetId: Int?
+    var width: String?
+    var height: String?
+    var depth: String?
+    var fireRating: String?
+    var finish: String?
+    var visionPanel: String?
+    var frameMaterial: String?
+    var frameFinish: String?
+    
+    init() {}
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        assetId         <- map["assetId"]
+        width           <- map["width"]
+        height          <- map["height"]
+        depth           <- map["depth"]
+        fireRating      <- map["fireRating"]
+        finish          <- map["finish"]
+        visionPanel     <- map["visionPanel"]
+        frameMaterial   <- map["frameMaterial"]
+        frameFinish     <- map["frameFinish"]
+    }
+}
+
+class LOV_Model: Mappable {
+    var id: Int?
+    var lovType: String?
+    var lovValue: String?
+    var lovDesc: String?
+    var attribite1: String?
+    var attribite2: String?
+    var attribite3: String?
+    var attribite4: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        lovType <- map["lovType"]
+        lovValue <- map["lovValue"]
+        lovDesc <- map["lovDesc"]
+        attribite1 <- map["attribite1"]
+        attribite2 <- map["attribite2"]
+        attribite3 <- map["attribite3"]
+        attribite4 <- map["attribite4"]
+    }
+}
+
+class AssetDetailsResponse: Mappable, Equatable {
+    var assetId: Int?
+    var siteId: Int?
+    var siteName: String?
+    var assetName: String?
+    var manufacturer: String?
+    var category: String?
+    var subCategory: String?
+    var subCategory2: String?
+    var subCategory3: String?
+    var model: String?
+    var serialNumber: String?
+    var relatedAssetId: String?
+    var relatedAssetName: String?
+    var folderId: Int?
+    var folderName: String?
+    var image: String?
+    var patItem: Bool?
+    var pfpItem: Bool?
+    var doorItem: Bool?
+    var barcode: String?
+    var position: String?
+    var floor: String?
+    var room: String?
+    var purchaseDate: String?
+    var invoiceFile: String?
+    var supplier: String?
+    var transactionId: String?
+    var cost: String?
+    var valuationDate: String?
+    var valuationValue: String?
+    var valuationUserId: Int?
+    var valuationUserName: String?
+    var disposalDate: String?
+    var disposalValue: String?
+    var disposalTo: String?
+    
+    var assetPATItems: [AssetPATItem]?
+    var assetPFPItem: AssetPFPItem?
+    var assetDoorSpecifications: AssetDoorSpecifications?
+    
+    var isSelected: Bool? = false
+    
+    var assetPATEntityList: [AssetPATItem]?
+    var assetPFPEntity: AssetPFPItem?
+    var assetDoorSpecificationEntity: AssetDoorSpecifications?
+    var siteEntity: String?
+    var documentsEntity: CreateFolderReq?
+    var userEntity: User?
+    var preActionAssetsEntity: [PreActionAssetsEntity]?
+    var siteProjectContractsAssetEntity: [SiteProjectContractsFoldersEntity]?
+    
+    required init?(map: Map) {}
+    
+    init() { }
+    
+    static func == (lhs: AssetDetailsResponse, rhs: AssetDetailsResponse) -> Bool {
+        return lhs.assetId == rhs.assetId
+    }
+    
+    func mapping(map: Map) {
+        assetId                 <- map["assetId"]
+        siteId                  <- map["siteId"]
+        siteName                <- map["siteName"]
+        assetName               <- map["assetName"]
+        manufacturer            <- map["manufacturer"]
+        category                <- map["category"]
+        subCategory             <- map["subCategory"]
+        subCategory2            <- map["subCategory2"]
+        subCategory3            <- map["subCategory3"]
+        model                   <- map["model"]
+        serialNumber            <- map["serialNumber"]
+        relatedAssetId          <- map["relatedAssetId"]
+        relatedAssetName        <- map["relatedAssetName"]
+        folderId                <- map["folderId"]
+        folderName              <- map["folderName"]
+        image                   <- map["image"]
+        patItem                 <- map["patItem"]
+        pfpItem                 <- map["pfpItem"]
+        doorItem                <- map["doorItem"]
+        barcode                 <- map["barcode"]
+        position                <- map["position"]
+        floor                   <- map["floor"]
+        room                    <- map["room"]
+        purchaseDate            <- map["purchaseDate"]
+        invoiceFile             <- map["invoiceFile"]
+        supplier                <- map["supplier"]
+        transactionId           <- map["transactionId"]
+        cost                    <- map["cost"]
+        valuationDate           <- map["valuationDate"]
+        valuationValue          <- map["valuationValue"]
+        valuationUserId         <- map["valuationUserId"]
+        valuationUserName       <- map["valuationUserName"]
+        disposalDate            <- map["disposalDate"]
+        disposalValue           <- map["disposalValue"]
+        disposalTo              <- map["disposalTo"]
+        
+        assetPATItems           <- map["assetPATItems"]
+        assetPFPItem            <- map["assetPFPItem"]
+        assetDoorSpecifications <- map["assetDoorSpecifications"]
+        
+        isSelected              <- map["isSelected"]
+        
+        assetPATEntityList <- map["assetPATEntityList"]
+        assetPFPEntity <- map["assetPFPEntity"]
+        assetDoorSpecificationEntity <- map["assetDoorSpecificationEntity"]
+        siteEntity <- map["siteEntity"]
+        documentsEntity <- map["documentsEntity"]
+        userEntity <- map["userEntity"]
+        preActionAssetsEntity <- map["preActionAssetsEntity"]
+        siteProjectContractsAssetEntity <- map["siteProjectContractsAssetEntity"]
+    }
+}
+
+class AssetsResponse: Mappable {
+    var assets: [AssetDetailsResponse]?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        assets <- map["assets"]
+    }
+}
+
+class PATDetailsRequest: Mappable {
+    var assetPATItems: [AssetPATItem]?
+    var deletedPatIds: [Int]?
+    
+    init() { }
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        assetPATItems <- map["assetPATItems"]
+        deletedPatIds <- map["deletedPatIds"]
+    }
+}
+
+class SiteContractsCategotyResponse: Mappable {
+    var id: Int?
+    var lovType: String?
+    var lovValue: String?
+    var lovDesc: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        lovType <- map["lovType"]
+        lovValue <- map["lovValue"]
+        lovDesc <- map["attribite1"]
+    }
+}
+
+class CompanyDetails: Mappable {
+    var companyId: Int?
+    var companyName: String?
+    var email: String?
+    var phone: String?
+    
+    // Required initializer
+    required init?(map: Map) {}
+    
+    init() {}
+    
+    // Mapping function
+    func mapping(map: Map) {
+        companyId   <- map["companyId"]
+        companyName <- map["companyName"]
+        email       <- map["email"]
+        phone       <- map["phone"]
+    }
+}
+
+// Response Model
+class UsersResponse: Mappable {
+    var users: [User]?
+
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        users <- map["users"]
+    }
+}
+
+class ContractDetailsModel: Mappable {
+    
+    var projectContractId: Int?
+    var summary: String?
+    var siteId: Int?
+    var category: String?
+    var subCategory: String?
+    var contractorCompanyId: Int?
+    var status: String?
+    var budget: String?
+    var startDate: String?
+    var endDate: String?
+    var projectManagerUserId: Int?
+    var description: String?
+    var contractorQuotes: [ContractorQuote]?
+    var frequency: String?
+
+    // Default initializer
+    init() {}
+
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        projectContractId     <- map["projectContractId"]
+        summary               <- map["summary"]
+        siteId                <- map["siteId"]
+        category              <- map["category"]
+        subCategory           <- map["subCategory"]
+        contractorCompanyId    <- map["contractorCompanyId"]
+        status                <- map["status"]
+        budget                <- map["budget"]
+        startDate             <- map["startDate"]
+        endDate               <- map["endDate"]
+        projectManagerUserId   <- map["projectManagerUserId"]
+        description           <- map["description"]
+        contractorQuotes      <- map["contractorQuotes"]
+        frequency             <- map["frequency"]
+    }
+}
+
+class FolderRequest: Mappable {
+    
+    var mandatoryFolders: [Int]?
+    var removeMandatoryFolders: [Int]?
+
+    // Default initializer
+    init() {}
+
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        mandatoryFolders        <- map["mandatoryFolders"]
+        removeMandatoryFolders  <- map["removeMandatoryFolders"]
+    }
+}
+
+class AssetRequest: Mappable {
+    
+    var addAssets: [Int]?
+    var removeAssets: [Int]?
+
+    // Default initializer
+    init() {}
+
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        addAssets      <- map["addAssets"]
+        removeAssets   <- map["removeAssets"]
+    }
+}
+
+class ScheduleRequest: Mappable {
+
+    var scheduleId: Int?
+    var projectContractId: Int?
+    var visitPurpose: String?
+    var status: String?
+    var visitDate: String?
+    var rescheduleDate: String?
+
+    // Default initializer
+    init() {}
+
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        scheduleId        <- map["scheduleId"]
+        projectContractId <- map["projectContractId"]
+        visitPurpose      <- map["visitPurpose"]
+        status            <- map["status"]
+        visitDate         <- map["visitDate"]
+        rescheduleDate    <- map["rescheduleDate"]
+    }
+}
+
+class CalenderEventRequest: Mappable {
+
+    var siteId: Int?
+    var startDate: String?
+    var endDate: String?
+    var shortText: String?
+    var eventType: String?
+    var userId: Int?
+    var includeCompanyUsers: Bool?
+
+    // Default initializer
+    init() {}
+
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        siteId              <- map["siteId"]
+        startDate           <- map["startDate"]
+        endDate             <- map["endDate"]
+        shortText           <- map["shortText"]
+        eventType           <- map["eventType"]
+        userId              <- map["userId"]
+        includeCompanyUsers <- map["includeCompanyUsers"]
+    }
+}
+
+class CalendarEventResponse: Mappable {
+    var calendarId: Int?
+    var siteId: Int?
+    var siteName: String?
+    var startDate: String?
+    var endDate: String?
+    var shortText: String?
+    var section: String?
+    var sectionId: Int?
+    var eventType: String?
+    var userId: String?  // Notice that userId is a String here
+    var userName: String?
+    
+    // Default initializer
+    init() {}
+    
+    // Required initializer for mapping JSON to the object
+    required init?(map: Map) {}
+    
+    // Mapping function to map JSON keys to variables
+    func mapping(map: Map) {
+        calendarId     <- map["calendarId"]
+        siteId         <- map["siteId"]
+        siteName       <- map["siteName"]
+        startDate      <- map["startDate"]
+        endDate        <- map["endDate"]
+        shortText      <- map["shortText"]
+        section        <- map["section"]
+        sectionId      <- map["sectionId"]
+        eventType      <- map["eventType"]
+        userId         <- map["userId"]
+        userName       <- map["userName"]
+    }
+}
+
+class InspectionFaultModel: Mappable {
+    
+    enum Status: String, CaseIterable {
+        case `default` = "Status"
+        case open = "Open"
+        case closed = "Closed"
+        
+        func textColor() -> UIColor {
+            switch self {
+            case .open:
+                return UIColor(appColor: .AmberStatus)
+            case .closed, .default:
+                return UIColor(appColor: .GreenStatus)
+            }
+        }
+        
+        func textBGColor() -> UIColor {
+            switch self {
+            case .open:
+                return UIColor(appColor: .AmberStatusBG)
+            case .closed, .default:
+                return UIColor(appColor: .GreenStatusBG)
+            }
+        }
+    }
+    
+    var faultId: Int?
+    var checkId: Int?
+    var faultDescription: String?
+    var dateRaised: String?
+    var rating: Int?
+    var assetId: String?
+    var imageUrl: String?
+    var action: String?
+    var riskType: String?
+    var closedByUserId: String?
+    var closedDate: String?
+    var status: Status?
+    var siteCheck: String?
+    
+    var auditId: Int?
+    var summary: String?
+    
+    var add: Bool?
+    var siteId: Int?
+    var folderName: String?
+    
+    var isEditing: Bool?
+    var isForAddNew: Bool?
+    var selectedFile: FilePickerModel?
+    
+    init() { }
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        faultId <- map["faultId"]
+        checkId <- map["checkId"]
+        faultDescription <- map["faultDescription"]
+        dateRaised <- map["dateRaised"]
+        rating <- map["rating"]
+        assetId <- map["assetId"]
+        imageUrl <- map["imageUrl"]
+        action <- map["action"]
+        riskType <- map["riskType"]
+        closedByUserId <- map["closedByUserId"]
+        closedDate <- map["closedDate"]
+        status <- map["status"]
+        siteCheck <- map["siteCheck"]
+        
+        auditId <- map["auditId"]
+        summary <- map["summary"]
+        
+        add <- map["add"]
+        siteId <- map["siteId"]
+        folderName <- map["folderName"]
+    }
+}
+
+class SiteCheckInspectionModel: Mappable {
+    var certificateId: Int?
+    var checkId: Int?
+    var certificateName: String?
+    var reviewerUserId: String?
+    var issueDate: String?
+    var expiryDate: String?
+    var note: String?
+    var certificateUrl: String?
+    var status: String?
+    var siteCheck: SiteCheckModel?
+    
+    var siteId: Int?
+    var folderName: String?
+    
+    init() { }
+    
+    required init?(map: Map) { }
+    
+    func mapping(map: Map) {
+        certificateId <- map["certificateId"]
+        checkId <- map["checkId"]
+        certificateName <- map["certificateName"]
+        reviewerUserId <- map["reviewerUserId"]
+        issueDate <- map["issueDate"]
+        expiryDate <- map["expiryDate"]
+        note <- map["note"]
+        certificateUrl <- map["certificateUrl"]
+        status <- map["status"]
+        siteCheck <- map["siteCheck"]
+        
+        siteId <- map["siteId"]
+        folderName <- map["folderName"]
+    }
+}
+
+class SiteModel: Mappable {
+    var siteId: Int?
+    var siteName: String?
+    var address1: String?
+    var address2: String?
+    var postCode: String?
+    var status: String?
+    var area: String?
+    var city: String?
+    var riskScores: [Int] = [0,0,0,0]
+    
+    required init?(map: Map) { }
+    
+    init() {
+        
+    }
+    
+    func mapping(map: Map) {
+        siteId <- map["siteId"]
+        siteName <- map["siteName"]
+        address1 <- map["address1"]
+        address2 <- map["address2"]
+        postCode <- map["postCode"]
+        status <- map["status"]
+        area <- map["area"]
+        city <- map["city"]
+        riskScores <- map["riskScores"]
+    }
+}
+
+class LoginRequestModel: Mappable {
+    
+    var email: String?
+    var password: String?
+    
+    required init?(map: Map) { }
+    
+    init() {
+        
+    }
+    
+    func mapping(map: Map) {
+        email <- map["email"]
+        password <- map["password"]
+    }
+
+}
+
+class ProjectContractResponse: Mappable {
+    
+    var frequency: String?
+    var projectContractId: Int?
+    var summary: String?
+    var siteId: Int?
+    var category: String?
+    var subCategory: String?
+    var contractorCompanyId: String?
+    var status: String?
+    var budget: String?
+    var cost: String?
+    var startDate: String?
+    var endDate: String?
+    var projectManagerUserId: Int?
+    var description: String?
+    var siteName: String?
+    var projectManagerName: String?
+    var contractorCompanyName: String?
+    var contractorQuotes: [ContractorQuote]?
+    var projectContractFolders: [ProjectContractFolderModel]?
+    var projectContractAssets: [ProjectContractAsset]?
+    var projectContractScheduleVisits: [ProjectContractScheduleVisit]?
+    
+    // Initialize the mapping function
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        frequency                    <- map["frequency"]
+        contractorQuotes             <- map["contractorQuotes"]
+        projectContractId            <- map["projectContractId"]
+        summary                      <- map["summary"]
+        siteId                       <- map["siteId"]
+        category                     <- map["category"]
+        subCategory                  <- map["subCategory"]
+        contractorCompanyId          <- map["contractorCompanyId"]
+        status                       <- map["status"]
+        budget                       <- map["budget"]
+        cost                         <- map["cost"]
+        startDate                    <- map["startDate"]
+        endDate                      <- map["endDate"]
+        projectManagerUserId         <- map["projectManagerUserId"]
+        description                  <- map["description"]
+        siteName                     <- map["siteName"]
+        projectManagerName           <- map["projectManagerName"]
+        contractorCompanyName        <- map["contractorCompanyName"]
+        projectContractFolders       <- map["projectContractFolders"]
+        projectContractAssets        <- map["projectContractAssets"]
+        projectContractScheduleVisits <- map["projectContractScheduleVisits"]
+    }
+}
+
+class ProjectContractAsset: Mappable {
+    
+    var assetId: Int?
+    var assetName: String?
+    var category: String?
+    var subCategory: String?
+    var subCategory2: String?
+    var manufacturer: String?
+    var model: String?
+    var serialNumber: String?
+    var position: String?
+    var floor: String?
+    var room: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        assetId        <- map["assetId"]
+        assetName      <- map["assetName"]
+        category       <- map["category"]
+        subCategory    <- map["subCategory"]
+        subCategory2   <- map["subCategory2"]
+        manufacturer   <- map["manufacturer"]
+        model          <- map["model"]
+        serialNumber   <- map["serialNumber"]
+        position       <- map["position"]
+        floor          <- map["floor"]
+        room           <- map["room"]
+    }
+}
+
+class ProjectContractScheduleVisit: Mappable {
+    
+    var scheduleId: Int?
+    var visitPurpose: String?
+    var status: String?
+    var visitDate: String?
+    var rescheduleDate: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        scheduleId      <- map["scheduleId"]
+        visitPurpose    <- map["visitPurpose"]
+        status          <- map["status"]
+        visitDate       <- map["visitDate"]
+        rescheduleDate  <- map["rescheduleDate"]
+    }
+}
+
+class ProjectContractFolderModel: Mappable {
+    var id: Int?
+    var name: String?
+    var files: [FileModel]?
+
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        id    <- map["id"]
+        name  <- map["name"]
+        files <- map["files"]
+    }
+}
+
+class FileModel: Mappable {
+    var id: Int?
+    var version: Int?
+    var name: String?
+    var url: String?
+
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        id      <- map["id"]
+        version <- map["version"]
+        name    <- map["name"]
+        url     <- map["url"]
+    }
+}
+
+class ContractorQuote: Mappable {
+    var quoteId: Int?
+    var contractor: String?
+    var company: String?
+    var quote: Double?
+    var quoteDate: String?
+    var status: String?
+    var notes: String?
+    var managerNotes: String?
+    var projectContractId: Int?
+    
+    init() {
+            
+    }
+
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {
+    }
+
+    // Mapping function
+    func mapping(map: Map) {
+        quoteId            <- map["quoteId"]
+        contractor         <- map["contractor"]
+        company            <- map["company"]
+        quote              <- map["quote"]
+        quoteDate          <- map["quoteDate"]
+        status             <- map["status"]
+        notes              <- map["notes"]
+        managerNotes       <- map["managerNotes"]
+        projectContractId  <- map["projectContractId"]
+    }
+}
+
+// PreAction Model
+class PreActionResponseModel: Mappable {
+    var raisedDate: String?
+    var taggedAsset: String?
+    var actionId: Int?
+    var category: String?
+    var floor: String?
+    var room: String?
+    var image: String?
+    var description: String?
+    var raisedByUserId: Int?
+    var raisedByUserName: String?
+    var status: String?
+
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        raisedDate <- map["raisedDate"]
+        taggedAsset <- map["taggedAsset"]
+        actionId <- map["actionId"]
+        category <- map["category"]
+        floor <- map["floor"]
+        room <- map["room"]
+        image <- map["image"]
+        description <- map["description"]
+        raisedByUserId <- map["raisedByUserId"]
+        raisedByUserName <- map["raisedByUserName"]
+        status <- map["status"]
+    }
+}
+
+class CreatePreActionRequestModel: Mappable {
+    var category: String?
+    var floor: String?
+    var room: String?
+    var description: String?
+    var status: String?
+    var actionId: Int?
+    var raisedByUserId: Int?
+    var taggedAsset: String?
+
+    init() { }
+    
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {
+        // This can be left empty or used to validate mandatory fields
+    }
+
+    // Mapping function that maps the JSON keys to the properties
+    func mapping(map: Map) {
+        category          <- map["category"]
+        floor             <- map["floor"]
+        room              <- map["room"]
+        description       <- map["description"]
+        status            <- map["status"]
+        actionId          <- map["actionId"]
+        raisedByUserId    <- map["raisedByUserId"]
+        taggedAsset       <- map["taggedAsset"]
+    }
+}
+
+class CreatePreActrionResponseModel: Mappable {
+    var taggedAsset: String?
+    var actionId: Int?
+    var siteId: Int?
+    var category: String?
+    var floor: String?
+    var room: String?
+    var image: String?
+    var description: String?
+    var raisedByUserId: Int?
+    var status: String?
+
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {
+        // This can be left empty or used to validate mandatory fields
+    }
+
+    // Mapping function that maps the JSON keys to the properties
+    func mapping(map: Map) {
+        taggedAsset      <- map["taggedAsset"]
+        actionId         <- map["actionId"]
+        siteId           <- map["siteId"]
+        category         <- map["category"]
+        floor            <- map["floor"]
+        room             <- map["room"]
+        image            <- map["image"]
+        description      <- map["description"]
+        raisedByUserId   <- map["raisedByUserId"]
+        status           <- map["status"]
+    }
+}
+
+class StatusRequestModel: Mappable {
+    var status: String?
+    var actionTaken: String?
+
+    init() { }
+    
+    // Default initializer
+    init(status: String?, actionTaken: String?) {
+        self.status = status
+        self.actionTaken = actionTaken
+    }
+
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {}
+
+    // Mapping function for ObjectMapper
+    func mapping(map: Map) {
+        status      <- map["status"]
+        actionTaken <- map["actionTaken"]
+    }
+}
+
+class StatusModel: Mappable {
+    var status: String?
+    var approverNotes: String?
+    
+    init() { }
+    
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {}
+    
+    // Mapping function to map JSON fields to model properties
+    func mapping(map: Map) {
+        status        <- map["status"]
+        approverNotes <- map["approverNotes"]
+    }
+}
+
+class ClientAction: Mappable {
+    var type: String?
+    var status: String?
+    var observation: String?
+    var desc: String?
+    var requiredAction: String?
+    var riskScore: Int?
+    var dueDate: String?
+    var siteId: Int?
+    var userId: Int?
+    
+    init() { }
+    
+    // Initialize mapping
+    required init?(map: Map) {}
+
+    // Mapping function
+    func mapping(map: Map) {
+        type           <- map["type"]
+        status         <- map["status"]
+        observation    <- map["observation"]
+        desc           <- map["desc"]
+        requiredAction <- map["requiredAction"]
+        riskScore      <- map["riskScore"]
+        dueDate        <- map["dueDate"]
+        siteId         <- map["siteId"]
+        userId         <- map["userId"]
+    }
+}
+
+class ClientActionResponse: Mappable {
+    var actionId: Int?
+    var type: String?
+    var status: String?
+    var observation: String?
+    var desc: String?
+    var requiredAction: String?
+    var riskScore: Int?
+    var dueDate: String?
+    var siteId: Int?
+    var userId: Int?
+    var competentPersons: String?
+    var serviceProvider: String?
+    var stakeholder: String?
+    var assignedTo: String?
+    var comments: String?
+    var internalExternal: String?
+    var floor: String?
+    var actionImage: String?
+    var room: String?
+    var taggedAsset: String?
+    var createdAt: String?
+    var completedAt: String?
+    var completedBy: String?
+    
+    // Initialize mapping
+    required init?(map: Map) {}
+    
+    // Mapping function
+    func mapping(map: Map) {
+        actionId           <- map["actionId"]
+        type               <- map["type"]
+        status             <- map["status"]
+        observation        <- map["observation"]
+        desc               <- map["desc"]
+        requiredAction     <- map["requiredAction"]
+        riskScore          <- map["riskScore"]
+        dueDate            <- map["dueDate"]
+        siteId             <- map["siteId"]
+        userId             <- map["userId"]
+        competentPersons   <- map["competentPersons"]
+        serviceProvider    <- map["serviceProvider"]
+        stakeholder        <- map["stakeholder"]
+        assignedTo         <- map["assignedTo"]
+        comments           <- map["comments"]
+        internalExternal   <- map["internalExternal"]
+        floor              <- map["floor"]
+        actionImage        <- map["actionImage"]
+        room               <- map["room"]
+        taggedAsset        <- map["taggedAsset"]
+        createdAt          <- map["createdAt"]
+        completedAt        <- map["completedAt"]
+        completedBy        <- map["completedBy"]
+    }
+    
+}
+
+class CategoryModel: Mappable {
+    var categoryList: [String?]?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        categoryList <- map["categoryList"]
+    }
+}
+
+class DropDownModel: Mappable {
+    var id: Int?
+    var lovType: String?
+    var lovValue: String?
+    var lovDesc: String?
+    var attribite1: String?
+    var attribite2: String?
+    var attribite3: String?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        id           <- map["id"]
+        lovType      <- map["lovType"]
+        lovValue     <- map["lovValue"]
+        lovDesc      <- map["lovDesc"]
+        attribite1   <- map["attribite1"]
+        attribite2   <- map["attribite2"]
+        attribite3   <- map["attribite3"]
+    }
+}
+
+class DropDownSubCategory: Mappable {
+    var id: Int?
+    var add: Bool?
+    var edit: Bool?
+    var attribite1: String?
+    var attribite2: String?
+    var attribite3: String?
+    var lovDesc: String?
+    var lovType: String?
+    var lovValue: String?
+    
+    init() {
+        
+    }
+    
+    // Default initializer required by ObjectMapper
+    required init?(map: Map) {
+        // Initialization code, if necessary
+    }
+    
+    // Mapping function where fields from JSON are mapped to Swift properties
+    func mapping(map: Map) {
+        id           <- map["id"]
+        add        <- map["add"]
+        edit        <- map["add"]
+        attribite1 <- map["attribite1"]
+        attribite2 <- map["attribite2"]
+        attribite3 <- map["attribite3"]
+        lovDesc    <- map["lovDesc"]
+        lovType    <- map["lovType"]
+        lovValue   <- map["lovValue"]
+    }
+}
+
+//class ResetPasswordRequest: Mappable {
+//    var email: String?
+//    var otp: String?
+//    var password: String?
+//    
+//    init() {}
+//    
+//    init(email: String, otp: String, password: String) {
+//        self.email = email
+//        self.otp = otp
+//        self.password = password
+//    }
+//    
+//    required init?(map: Map) {}
+//    
+//    func mapping(map: Map) {
+//        email       <- map["email"]
+//        otp         <- map["otp"]
+//        password    <- map["password"]
+//    }
+//}
+
+class EnergyUsage: Mappable {
+    var budgetCategory: String?
+    var cost: String?
+    var energyId: Int?
+    var fromDate: String?
+    var siteId: Int?
+    var submittedUserId: Int?
+    var toDate: String?
+    
+    init() {
+        
+    }
+    
+    required init?(map: Map) {
+        // Initialize any necessary variables or perform checks
+    }
+    
+    func mapping(map: Map) {
+        budgetCategory     <- map["budgetCategory"]
+        cost               <- map["cost"]
+        energyId           <- map["energyId"]
+        fromDate           <- map["fromDate"]
+        siteId             <- map["siteId"]
+        submittedUserId    <- map["submittedUserId"]
+        toDate             <- map["toDate"]
+    }
+}
+
+
+class ReqEnergyReading: Mappable {
+    var energyId: Int?
+    var readingDate: String?
+    var readingUnit: String?
+    var readingValue: String?
+    var siteId: Int?
+    var submittedUserId: Int?
+    
+    init() {
+        
+    }
+    
+    // Required initializer for ObjectMapper
+    required init?(map: Map) {
+    }
+    
+    // Function to map the fields
+    func mapping(map: Map) {
+        energyId          <- map["energyId"]
+        readingDate       <- map["readingDate"]
+        readingUnit       <- map["readingUnit"]
+        readingValue      <- map["readingValue"]
+        siteId            <- map["siteId"]
+        submittedUserId   <- map["submittedUserId"]
+    }
+}
+
+class ResetPasswordRequest: Mappable {
+    var email: String?
+    var otp: String?
+    var password: String?
+    
+    init() {}
+    
+    init(email: String, otp: String, password: String) {
+        self.email = email
+        self.otp = otp
+        self.password = password
+    }
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        email       <- map["email"]
+        otp         <- map["otp"]
+        password    <- map["password"]
+    }
+}
+
+class ActionResponseModel: Mappable {
+    var actionId: Int?
+    var type: String?
+    var status: String?
+    var observation: String?
+    var desc: String?
+    var requiredAction: String?
+    var riskScore: Int?
+    var dueDate: String?
+    var siteId: Int?
+    var userId: Int?
+    var competentPersons: String?
+    var serviceProvider: String?
+    var stakeholder: Int?
+    var assignedTo: Int?
+    var comments: String?
+    var internalExternal: String?
+    var floor: String?
+    var actionImage: String?
+    var room: String?
+    var taggedAsset: String?
+    var createdAt: String?
+    var completedAt: String?
+    var completedBy: String?
+
+    required init?(map: Map) {
+        // Empty initializer for Mappable protocol
+    }
+
+    func mapping(map: Map) {
+        actionId           <- map["actionId"]
+        type               <- map["type"]
+        status             <- map["status"]
+        observation        <- map["observation"]
+        desc               <- map["desc"]
+        requiredAction     <- map["requiredAction"]
+        riskScore          <- map["riskScore"]
+        dueDate            <- map["dueDate"]
+        siteId             <- map["siteId"]
+        userId             <- map["userId"]
+        competentPersons   <- map["competentPersons"]
+        serviceProvider    <- map["serviceProvider"]
+        stakeholder        <- map["stakeholder"]
+        assignedTo         <- map["assignedTo"]
+        comments           <- map["comments"]
+        internalExternal   <- map["internalExternal"]
+        floor              <- map["floor"]
+        actionImage        <- map["actionImage"]
+        room               <- map["room"]
+        taggedAsset        <- map["taggedAsset"]
+        createdAt          <- map["createdAt"]
+        completedAt        <- map["completedAt"]
+        completedBy        <- map["completedBy"]
+    }
+}
+
+class AddCommentsRequestModel: Mappable {
+    var text: String?
+    var date: String?
+    var userId: Int?
+    var actionId: String?
+    var createdAt: String?
+
+    required init?(map: Map) {}
+    
+    init() {}
+
+    func mapping(map: Map) {
+        text       <- map["text"]
+        date       <- map["date"]
+        userId     <- map["userId"]
+        actionId   <- map["actionId"]
+        createdAt  <- map["createdAt"]
+    }
+}
+
+class AddedCommentResponseModel: Mappable {
+    var commentId: Int?
+    var text: String?
+    var actionId: Int?
+    var userId: Int?
+    var image: String?  // Assuming `image` is a URL or base64 encoded string; update type if needed
+    var createdAt: String?
+    var user: Any?  // Adjust the type if you have a specific model for `user`
+
+    required init?(map: Map) {}
+
+    func mapping(map: Map) {
+        commentId   <- map["commentId"]
+        text        <- map["text"]
+        actionId    <- map["actionId"]
+        userId      <- map["userId"]
+        image       <- map["image"]
+        createdAt   <- map["createdAt"]
+        user        <- map["user"]
+    }
+}
+
+class APIErrorResponse: Mappable {
+    var timestamp: String?
+    var status: Int?
+    var error: String?
+    var message: String?
+    var path: String?
+
+    // Required initializer for ObjectMapper
+    required init?(map: Map) { }
+
+    // Mapping function to bind JSON keys to properties
+    func mapping(map: Map) {
+        timestamp <- map["timestamp"]
+        status    <- map["status"]
+        error     <- map["error"]
+        message   <- map["message"]
+        path      <- map["path"]
     }
 }

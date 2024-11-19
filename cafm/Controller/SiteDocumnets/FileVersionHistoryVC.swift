@@ -17,6 +17,7 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
     @IBOutlet weak var viewFileNameTFXib: TextFiledDataXib!
     @IBOutlet weak var viewSpread: SpreadsheetView!
     @IBOutlet weak var lblSelectedFile: UILabel!
+    @IBOutlet weak var selectFileBtn: UIButton!
     
     @IBOutlet weak var viewMainBgBtn: UIView!
     
@@ -55,6 +56,9 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
             self.heightOFFileName.constant = 0
             self.heightOfBtnChhose.constant = 0
         }
+        
+        CAFMFilePicker(delegate: self).configureFileMenu(on: self, sender: self.selectFileBtn, tag: 1, allowPhotos: true, supportedTypes: [.image])
+        
         viewFolderTFXib.lblTFName.text = "Folder"
         viewFolderTFXib.tfData.text = folderName
         viewFolderTFXib.tfData.backgroundColor = UIColor(.separator)
@@ -62,7 +66,7 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
         
         viewFileNameTFXib.lblTFName.text = "File Name"
         viewFileNameTFXib.tfData.delegate = self
-        viewFileNameTFXib.tfData.text = selectedFile?.name
+        viewFileNameTFXib.tfData.text = getFileNameAndExtension(from: selectedFile?.name ?? "").fileName//selectedFile?.name
         if let id = self.selectedFile?.id {
             fetchData(id: id)
         }
@@ -120,8 +124,8 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
         req.folderId = folderId
         var fileRequest = FileRequest()
         fileRequest.id = self.fileID
-        fileRequest.name = (self.viewFileNameTFXib.tfData.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Unknow")+".png"
-        fileRequest.originalFileName = originalName
+        fileRequest.name = (self.viewFileNameTFXib.tfData.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Unknow")+"."+(getFileNameAndExtension(from: selectedFile?.name ?? "").fileExtension ?? "png")
+        fileRequest.originalFileName = selectedImageFile?.lastPathComponent
         fileRequest.fileVersion = (self.versionFileHistory?.files?.count ?? 1) + 1
         fileRequest.siteId = 1
         fileRequest.uploaderUserId = UserConstants.shared.currentUserID
@@ -165,14 +169,14 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
                     
                     print("Selected the correct image!")
                     // Check if the image size exceeds 1 MB
-                    if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+                    if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
                         let imageSize = imageData.count
-                        let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+                        let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
                         DispatchQueue.main.async { [weak self] in
                             guard let self else {return}
                             if imageSize > maxFileSize {
                                 // Image size exceeds 1 MB, show an alert
-                                showAlert(message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                                showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                             } else {
                                 print("Image size is within the limit: \(imageSize) bytes")
                                 let name = (fileName as NSString).deletingPathExtension
@@ -207,15 +211,6 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-    
-    // Function to show an alert with a message
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-
-    
     
     @IBAction func btnCloseClick(_ sender: Any) {
         self.dismiss(animated: true)
@@ -267,18 +262,18 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
         print("Selected image name: \(fileName)")
         
         // Check the image size and proceed similarly to your original code
-        if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+        if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
             let imageSize = imageData.count
-            let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+            let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
             DispatchQueue.main.async { [weak self] in
                 guard let self else {return}
                 if imageSize > maxFileSize {
                     // Image size exceeds 1 MB, show an alert
-                    self.showAlert(message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                    self.showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                 } else {
                     print("Image size is within the limit: \(imageSize) bytes")
                     let name = (fileName as NSString).deletingPathExtension
-                    let newfileName = (name.isEmpty ? UUID().uuidString : name) + ".png"
+                    let newfileName = (name.isEmpty ? UUID().uuidString : name)+"."+(getFileNameAndExtension(from: selectedFile?.name ?? "").fileExtension ?? "png")
                     let fileURL = documentDirectory().appendingPathComponent(newfileName)
                     if FileManager.default.fileExists(atPath: fileURL.path) {
                         do {
@@ -434,10 +429,14 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
                 cell.btnFolder.addAction { [weak self] in
                     DispatchQueue.main.async { [weak self] in
                         guard let self else { return }
-                        let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
+                        //let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
                         let urlString = self.versionFileHistory?.files?[indexPath.row-1].fileBlobUrl ?? ""
-                        vc.url = URL(string: urlString)
-                        self.present(vc, animated: true)
+                        //vc.url = URL(string: urlString)
+                        //self.present(vc, animated: true)
+                        let vc = generalSB.instantiateViewController(withIdentifier: "FileViewVC") as! FileViewVC
+                        vc.fileURL = URL(string: urlString)
+                        let nav = UINavigationController(rootViewController: vc)
+                        self.present(nav, animated: true)
                     }
                 }
                 return cell
@@ -462,10 +461,14 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
                 cell.btnPreview.addAction { [weak self] in
                     DispatchQueue.main.async { [weak self] in
                         guard let self else { return }
-                        let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
+                        //let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
                         let urlString = self.versionFileHistory?.files?[indexPath.row-1].fileBlobUrl ?? ""
-                        vc.url = URL(string: urlString)
-                        self.present(vc, animated: true)
+                        //vc.url = URL(string: urlString)
+                        //self.present(vc, animated: true)
+                        let vc = generalSB.instantiateViewController(withIdentifier: "FileViewVC") as! FileViewVC
+                        vc.fileURL = URL(string: urlString)
+                        let nav = UINavigationController(rootViewController: vc)
+                        self.present(nav, animated: true)
                     }
                 }
                 return cell
@@ -503,5 +506,47 @@ class FileVersionHistoryVC: UIViewController, UITextFieldDelegate, SpreadsheetVi
     }
     
 
+    
+}
+
+extension FileVersionHistoryVC: CAFMFilePickerDelegate {
+    
+    func filePickerDidSelectFile(_ fileData: FilePickerModel, tag: Int) {
+        let fileName = fileData.fileName ?? ""
+        if let imageData = fileData.image?.jpegData(compressionQuality: 0.8) {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+                let name = (fileName as NSString).deletingPathExtension
+                let newfileName = (name.isEmpty ? UUID().uuidString : name) + ".png"
+                let fileURL = documentDirectory().appendingPathComponent(newfileName)
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    do {
+                        try FileManager.default.removeItem(at: fileURL)
+                    } catch {
+                        showAlert(message: "Please try again")
+                        return
+                    }
+                }
+                do {
+                    try imageData.write(to: fileURL, options: .atomic)
+                    self.lblSelectedFile.text = " \(fileURL.lastPathComponent)"
+                    self.selectedImageFile = fileURL
+                    self.originalName = fileName
+                } catch {
+                    showAlert(message: "Please try again")
+                    print("Error saving image: \(error)")
+                }
+            }
+        }else if let fileURL = fileData.fileURL {
+            self.lblSelectedFile.text = " \(fileURL.lastPathComponent)"
+            self.selectedImageFile = fileURL
+            self.originalName = fileName
+        }
+        
+    }
+    
+    func filePickerDidClose(tag: Int) {
+        
+    }
     
 }

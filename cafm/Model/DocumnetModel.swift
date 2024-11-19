@@ -115,7 +115,12 @@ struct CreateFolderReq : Mappable {
     var parentFolderId: String?
     var siteId: Int?
     var isStatutoryRegister: Bool?
-
+    var folderId: Int?
+    var required: Bool?
+    var status: String?
+    var siteDocumentsEntity: [String]?
+    var siteEntity: String?
+    
     // Required initializer for the Mappable protocol
     init?(map: Map) {}
     
@@ -132,6 +137,11 @@ struct CreateFolderReq : Mappable {
         parentFolderId        <- map["parentFolderId"]
         siteId                <- map["siteId"]
         isStatutoryRegister   <- map["isStatutoryRegister"]
+        folderId <- map["folderId"]
+        required <- map["required"]
+        status <- map["status"]
+        siteDocumentsEntity <- map["siteDocumentsEntity"]
+        siteEntity <- map["siteEntity"]
     }
 }
 
@@ -156,6 +166,7 @@ struct FileRequest: Mappable {
     var name: String?
     var issueDate: String?
     var expiryDate: String?
+    var uploadDate: String?
     var note: String?
     var fileVersion: Int?
     var siteId: Int?
@@ -163,6 +174,7 @@ struct FileRequest: Mappable {
     var uploaderUserId: Int?
     var reviewerUserId: Int?
     var referenceNumber: String?
+    var statutoryCategoryId: Int?
 
     init?(map: Map) {}
     
@@ -175,6 +187,7 @@ struct FileRequest: Mappable {
         name              <- map["name"]
         issueDate         <- map["issueDate"]
         expiryDate        <- map["expiryDate"]
+        uploadDate        <- map["uploadDate"]
         note              <- map["note"]
         fileVersion       <- map["fileVersion"]
         siteId            <- map["siteId"]
@@ -182,6 +195,7 @@ struct FileRequest: Mappable {
         uploaderUserId    <- map["uploaderUserId"]
         reviewerUserId    <- map["reviewerUserId"]
         referenceNumber   <- map["referenceNumber"]
+        statutoryCategoryId <- map["statutoryCategoryId"]
     }
 }
 
@@ -244,6 +258,18 @@ struct UploadedFile: Mappable {
 }
 
 class VersionHistoryResponse: Mappable {
+    var files: [File]?
+
+    required init?(map: Map) {
+        // Initializer implementation if needed
+    }
+
+    func mapping(map: Map) {
+        files <- map["files"]
+    }
+}
+
+class FileResponseData: Mappable {
     var files: [File]?
 
     required init?(map: Map) {

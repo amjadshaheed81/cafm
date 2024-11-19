@@ -12,6 +12,8 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
             <connections>
                 <outlet property="btnDownClick" destination="2eo-B1-rxv" id="d7K-zQ-N4C"/>
+                <outlet property="dummyTF" destination="4Qh-eT-cEQ" id="Bxh-J0-ARE"/>
+                <outlet property="imageView" destination="unV-su-Fcw" id="3KB-YJ-dZH"/>
                 <outlet property="lblText" destination="EDo-8N-bxG" id="gcD-Rt-3hQ"/>
             </connections>
         </placeholder>

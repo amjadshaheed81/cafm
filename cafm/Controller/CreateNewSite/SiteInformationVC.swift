@@ -174,7 +174,7 @@ extension SiteInformationVC: SiteInformationDelegate {
     func hideLoadingAndShowError(message: String? = nil) {
         self.loadingSCLAlertView.hideView()
         let subTitle = message ?? "Something went wrong, Please try again!"
-        SCLAlertView.showLoading(title: "Error", message: subTitle, cancelButtonTitle: "OK")
+        SCLAlertView.showErrorAlert(title: "Error", message: subTitle, cancelButtonTitle: "OK")
     }
     
 }

@@ -19,17 +19,19 @@ class FileViewVC: UIViewController {
     @IBOutlet weak var imageScrollView: ImageScrollView!
     
     var fileURL: URL?
-    var image: UIImage?
+    private var image: UIImage?
     
     var loadingStatus: LoadingStatus = .default {
         didSet {
             if self.loadingStatus.hasData {
                 self.mainView.isHidden = false
                 self.emptyView.isHidden = true
+                self.emptyView.stopSkeleton()
             }else {
                 self.emptyView.mainLbl.text = self.loadingStatus.rawValue
                 self.emptyView.isHidden = false
                 self.mainView.isHidden = true
+                self.emptyView.startSkeleton()
             }
         }
     }
@@ -55,13 +57,7 @@ class FileViewVC: UIViewController {
         let closeBtn = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(self.navCloseBtnClicked(_:)))
         self.navigationItem.leftBarButtonItem = closeBtn
         
-        let downloadBtn = UIButton(type: .system)
-        downloadBtn.addCorner()
-        downloadBtn.backgroundColor = UIColor(appColor: .AppTint)
-        downloadBtn.tintColor = UIColor.white
-        downloadBtn.setTitle("Download", for: .normal)
-        downloadBtn.titleLabel?.font = UIFont(name: .MontserratMedium, size: 15)
-        downloadBtn.frame = CGRect(x: 0, y: 0, width: 8+79+8, height: 32)
+        let downloadBtn = getPrimaryNavigationBtn(title: "Download")
         downloadBtn.addTarget(self, action: #selector(self.navDownloadBtnClicked(_:)), for: .touchUpInside)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: downloadBtn)
     }
@@ -74,7 +70,7 @@ class FileViewVC: UIViewController {
         guard let serverURL = self.fileURL else { return }
         
         var data: Data?
-        if let image = self.image, let imageData = image.jpegData(compressionQuality: 1.0) {
+        if let image = self.image, let imageData = image.jpegData(compressionQuality: 0.8) {
             data = imageData
         }else if let document = pdfView.document, let pdfData = document.dataRepresentation() {
             data = pdfData
@@ -116,6 +112,7 @@ class FileViewVC: UIViewController {
         self.pdfView.backgroundColor = UIColor.white
         self.pdfView.autoScales = true
         
+        self.loadingStatus = .loading
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let strongSelf = self else { return }
             guard let data = data, error == nil else {
@@ -124,6 +121,7 @@ class FileViewVC: UIViewController {
             }
             DispatchQueue.main.async {
                 if let document = PDFDocument(data: data) {
+                    strongSelf.loadingStatus = .default
                     strongSelf.pdfView.document = document
                 } else {
                     strongSelf.loadingStatus = .failed

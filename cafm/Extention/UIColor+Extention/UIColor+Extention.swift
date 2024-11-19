@@ -31,11 +31,15 @@ extension UIColor {
         case GrayText = "#64748B"
         
         case BG1 = "#F1F5F9"
+        case BG2 = "#E8E9EA"
         
+        //Miscellaneous
+        case DisabledGray = "#7878801E"
         //case Separator = "#E2E8F0"
         case Separator2 = "#D4D4D4"
         case ViewBorder = "#09194821"
         case ViewBorder2 = "#C8CEDA"
+        case ViewBorder3 = "#808080"
         
         //Building Layout Chart Colors
         case BLC_Lv1_Green_Border = "#1DCA5D"
@@ -46,6 +50,20 @@ extension UIColor {
         case BLC_Lv3_Red = "#FFF5F4" //#F340400A
         case BLC_Lv4_Blue_Border = "#3B80F2"
         case BLC_Lv4_Blue = "#F0F8FF" //#3B80F20A
+        
+        //EventTypeColor
+        case BlueEventTypeBG = "#0085FF1A"
+        case BlueEventTypeText = "#0085FF"
+        case GreenEventTypeBG = "#00BA341A"
+        case GreenEventTypeText = "#00BA34"
+        case OrangeEventTypeBG = "#FF961B1A"
+        case OrangeEventTypeText = "#FF9F2D"
+        case PinkEventTypeBG = "#DD3CE014"
+        case PinkEventTypeText = "#EB00FF"
+        case RedEventTypeBG = "#FF3B3B1A"
+        case RedEventTypeText = "#E92C2C"
+        case RegularEventTypeBG = "#E8E8E8"
+        case RegularEventTypeText = "#585757"
     }
     
     convenience init(appColor: CommonColor) {

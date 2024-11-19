@@ -3,7 +3,7 @@
 //  cafm
 //
 //  Created by NS on 24/08/24.
-//  
+//
 //
 
 import SCLAlertView
@@ -24,16 +24,32 @@ let errorSCLAppearance: SCLAlertView.SCLAppearance = SCLAlertView.SCLAppearance(
     textColor: UIColor(appColor: .PrimaryText)
 )
 
+let successSCLAppearance: SCLAlertView.SCLAppearance = SCLAlertView.SCLAppearance(
+    kTitleFont: UIFont(name: .MontserratMedium, size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .medium),
+    kTextFont: UIFont(name: .MontserratRegular, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .regular),
+    kButtonFont: UIFont(name: .MontserratBold, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .bold),
+    showCloseButton: false,
+    contentViewColor: UIColor(appColor: .GreenStatusBG),
+    titleColor: UIColor(appColor: .GreenRiskScore),
+    textColor: UIColor(appColor: .PrimaryText)
+)
+
 extension SCLAlertView {
     
-    func showLoading() {
+    func showLoading(title: String = "Loading...", subTitle: String = "") {
         if !self.isShowing() {
-            self.showWait("Loading...", subTitle: "", colorStyle: 0x384BD3)
+            self.showWait(title, subTitle: subTitle, colorStyle: 0x384BD3)
         }
     }
     
-    class func showLoading(title: String, message: String, cancelButtonTitle: String) {
-        SCLAlertView(appearance: errorSCLAppearance).showError(title, subTitle: message, closeButtonTitle: cancelButtonTitle, colorStyle: 0xE03C3C)
+    class func showErrorAlert(title: String, message: String, cancelButtonTitle: String) {
+        SCLAlertView().showError(title, subTitle: message, closeButtonTitle: cancelButtonTitle)
+    }
+    
+    class func showSuccessAlert(title: String, message: String, doneButtonTitle: String, doneButtonaction: @escaping () -> Void) {
+        let sclAlert = SCLAlertView(appearance: SCLAppearance(showCloseButton: false))
+        sclAlert.addButton(doneButtonTitle, action: doneButtonaction)
+        sclAlert.showSuccess(title, subTitle: message)
     }
     
 }

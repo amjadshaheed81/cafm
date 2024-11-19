@@ -184,14 +184,14 @@ class BulkUploadVC: UIViewController, UICollectionViewDelegate, UICollectionView
         print("Selected image name: \(fileName)")
         
         // Check the image size and proceed similarly to your original code
-        if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+        if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
             let imageSize = imageData.count
-            let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+            let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
             DispatchQueue.main.async { [weak self] in
                 guard let self else {return}
                 if imageSize > maxFileSize {
                     // Image size exceeds 1 MB, show an alert
-                    self.showAlert(message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                    self.showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                 } else {
                     print("Image size is within the limit: \(imageSize) bytes")
                     let name = (fileName as NSString).deletingPathExtension
@@ -216,12 +216,6 @@ class BulkUploadVC: UIViewController, UICollectionViewDelegate, UICollectionView
                 }
             }
         }
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
     }
     
 }

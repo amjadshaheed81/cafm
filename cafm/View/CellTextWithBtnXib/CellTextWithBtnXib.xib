@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="ktp-NT-s9k" customClass="CellTextWithBtnXib" customModule="cafm" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="746" height="191"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PT8-4k-TKO">
+                    <rect key="frame" x="12" y="10" width="722" height="21.5"/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JYQ-dE-IfZ" customClass="DesignableCornerView" customModule="cafm" customModuleProvider="target">
+                    <rect key="frame" x="292.5" y="40.5" width="161" height="40"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View Evidence" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tem-65-Kk2">
+                            <rect key="frame" x="15" y="0.0" width="131" height="40"/>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6yD-b3-Yqk">
+                            <rect key="frame" x="0.0" y="0.0" width="161" height="40"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" name="AppTintColor"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="6yD-b3-Yqk" secondAttribute="trailing" id="0Lm-Lj-3Mo"/>
+                        <constraint firstAttribute="bottom" secondItem="Tem-65-Kk2" secondAttribute="bottom" id="APd-09-kMe"/>
+                        <constraint firstItem="Tem-65-Kk2" firstAttribute="leading" secondItem="JYQ-dE-IfZ" secondAttribute="leading" constant="15" id="MyZ-sm-MXZ"/>
+                        <constraint firstItem="Tem-65-Kk2" firstAttribute="top" secondItem="JYQ-dE-IfZ" secondAttribute="top" id="RIG-ct-faQ"/>
+                        <constraint firstAttribute="trailing" secondItem="Tem-65-Kk2" secondAttribute="trailing" constant="15" id="ZIE-6J-nwg"/>
+                        <constraint firstAttribute="height" constant="40" id="aMA-Je-1TR"/>
+                        <constraint firstAttribute="bottom" secondItem="6yD-b3-Yqk" secondAttribute="bottom" id="kfe-h5-FrS"/>
+                        <constraint firstItem="6yD-b3-Yqk" firstAttribute="top" secondItem="JYQ-dE-IfZ" secondAttribute="top" id="xLb-o6-en8"/>
+                        <constraint firstItem="6yD-b3-Yqk" firstAttribute="leading" secondItem="JYQ-dE-IfZ" secondAttribute="leading" id="xYy-gq-Gw4"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="bT4-Bo-5KX"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="PT8-4k-TKO" firstAttribute="top" secondItem="ktp-NT-s9k" secondAttribute="top" constant="10" id="0xy-R4-FTZ"/>
+                <constraint firstItem="PT8-4k-TKO" firstAttribute="leading" secondItem="bT4-Bo-5KX" secondAttribute="leading" constant="12" id="Qy2-zh-csQ"/>
+                <constraint firstItem="bT4-Bo-5KX" firstAttribute="trailing" secondItem="PT8-4k-TKO" secondAttribute="trailing" constant="12" id="Z2v-pv-LdA"/>
+                <constraint firstItem="JYQ-dE-IfZ" firstAttribute="centerX" secondItem="ktp-NT-s9k" secondAttribute="centerX" id="l7L-F1-XaE"/>
+                <constraint firstItem="JYQ-dE-IfZ" firstAttribute="top" secondItem="PT8-4k-TKO" secondAttribute="bottom" constant="9" id="qgn-ng-Iti"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btnViewEvidence" destination="6yD-b3-Yqk" id="AWh-FD-Kc3"/>
+                <outlet property="lblText" destination="PT8-4k-TKO" id="8Of-WR-wr6"/>
+            </connections>
+            <point key="canvasLocation" x="760" y="111.0944527736132"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="AppTintColor">
+            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -25,14 +25,19 @@ class StatusXIb: Cell {
         lblActive.font = font
         lblInactive.font = font
         switch string.lowercased() {
-        case "active", "open", "sold":
+        case "active", "open", "sold", "awarded", "pending":
             lblActive.text = string.capitalized
             lblActive.backgroundColor = .clear
             activeView.isHidden = false
             inactiveView.isHidden = true
-        case "closed":
-            lblActive.text = "Closed"
+        case "closed", "expired", "rejected":
+            lblActive.text = string.capitalized
             lblActive.backgroundColor = .red
+            activeView.isHidden = false
+            inactiveView.isHidden = true
+        case "terminated", "recieved":
+            lblActive.text = string.capitalized
+            lblActive.backgroundColor = inactiveView.backgroundColor
             activeView.isHidden = false
             inactiveView.isHidden = true
         default:

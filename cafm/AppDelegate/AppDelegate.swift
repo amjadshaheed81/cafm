@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared().isEnabled = true
         HIChartView.preload()
         setNavigationBarAppearance()
-        
+        UILabel.appearance(whenContainedInInstancesOf: [CalendarSegment.self]).numberOfLines = 0
         return true
     }
 

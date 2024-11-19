@@ -2,27 +2,42 @@
 //  SiteDocumnetsVC.swift
 //  cafm
 //
+//
 //  Created by ShitaRam on 30/08/24.
 //
 
 import UIKit
 import SpreadsheetView
 import SCLAlertView
+import Photos
 
-class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SpreadsheetViewDataSource, SpreadsheetViewDelegate {
+class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SpreadsheetViewDataSource, SpreadsheetViewDelegate, UISearchBarDelegate, UITextFieldDelegate {
         
     @IBOutlet weak var clView: UICollectionView!
     
     @IBOutlet weak var heightOfCollectionView: NSLayoutConstraint!
     
     @IBOutlet weak var viewSpreadsView: SpreadsheetView!
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var loadingStatus: LoadingStatus = .loading
     
     struct FolderCollectonModel {
-        let name: String
+        var name: String
         let id: Int
     }
     
+    //search postcode setup
+    var tableView: CustomTableView?
+    var overlayView: UIView!
+    var filteredArray: [File] = []
+    var keyBoardHeight: CGFloat = 0.0
+    
+    let userRole: UserEnum = UserDefaults.standard.userRole
+    
+    var fromCalenderID: Int?
+
     var folderCollection: [FolderCollectonModel] = [] {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -30,21 +45,25 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 self.heightOfCollectionView.constant = self.folderCollection.count == 1 ? 0 : 50
                 self.clView.isHidden = self.folderCollection.count == 1 ? true : false
                 self.clView.reloadData()
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.2) { [weak self] in
+                    guard let self else {return}
+                    self.clView.scrollToItem(at: IndexPath(row: self.folderCollection.count-1, section: 0), at: .centeredHorizontally, animated: true)
+                }
             }
         }
     }
     
     var headerRow: [String] = ["Document Name", "Uploader", "Issue Date", "Expiry Date", "Source", "Actions"]
     
-    let homeFolder = [
-        Folder(id: 1, name: "Statutory Documents", required: false, status: ""),
-        Folder(id: 2, name: "Occupation H&S policies", required: false, status: ""),
-        Folder(id: 3, name: "Mechanical O&M Manuals", required: false, status: ""),
-        Folder(id: 4, name: "others", required: false, status: ""),
-        Folder(id: 5, name: "Building Report", required: false, status: ""),
-        Folder(id: 6, name: "Electrical O&M Manuals", required: false, status: ""),
-        Folder(id: 7, name: "Log Book", required: false, status: ""),
-    ]
+    var homeFolder = [ParentFolder]()//[
+//        Folder(id: 1, name: "Statutory Documents", required: false, status: ""),
+//        Folder(id: 2, name: "Occupation H&S policies", required: false, status: ""),
+//        Folder(id: 3, name: "Mechanical O&M Manuals", required: false, status: ""),
+//        Folder(id: 4, name: "others", required: false, status: ""),
+//        Folder(id: 5, name: "Building Report", required: false, status: ""),
+//        Folder(id: 6, name: "Electrical O&M Manuals", required: false, status: ""),
+//        Folder(id: 7, name: "Log Book", required: false, status: ""),
+//    ]
     
     var isDataNotRecive : Bool {
         return (loadingStatus == .loading || loadingStatus == .failed || loadingStatus == .noResponse || loadingStatus == .noInternet)
@@ -56,6 +75,9 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         super.viewDidLoad()
         clView.delegate = self
         clView.dataSource = self
+        searchBar.delegate = self
+        searchBar.searchTextField.delegate = self
+        setUpOverlayImage()
         self.title = "Document Management"
         viewSpreadsView.register(UINib(nibName: String(describing: FolderViewXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: FolderViewXib.self))
         viewSpreadsView.register(UINib(nibName: String(describing: FolderViewImgXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: FolderViewImgXib.self))
@@ -64,11 +86,315 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         viewSpreadsView.bounces = false
         viewSpreadsView.dataSource = self
         viewSpreadsView.delegate = self
-        setupHomeFolder()
+//        setupHomeFolder()
+        getParentFoldersFromSiteId()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    func getParentFoldersFromSiteId() {
+        loadingStatus = .loading
+        folderCollection = [FolderCollectonModel(name: "Documents", id: 0)]
+        viewSpreadsView.reloadData()
+
+        guard let siteID = UserConstants.shared.selectedSiteID else {
+            self.loadingStatus = .failed
+            return
+        }
+        let apiService = ApiService.documentSiteParentFoldersAPI(siteId: siteID)
+        
+        self.loadingStatus = .loading
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<ParentFoldersResponse>, Error>) in
+            guard let self else { return }
+            switch result {
+            case .success(let mappableResult):
+                switch mappableResult {
+                case .single(let single):
+                    self.homeFolder = single.parentFolders ?? []
+                    self.loadingStatus = self.homeFolder.isEmpty ? .noResponse : .default
+                    setupHomeFolder()
+                    if let id = fromCalenderID {
+                        self.folderCollection.append(FolderCollectonModel(name: "", id: id))
+                        self.fetchData(id: id)
+                    }
+                case .array:
+                    if fromCalenderID != nil {
+                        fromCalenderID = nil
+                    }
+                    self.loadingStatus = .failed
+                    break
+                }
+            case .failure(let error):
+                print(apiService.api(), "Error:", error.localizedDescription)
+                if fromCalenderID != nil {
+                    fromCalenderID = nil
+                }
+                self.loadingStatus = .failed
+            }
+        }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string).trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if searchBar.searchTextField == textField {
+            createSitePostCode = updatedText
+            let searchText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
+            // API Call to update filteredArray
+            searchResultAPI(with: searchText) { [weak self] newResults in
+                guard let self = self else { return }
+                self.filteredArray = []
+                self.filteredArray = newResults
+                self.updateTableView(below: textField)
+            }
+        }
+        return true
+    }
+    
+    func setUpOverlayImage() {
+        self.overlayView = UIView(frame: self.view.bounds)
+        self.overlayView.backgroundColor = .clear
+        self.overlayView.isHidden = true // Initially hidden
+        self.view.addSubview(self.overlayView)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideTableView))
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(hideTableView))
+        self.overlayView.addGestureRecognizer(panGesture)
+        self.overlayView.addGestureRecognizer(tapGesture)
+    }
+
+    
+    func searchResultAPI(with query: String, completion: @escaping ([File]) -> Void) {
+        let apiService = ApiService.searchApiForDocumnet(query: query)
+        
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<Document>, Error>) in
+            switch result {
+            case .success(let responseResult):
+                if case .single(let responseResult) = responseResult {
+                    guard let self = self else { return }
+                    return completion(responseResult.files ?? [])
+                }
+            case .failure(let error):
+                self?.filteredArray = []
+                print("Error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        self.hideTableView()
+    }
+    
+    func showTableView() {
+        self.overlayView.isHidden = false
+        self.tableView?.isHidden = false
+    }
+    
+    @objc func hideTableView() {
+        self.overlayView.isHidden = true
+        self.tableView?.isHidden = true
+        self.tableView?.hideTableView()
+    }
+    
+    func updateTableView(below textField: UITextField) {
+        showTableView()
+        if self.tableView == nil {
+            self.tableView = CustomTableView()
+            self.tableView?.type = .documnetGuide
+        }
+        
+        // Safely find the cell containing the text field
+        let textFieldFrame = textField.convert(textField.bounds, to: view)
+        
+        // Calculate available space below and above the text field
+        let availableSpaceBelowTextField = view.frame.height - keyBoardHeight - textFieldFrame.maxY - 10 // Padding of 10
+        let availableSpaceAboveTextField = textFieldFrame.minY - 10 // Padding of 10
+        
+        // Calculate the desired height for the tableView
+        let desiredTableViewHeight = CGFloat(filteredArray.count > 5 ? (5 * 40) + 20 : filteredArray.count * 40)
+        
+        // Determine whether to show the table view below or above the text field
+        if desiredTableViewHeight <= availableSpaceBelowTextField {
+            // Show the tableView below the text field
+            self.tableView?.frame = CGRect(x: textFieldFrame.minX,
+                                           y: textFieldFrame.maxY + 5, // Small gap below the text field
+                                           width: textFieldFrame.width,
+                                           height: desiredTableViewHeight)
+        } else if desiredTableViewHeight <= availableSpaceAboveTextField {
+            // Show the tableView above the text field
+            self.tableView?.frame = CGRect(x: textFieldFrame.minX,
+                                           y: textFieldFrame.minY - desiredTableViewHeight - 5, // Small gap above the text field
+                                           width: textFieldFrame.width,
+                                           height: desiredTableViewHeight)
+        } else {
+            // Show the tableView with maximum available space below or above
+            if availableSpaceBelowTextField >= availableSpaceAboveTextField {
+                // Show the tableView below, but limit its height to the available space
+                let tableViewHeight = min(desiredTableViewHeight, availableSpaceBelowTextField)
+                self.tableView?.frame = CGRect(x: textFieldFrame.minX,
+                                               y: textFieldFrame.maxY + 5,
+                                               width: textFieldFrame.width,
+                                               height: tableViewHeight)
+            } else {
+                // Show the tableView above, but limit its height to the available space
+                let tableViewHeight = min(desiredTableViewHeight, availableSpaceAboveTextField)
+                self.tableView?.frame = CGRect(x: textFieldFrame.minX,
+                                               y: textFieldFrame.minY - tableViewHeight - 5,
+                                               width: textFieldFrame.width,
+                                               height: tableViewHeight)
+            }
+        }
+        
+        self.tableView?.isHidden = filteredArray.isEmpty
+        self.tableView?.documentFilter = filteredArray
+        self.tableView?.showTableView(with: filteredArray)
+        view.addSubview(self.tableView!)
+        
+        self.tableView?.didSelectItem = { selectedItem in
+            print("Selected item: \(selectedItem)")
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+                if let urlString = (selectedItem as? File)?.fileBlobUrl, let url = URL(string: urlString) , let name = (selectedItem as? File)?.name {
+                    self.downloadImageOrFile(from: url, name: name) { isSucess in
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    func downloadImageOrFile(from url: URL,name: String,completion: @escaping (_ isSuccess: Bool) -> Void) {
+        // Create a URLSession data task to download the file
+        let appearance = SCLAlertView.SCLAppearance(
+            showCloseButton: false // if you dont want the close button use false
+        )
+        let sclAlert = SCLAlertView(appearance: appearance)
+        sclAlert.showWait("", subTitle: "please wait...", closeButtonTitle: "")
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            // Check for any errors
+            DispatchQueue.main.async { [weak self] in
+                sclAlert.hideView()
+                guard let self else {return}
+                if let error = error {
+                    SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                    print("Error downloading file: \(error)")
+                    completion(false)
+                    return
+                }
+                
+                // Check if the response is valid and data is received
+                guard let data = data else {
+                    SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                    print("Failed to receive data")
+                    completion(false)
+                    return
+                }
+                
+                // Try to convert the data to a UIImage
+                if let image = UIImage(data: data) {
+                    // Image case: Save to Photos library
+                    self.saveImageToPhotos(image) { isSuccess in
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self else {return}
+                            if isSuccess {
+                                SCLAlertView().showSuccess("", subTitle: "Image saved to Photos library successfully.")
+                            }else {
+                                SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                            }
+                        }
+                        completion(isSuccess)
+                    }
+                } else {
+                    // Non-image file case: Save to documents directory
+                    self.saveFileToDocuments(data: data, fileName: name) { fileURL in
+                        if let fileURL = fileURL {
+                            // Open share activity for the saved file
+                            DispatchQueue.main.async {
+                                self.presentShareSheet(fileURL: fileURL)
+                            }
+                            completion(true)
+                        } else {
+                            DispatchQueue.main.async { [weak self] in
+                                guard let self else {return}
+                                SCLAlertView().showError("Error", subTitle: "Oops! please try again")
+                            }
+                            completion(false)
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        // Start the download task
+        task.resume()
+    }
+    
+    func saveImageToPhotos(_ image: UIImage, completion: @escaping (_ isSuccess: Bool) -> Void) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        }) { success, error in
+            if success {
+                print("Image saved to Photos library successfully.")
+            } else {
+                print("Error saving image to Photos: \(String(describing: error))")
+            }
+            completion(success)
+        }
+    }
+
+    // Save file to local documents directory
+    func saveFileToDocuments(data: Data, fileName: String, completion: @escaping (URL?) -> Void) {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fileURL = documentsURL?.appendingPathComponent(fileName)
+        
+        do {
+            try data.write(to: fileURL!)
+            print("File saved to: \(fileURL!)")
+            completion(fileURL)
+        } catch {
+            print("Error saving file to documents: \(error)")
+            completion(nil)
+        }
+    }
+
+    // Present the share sheet for the file
+    func presentShareSheet(fileURL: URL) {
+        let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // iPad-specific popover configuration
+            if let popoverController = activityViewController.popoverPresentationController {
+                popoverController.sourceView = self.view // Provide the view where the popover will appear
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            
+            // Present the activity view controller
+            self.present(activityViewController, animated: true)
+        }
+    }
+
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        
+        self.keyBoardHeight = keyboardFrame.cgRectValue.height
+        globalKeyBoradHeight = self.keyBoardHeight
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.keyBoardHeight = 0.0
+    }
+
+    
     func setupHomeFolder() {
-        loadingStatus = .default
+        self.loadingStatus = self.homeFolder.isEmpty ? .noResponse : .default
         folderCollection = [FolderCollectonModel(name: "Documents", id: 0)]
         viewSpreadsView.reloadData()
     }
@@ -83,12 +409,27 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 if case .single(let documentResponse) = responseResult {
                     DispatchQueue.main.async {
                         guard let self = self else { return }
+                        if let name = documentResponse.document?.name, self.fromCalenderID != nil {
+                            self.folderCollection[self.folderCollection.count-1].name = name
+                            self.fromCalenderID = nil
+                        }
                         self.subFolderDetails = documentResponse
                         self.loadingStatus = (self.subFolderDetails?.document?.childFolders?.isEmpty ?? false) && (self.subFolderDetails?.document?.files?.isEmpty ?? false) ? .noResponse : .default
                         self.reloadCollection()
                     }
+                }else {
+                    if self?.fromCalenderID != nil  {
+                        self?.folderCollection.removeLast()
+                        self?.fromCalenderID = nil
+                        self?.setupHomeFolder()
+                    }
                 }
             case .failure(let error):
+                if self?.fromCalenderID != nil  {
+                    self?.folderCollection.removeLast()
+                    self?.fromCalenderID = nil
+                    self?.setupHomeFolder()
+                }
                 print("Error: \(error.localizedDescription)")
                 self?.loadingStatus = .failed
                 self?.reloadCollection()
@@ -194,14 +535,22 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         switch self.loadingStatus {
         case .default:
             if folderCollection.count == 1 {
-                return homeFolder.count+1
+                if homeFolder.isEmpty {
+                    return 1+1
+                }else {
+                    return homeFolder.count+1
+                }
             }else {
                 let folderCount = self.subFolderDetails?.document?.childFolders?.count ?? 0
                 let documentCount = self.subFolderDetails?.document?.files?.count ?? 0
                 return 1+1+folderCount+documentCount
             }
         case .loading, .failed, .noResponse, .noInternet:
-            return 1+1+1
+            if folderCollection.count == 1 {
+                return 1+1
+            }else {
+                return 1+1+1
+            }
         }
     }
     
@@ -377,6 +726,16 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             cell.lblText.text = headerRow[indexPath.section]
             return cell
         }else if indexPath.row == 1 && isDataNotRecive {
+            if folderCollection.count == 1 {
+                let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: "CellTextXib", for: indexPath) as! CellTextXib
+                cellBorderSetUp(cell: cell, isHeader: false)
+                cell.lblText.addCorner(value: 0)
+                cell.lblText.font = UIFont(name: .MontserratRegular, size: textFontSize)
+                cell.lblText.textColor = UIColor.black
+                cell.lblText.backgroundColor = UIColor.clear
+                cell.lblText.text = loadingStatus.rawValue
+                return cell
+            }
             switch indexPath.column {
             case 0:
                 let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: "FolderViewXib", for: indexPath) as! FolderViewXib
@@ -492,10 +851,14 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                     cell.btnFolder.addAction { [weak self] in
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { return }
-                            let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
+                            //let vc = documnetSB.instantiateViewController(withIdentifier: "FilePreviewVC") as! FilePreviewVC
                             let urlString = self.subFolderDetails?.document?.files?[convertRow].fileBlobUrl ?? ""
-                            vc.url = URL(string: urlString)
-                            self.present(vc, animated: true)
+                            //vc.url = URL(string: urlString)
+                            //self.present(vc, animated: true)
+                            let vc = generalSB.instantiateViewController(withIdentifier: "FileViewVC") as! FileViewVC
+                            vc.fileURL = URL(string: urlString)
+                            let nav = UINavigationController(rootViewController: vc)
+                            self.present(nav, animated: true)
                         }
                     }
                     return cell
@@ -538,6 +901,10 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: "MoreEditOption", for: indexPath) as! MoreEditOption
                 cellBorderSetUp(cell: cell, isHeader: false)
                 cell.btnAction.showsMenuAsPrimaryAction = true
+                if !(userRole == .admin || userRole == .manager) {
+                    cell.imgView.isHidden = true
+                    return cell
+                }
                 if indexPath.row == 1 {
                     let goBackAction = UIAction(title: "Go back", image: UIImage(systemName: "arrow.left")) { [weak self] _ in
                         guard let self else {return}
@@ -733,12 +1100,25 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                         }
                     }
                     
-                    let copyAction = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { action in
+                    let copyAction = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { [weak self] action in
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self else {return}
+                            let vc = documnetSB.instantiateViewController(withIdentifier: "FileCopyMoveActionVC") as! FileCopyMoveActionVC
+                            vc.selectedFile = self.subFolderDetails?.document?.files?[convertRow]
+                            self.present(vc, animated: true)
+                        }
                         print("Copy tapped")
                     }
                     
-                    let moveAction = UIAction(title: "Move", image: UIImage(systemName: "folder")) { action in
-                        print("Move tapped")
+                    let moveAction = UIAction(title: "Move", image: UIImage(systemName: "folder")) { [weak self] action in
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self else {return}
+                            let vc = documnetSB.instantiateViewController(withIdentifier: "FileCopyMoveActionVC") as! FileCopyMoveActionVC
+                            vc.selectedFile = self.subFolderDetails?.document?.files?[convertRow]
+                            vc.actionType = .move
+                            self.present(vc, animated: true)
+                        }
+                        print("Copy tapped")
                     }
                     
                     // Create a UIMenu with the actions
@@ -769,13 +1149,18 @@ class DocumnetsVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             return []
         case .loading, .failed, .noResponse, .noInternet:
             let totalColumn = self.headerRow.count
+            if folderCollection.count == 1 {
+                return [CellRange(from: IndexPath(row: 1, column: 0), to: IndexPath(row: 1, column: totalColumn-1))]
+            }
             return [CellRange(from: IndexPath(row: 2, column: 0), to: IndexPath(row: 2, column: totalColumn-1))]
         }
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, didSelectItemAt indexPath: IndexPath) {
         if (loadingStatus == .noInternet || loadingStatus == .failed) {
-            if let id = folderCollection.last?.id {
+            if folderCollection.count == 1 {
+                self.getParentFoldersFromSiteId()
+            }else if let id = folderCollection.last?.id {
                 self.fetchData(id: id)
             }
         }

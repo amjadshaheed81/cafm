@@ -7,64 +7,80 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "45B7CAFE-5F48-40A1-B0DE-671E382ABAB7"
+            uuid = "79455829-F5F6-4E20-B222-E63148A5BB5A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "cafm/Controller/Home/Sites/SiteBasicDetailVC.swift"
+            filePath = "cafm/Controller/SiteContracts/CreateContractsVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1385"
-            endingLineNumber = "1385"
-            landmarkName = "collectionView(_:cellForItemAt:)"
+            startingLineNumber = "2119"
+            endingLineNumber = "2119"
+            landmarkName = "textFieldDidEndEditing(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "572EDAD4-5370-4FE1-B75C-30DB3A1232AC"
+            uuid = "240EC50C-AD00-486F-9A79-E4E225428D7C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "cafm/Controller/Home/Sites/SiteBasicDetailVC.swift"
+            filePath = "cafm/Controller/SiteContracts/CreateContractsVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1975"
-            endingLineNumber = "1975"
-            landmarkName = "setUpDropDownMenu()"
+            startingLineNumber = "2085"
+            endingLineNumber = "2085"
+            landmarkName = "textFieldDidBeginEditing(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A1573817-24FD-4232-A447-F0C1092DB4E0"
+            uuid = "7288D12D-99D3-4C9C-A28E-C23F81816AB7"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "cafm/Controller/Home/Sites/SiteBasicDetailVC.swift"
+            filePath = "cafm/Controller/SiteContracts/CreateContractsVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1981"
-            endingLineNumber = "1981"
-            landmarkName = "setUpDropDownMenu()"
+            startingLineNumber = "2076"
+            endingLineNumber = "2076"
+            landmarkName = "textFieldShouldEndEditing(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0CE6E79D-C6B4-4264-B908-6C47857413A3"
+            uuid = "2BE66817-0B2A-49DC-A53B-7A9A397DC707"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "cafm/Controller/Home/Sites/SiteBasicDetailVC.swift"
+            filePath = "cafm/Controller/SiteContracts/CreateContractsVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1973"
-            endingLineNumber = "1973"
-            landmarkName = "setUpDropDownMenu()"
+            startingLineNumber = "2063"
+            endingLineNumber = "2063"
+            landmarkName = "textFieldShouldBeginEditing(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0BA7FE91-BD0B-41E7-AE36-93B361A2A195"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "cafm/Controller/SiteContracts/CreateContractsVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2272"
+            endingLineNumber = "2272"
+            landmarkName = "loadAssetDetail()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

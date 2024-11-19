@@ -14,7 +14,7 @@ class HomeVC: UIViewController, UITabBarDelegate {
     @IBOutlet weak var tabBar: UITabBar!
     
     weak var vc1: DashboardVC!
-    weak var vc2: EventCalendarVC!
+    weak var vc2: EventCalendarContainerVC!
     
     var selectedTabIndex: Int = 1
     
@@ -45,7 +45,9 @@ class HomeVC: UIViewController, UITabBarDelegate {
     }
     
     @objc func navNotificationBtnClicked(_ sender: UIBarButtonItem) {
-        
+        //TODO: RK - Open Notification Screen
+        let vc = notificationSB.instantiateViewController(withIdentifier: "NotificationListVC") as! NotificationListVC
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func navLogOutBtnClicked(_ sender: UIBarButtonItem) {
@@ -80,7 +82,7 @@ class HomeVC: UIViewController, UITabBarDelegate {
         case 2:
             self.selectedTabIndex = index
             if vc2 == nil {
-                self.vc2 = generalSB.instantiateViewController(withIdentifier: "EventCalendarVC") as? EventCalendarVC
+                self.vc2 = generalSB.instantiateViewController(withIdentifier: "EventCalendarContainerVC") as? EventCalendarContainerVC
                 add(childVC: self.vc2, to: self.containerView)
                 self.vc2.view.isHidden = true
             }

@@ -7,6 +7,18 @@
 
 import UIKit
 
+let isNeedLogOutKey = "isNeedLogOutForPro"
+var isNeedLogOut: Bool {
+    get {
+        if UserDefaults.standard.value(forKey: isNeedLogOutKey) == nil {
+            return true
+        }
+        return false
+    }set {
+        UserDefaults.standard.setValue(false, forKey: isNeedLogOutKey)
+    }
+}
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
@@ -20,6 +32,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Instantiate the storyboard and the view controller
         let vc: UIViewController
+        if isNeedLogOut {
+            isNeedLogOut = false
+            userEmailId = nil
+            userPassword = nil
+            jwtToken = nil
+            sasToken = nil
+        }
         if userEmailId == nil, userPassword == nil {
             vc = loginSB.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         }else {

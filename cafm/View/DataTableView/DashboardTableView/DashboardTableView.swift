@@ -24,7 +24,6 @@ class DashboardTableView: NibView {
     
     var tableData: [DashboardTableData] = []
     var loadingStatus: LoadingStatus = .default
-    var isViewAll: Bool = false
     
     var title: String? {
         get {
@@ -48,13 +47,14 @@ class DashboardTableView: NibView {
         //self.spreadsheetView.gridStyle = .solid(width: 1, color: UIColor(appColor: .Separator2))
         
         self.spreadsheetView.register(UINib(nibName: DashboardTableCell.className(), bundle: nil), forCellWithReuseIdentifier: DashboardTableCell.className())
+        self.spreadsheetView.register(UINib(nibName: BadgeLabelCell.className(), bundle: nil), forCellWithReuseIdentifier: BadgeLabelCell.className())
         self.spreadsheetView.dataSource = self
         self.spreadsheetView.delegate = self
     }
     
     func reloadSpreadsheetView() {
         self.spreadsheetView.reloadData()
-        self.viewAllBtn.isHidden = !self.loadingStatus.hasData
+        //self.viewAllBtn.isHidden = !self.loadingStatus.hasData
         let spreadsheetSize = self.spreadsheetView.contentSize
         let width = min(self.frame.width-20, spreadsheetSize.width)
         self.spreadsheetViewWidth.constant = width
@@ -82,7 +82,7 @@ extension DashboardTableView: SpreadsheetViewDataSource, SpreadsheetViewDelegate
                 if totalRow == 0 {
                     return 1+1
                 }
-                return self.isViewAll ? max(5, totalRow)+1 : 5+1
+                return min(5, totalRow)+1
             }
             return 0
         case .loading, .failed, .noResponse, .noInternet:
@@ -91,64 +91,69 @@ extension DashboardTableView: SpreadsheetViewDataSource, SpreadsheetViewDelegate
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, cellForItemAt indexPath: IndexPath) -> Cell? {
-        let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
-        if self.tableData.count > indexPath.section {
-            let item = self.tableData[indexPath.section]
+        let column = indexPath.section
+        if self.tableData.count > column {
+            let item = self.tableData[column]
             if indexPath.row == 0 {
+                let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
                 cell.setGridLines(width: 1, color: UIColor(appColor: .AppTint))
-                
                 cell.backgroundColor = UIColor(appColor: .AppTint)
-                cell.mainLbl.addCorner(value: 0)
                 cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
                 cell.mainLbl.textColor = UIColor.white
-                cell.mainLbl.backgroundColor = UIColor.clear
                 
                 cell.mainLbl.text = item.columnHeaderText
-            }else {
+                return cell
+            }else if !self.loadingStatus.hasData {
+                let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
                 cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
-                
                 cell.backgroundColor = UIColor.white
-                cell.mainLbl.addCorner(value: 0)
                 cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
                 cell.mainLbl.textColor = UIColor.black
-                cell.mainLbl.backgroundColor = UIColor.clear
                 
-                switch self.loadingStatus {
-                case .default:
-                    let index = indexPath.row-1
-                    if item.columnData.count > index {
-                        let cellItem = item.columnData[index]
-                        cell.mainLbl.text = cellItem.text
+                cell.mainLbl.text = self.loadingStatus.rawValue
+                return cell
+            }else {
+                let index = indexPath.row-1
+                if item.columnData.count > index {
+                    let cellItem = item.columnData[index]
+                    if item.isStatusData {
+                        let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: BadgeLabelCell.className(), for: indexPath) as! BadgeLabelCell
+                        cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
+                        cell.backgroundColor = UIColor.white
+                        cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
+                        cell.badgeView.addCorner(value: 5)
+                        cell.badgeView.backgroundColor = cellItem.textBGColor ?? UIColor(appColor: .AppTintBG)
+                        cell.mainLbl.textColor = cellItem.textColor ?? UIColor(appColor: .AppTint)
                         
-                        if item.isStatusData {
-                            cell.mainLbl.addCorner()
-                            cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
-                            cell.mainLbl.textColor = cellItem.textColor ?? UIColor.black
-                            cell.mainLbl.backgroundColor = cellItem.textBGColor ?? UIColor.clear
-                        }
+                        cell.mainLbl.text = cellItem.text
+                        return cell
                     }else {
-                        cell.mainLbl.text = ""
+                        let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
+                        cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
+                        cell.backgroundColor = UIColor.white
+                        cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
+                        cell.mainLbl.textColor = UIColor.black
+                        
+                        cell.mainLbl.text = cellItem.text
+                        return cell
                     }
-                case .loading, .failed, .noResponse, .noInternet:
-                    cell.mainLbl.text = self.loadingStatus.rawValue
                 }
             }
         }
+        let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
+        cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
+        cell.backgroundColor = UIColor.white
+        cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
+        cell.mainLbl.textColor = UIColor.black
+        cell.mainLbl.text = ""
         return cell
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, didSelectItemAt indexPath: IndexPath) {
-        if self.tableData.count > indexPath.section {
-            let item = self.tableData[indexPath.section]
-            if indexPath.row == 0 {
-            }else {
-                switch self.loadingStatus {
-                case .default:
-                    break
-                case .loading, .failed, .noResponse, .noInternet:
-                    self.delegate?.dashboardTableViewDidTapForRetry(self, status: self.loadingStatus)
-                    break
-                }
+        if indexPath.row == 0 {
+        }else {
+            if !self.loadingStatus.hasData {
+                self.delegate?.dashboardTableViewDidTapForRetry(self, status: self.loadingStatus)
             }
         }
     }

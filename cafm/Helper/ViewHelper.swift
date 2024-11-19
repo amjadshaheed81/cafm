@@ -35,3 +35,12 @@ func addBorderToView(_ view: UIView, width: CGFloat = 1, color: UIColor = UIColo
     view.layer.borderColor = color.cgColor
     view.clipsToBounds = true
 }
+
+//MARK: - Shadow
+func addShadowToView(_ view: UIView, color: UIColor = .darkGray, opacity: Float = 1, offset: CGSize = .zero, radius: CGFloat = 3) {
+    view.layer.shadowColor = color.cgColor
+    view.layer.shadowOpacity = opacity
+    view.layer.shadowOffset = offset
+    view.layer.shadowRadius = radius
+    view.clipsToBounds = false
+}

@@ -40,6 +40,8 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="btnAction" destination="OGV-sq-O3N" id="z6N-5v-rO1"/>
+                <outlet property="imgView" destination="BzH-vo-Dd5" id="bxj-9C-Ftg"/>
+                <outlet property="moreIconImgWidthCons" destination="MWZ-nM-nR3" id="EUg-9V-erJ"/>
             </connections>
             <point key="canvasLocation" x="194.0625" y="236.09154929577466"/>
         </view>

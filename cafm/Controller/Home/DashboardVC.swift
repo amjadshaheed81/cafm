@@ -23,8 +23,11 @@ class DashboardVC: UIViewController {
     @IBOutlet weak var siteSelectionSwitch: UISwitch!
     @IBOutlet weak var selectedSiteSwitchLbl: UILabel!
     @IBOutlet weak var siteImageView: UIImageView!
+    @IBOutlet weak var siteImageViewWidth: NSLayoutConstraint!
+    @IBOutlet weak var siteImageViewHeight: NSLayoutConstraint!
     @IBOutlet weak var siteNameLbl: UILabel!
     
+    @IBOutlet weak var riskScorecardTitleLbl: DefaultFontLabel!
     @IBOutlet weak var riskScorecardView: UIView!
     @IBOutlet weak var riskScorecardChartContainerView: UIView!
     
@@ -42,10 +45,48 @@ class DashboardVC: UIViewController {
     let loadingSCLAlertView = SCLAlertView(appearance: loadingSCLAppearance)
     let userRole: UserEnum = UserDefaults.standard.userRole
     
-    var selectedSite: SiteModel? {
+    var selectedSite: CreateSiteRequestModel? {
         didSet {
             UserConstants.shared.selectedSiteID = self.selectedSite?.siteId
             self.siteNameLbl.text = selectedSite?.siteName
+            if let siteImageUrl = selectedSite?.siteImageUrl {
+                self.siteImageView.sd_setImage(with: URL(string: siteImageUrl), placeholderImage: UIImage(systemName: "person.circle.fill")) { [weak self] image, error, cache, url in
+                    guard let self else { return }
+                    if let image {
+                        let size = image.size
+                        let maxHeight: CGFloat = 52
+                        let maxWidth: CGFloat = 52
+                        
+                        var imageHeight: CGFloat = maxHeight
+                        var imageWidth: CGFloat = maxWidth
+                        if size.height > size.width {
+                            imageHeight = maxHeight
+                            imageWidth = size.width*(imageHeight/size.height)
+                            self.siteImageView.addCorner(value: imageWidth/2)
+                        }else {
+                            imageHeight = maxHeight
+                            imageWidth = size.width*(imageHeight/size.height)
+                            if imageWidth > maxWidth {
+                                imageWidth = maxWidth
+                                imageHeight = size.height*(imageWidth/size.width)
+                            }
+                            self.siteImageView.addCorner(value: imageHeight/2)
+                        }
+                        self.siteImageViewWidth.constant = imageWidth
+                        self.siteImageViewHeight.constant = imageHeight
+                        self.siteImageView.frame.size = CGSize(width: self.siteImageViewWidth.constant, height: self.siteImageViewHeight.constant)
+                    }else {
+                        self.siteImageViewWidth.constant = 32
+                        self.siteImageViewHeight.constant = 32
+                        self.siteImageView.frame.size = CGSize(width: self.siteImageViewWidth.constant, height: self.siteImageViewHeight.constant)
+                    }
+                }
+            }else {
+                self.siteImageView.image = UIImage(systemName: "person.circle.fill")
+                self.siteImageViewWidth.constant = 32
+                self.siteImageViewHeight.constant = 32
+                self.siteImageView.frame.size = CGSize(width: self.siteImageViewWidth.constant, height: self.siteImageViewHeight.constant)
+            }
             self.setupFromSiteID()
         }
     }
@@ -63,6 +104,8 @@ class DashboardVC: UIViewController {
         }
     }
     
+    let userConstants = UserConstants.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
@@ -79,10 +122,10 @@ class DashboardVC: UIViewController {
     }
     
     func getAllSites() {
-        let apiService = ApiService.siteAllDetails
+        let apiService = ApiService.siteAllDetails(sort: "asc", sortName: "siteName")
         
         self.loadingStatus = .loading
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
@@ -101,14 +144,14 @@ class DashboardVC: UIViewController {
         }
     }
     
-    func getUserDetails(sites: [SiteModel]) {
+    func getUserDetails(sites: [CreateSiteRequestModel]) {
         guard let userID = UserConstants.shared.currentUserID else {
             self.loadingStatus = .failed
             return
         }
         let apiService = ApiService.userDetailsAPI(userId: userID)
         
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<UserModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<User>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
@@ -143,17 +186,23 @@ class DashboardVC: UIViewController {
     }
     
     func setupRiskScorecardView() {
+        var titleStr = "Risk Scorecard"
+        if let siteName = userConstants.selectedSiteName {
+            titleStr += " - \(siteName)"
+        }
+        self.riskScorecardTitleLbl.text = titleStr
+        
         let view: UIView! = self.riskScorecardChartContainerView
         guard let siteID = UserConstants.shared.selectedSiteID else {
             return
         }
-        let apiService = ApiService.siteCheckSiteAPI(siteId: siteID)
+        let apiService = ApiService.siteActionsAPI(siteId: siteID)
         
         view.isSkeletonable = true
         let animation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topLeftBottomRight)
         view.showAnimatedGradientSkeleton(usingGradient: SkeletonGradient(baseColor: UIColor.clouds, secondaryColor: UIColor.silver), animation: animation)
         
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteCheckModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<ActionModel>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
@@ -172,20 +221,22 @@ class DashboardVC: UIViewController {
         }
     }
     
-    func setupRiskScorecardChart(_ array: [SiteCheckModel]) {
+    func setupRiskScorecardChart(_ array: [ActionModel]) {
         let view: UIView! = self.riskScorecardChartContainerView
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        let redScore = array.compactMap { $0.riskScoreRed }.reduce(0, +)
-        let amberScore = array.compactMap { $0.riskScoreAmber }.reduce(0, +)
-        let yellowScore = array.compactMap { $0.riskScoreYellow }.reduce(0, +)
-        let greenScore = array.compactMap { $0.riskScoreGreen }.reduce(0, +)
+        let siteChecks = array.filter { $0.status != .completed }
+        
+        let itemArray = siteChecks.compactMap { $0.riskScore ?? 0 }
+        let greenScore = itemArray.filter { $0 <= 4 }.count
+        let yellowScore = itemArray.filter { $0 > 4 && $0 < 10 }.count
+        let amberScore = itemArray.filter { $0 > 9 && $0 < 17 }.count
+        let redScore = itemArray.filter { $0 > 16 }.count
         
         let chartView = HIChartView(frame: view.bounds)
         chartView.addCorner(value: 12)
         chartView.addBorder(width: 1, color: UIColor(appColor: .Separator2))
         chartView.backgroundColor = UIColor.clear
-        //chartView.plugins = ["variable-pie"]
         
         let options = HIOptions()
         
@@ -201,13 +252,18 @@ class DashboardVC: UIViewController {
         chart.type = "pie"
         
         let title = HITitle()
-        title.text = ""
+        title.text = "\(greenScore+yellowScore+amberScore+redScore) Action"
         options.title = title
         
         let tooltip = HITooltip()
         tooltip.headerFormat = ""
         tooltip.pointFormat = "{point.name}: <b>{point.y}</b>"
         options.tooltip = tooltip
+        
+        let legends = HILegend()
+        legends.itemStyle = HICSSObject()
+        legends.itemStyle.fontSize = isiPadDevice ? "17" : "15"
+        options.legend = legends
         
         let plotOptions = HIPlotOptions()
         plotOptions.pie = HIPie()
@@ -217,7 +273,7 @@ class DashboardVC: UIViewController {
         let dataLabels = HIDataLabels()
         dataLabels.enabled = false
         plotOptions.pie.dataLabels = [dataLabels]
-        plotOptions.pie.showInLegend = false
+        plotOptions.pie.showInLegend = true
         options.plotOptions = plotOptions
         
         let pie = HIPie()
@@ -229,22 +285,22 @@ class DashboardVC: UIViewController {
         pie.borderRadius = borderRadius
         
         let red = HIData()
-        red.name = "Red"
+        red.name = "Very High"
         red.y = NSNumber(integerLiteral: redScore)
         red.color = HIColor(uiColor: UIColor(appColor: .RedRiskScore))
         
         let amber = HIData()
-        amber.name = "Amber"
+        amber.name = "High"
         amber.y = NSNumber(integerLiteral: amberScore)
         amber.color = HIColor(uiColor: UIColor(appColor: .AmberStatus))
         
         let yellow = HIData()
-        yellow.name = "Yellow"
+        yellow.name = "Medium"
         yellow.y = NSNumber(integerLiteral: yellowScore)
         yellow.color = HIColor(uiColor: UIColor(appColor: .YellowRiskScore))
         
         let green = HIData()
-        green.name = "Green"
+        green.name = "Low"
         green.y = NSNumber(integerLiteral: greenScore)
         green.color = HIColor(uiColor: UIColor(appColor: .GreenRiskScore))
         
@@ -268,7 +324,11 @@ class DashboardVC: UIViewController {
     func setupActiveProjectsView() {
         let view: DashboardTableView! = self.activeProjectsView
         view.delegate = self
-        view.title = "Active Projects"
+        var titleStr = "Active Projects"
+        if let siteName = userConstants.selectedSiteName {
+            titleStr += " - \(siteName)"
+        }
+        view.title = titleStr
         
         guard let siteID = UserConstants.shared.selectedSiteID else {
             view.loadingStatus = .failed
@@ -294,10 +354,11 @@ class DashboardVC: UIViewController {
                 switch mappableResult {
                 case .single(let response):
                     if let projectContracts = response.projectContracts {
+                        let projectContracts = [ProjectContract](projectContracts.prefix(5))
                         view.tableData = [
                             DashboardTableData(columnHeaderText: "Project".uppercased(), columnData: projectContracts.compactMap({ $0.summary }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
-                            DashboardTableData(columnHeaderText: "Start Date".uppercased(), columnData: projectContracts.compactMap({ $0.startDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss", newDateFormat: "dd MMM yy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
-                            DashboardTableData(columnHeaderText: "End Date".uppercased(), columnData: projectContracts.compactMap({ $0.endDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss", newDateFormat: "dd MMM yy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                            DashboardTableData(columnHeaderText: "Start Date".uppercased(), columnData: projectContracts.compactMap({ $0.startDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss", newDateFormat: "dd/MM/yyyy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                            DashboardTableData(columnHeaderText: "End Date".uppercased(), columnData: projectContracts.compactMap({ $0.endDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss", newDateFormat: "dd/MM/yyyy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
                             DashboardTableData(columnHeaderText: "Budget".uppercased(), columnData: projectContracts.compactMap({ $0.cost }).compactMap({ "€ \($0)" }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
                         ]
                         if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
@@ -323,7 +384,11 @@ class DashboardVC: UIViewController {
     func setupActionsView() {
         let view: DashboardTableView! = self.actionsView
         view.delegate = self
-        view.title = "Actions"
+        var titleStr = "Actions"
+        if let siteName = userConstants.selectedSiteName {
+            titleStr += " - \(siteName)"
+        }
+        view.title = titleStr
         
         guard let siteID = UserConstants.shared.selectedSiteID else {
             view.loadingStatus = .failed
@@ -350,10 +415,11 @@ class DashboardVC: UIViewController {
                     view.loadingStatus = .failed
                     break
                 case .array(let array):
+                    let array = [ActionModel](array.prefix(5))
                     view.tableData = [
                         DashboardTableData(columnHeaderText: "Type".uppercased(), columnData: array.compactMap({ $0.type }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
                         DashboardTableData(columnHeaderText: "Action".uppercased(), columnData: array.compactMap({ $0.desc }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
-                        DashboardTableData(columnHeaderText: "Status".uppercased(), isStatusData: true, columnData: array.compactMap({ $0.status }).compactMap({ DashboardTableData.ColumnData(text: "  \($0.rawValue)  ", textColor: $0.textColor(), textBGColor: $0.textBGColor()) })),
+                        DashboardTableData(columnHeaderText: "Status".uppercased(), isStatusData: true, columnData: array.compactMap({ $0.status }).compactMap({ DashboardTableData.ColumnData(text: "\($0.rawValue)  ", textColor: $0.textColor(), textBGColor: $0.textBGColor()) })),
                     ]
                     if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
                         view.loadingStatus = .noResponse
@@ -373,7 +439,11 @@ class DashboardVC: UIViewController {
     func setupNotificationsView() {
         let view: DashboardTableView! = self.notificationsView
         view.delegate = self
-        view.title = "Notifications"
+        var titleStr = "Notifications"
+        if let siteName = userConstants.selectedSiteName {
+            titleStr += " - \(siteName)"
+        }
+        view.title = titleStr
         
         guard let siteID = UserConstants.shared.selectedSiteID else {
             view.loadingStatus = .failed
@@ -388,26 +458,55 @@ class DashboardVC: UIViewController {
         view.loadingStatus = .loading
         view.reloadSpreadsheetView()
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2.0) { [weak self] in
-            guard let strongSelf = self else { return }
-            view.tableData = [
-                DashboardTableData(columnHeaderText: "Notification".uppercased(), columnData: []),
-                DashboardTableData(columnHeaderText: "Date".uppercased(), columnData: []),
-            ]
-            if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
-                view.loadingStatus = .noResponse
-            }else {
-                view.loadingStatus = .default
+        let apiService = ApiService.actionSummaryAPI(siteId: siteID)
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<PreActionsResponse>, Error>) in
+            guard self != nil else { return }
+            switch result {
+            case .success(let mappableResult):
+                switch mappableResult {
+                case .single(let single):
+                    if let array = single.preActions?.filter({ $0.status == "Pending Action" || $0.status == "Closed" }) {
+                        let array = [PreAction](array.prefix(5))
+                        view.tableData = [
+                            DashboardTableData(columnHeaderText: "Notification".uppercased(), columnData: array.compactMap({ $0.description }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                            DashboardTableData(columnHeaderText: "Date".uppercased(), columnData: array.compactMap({ $0.raisedDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", newDateFormat: "dd/MM/yyyy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                        ]
+                        if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
+                            view.loadingStatus = .noResponse
+                        }else {
+                            view.loadingStatus = .default
+                        }
+                    }else {
+                        view.loadingStatus = .failed
+                    }
+                    break
+                case .array:
+                    view.loadingStatus = .failed
+                    break
+                }
+            case .failure(let error):
+                print(apiService.api(), "Error:", error.localizedDescription)
+                view.loadingStatus = .failed
             }
             view.reloadSpreadsheetView()
         }
     }
     
     func setupTendersAndQuotesView() {
+        self.tendersAndQuotesViewHeight.constant = 0
+        self.tendersAndQuotesView.frame.size.height = self.tendersAndQuotesViewHeight.constant
+        self.tendersAndQuotesView.isHidden = true
+        
+        return
+        
         let view: DashboardTableView! = self.tendersAndQuotesView
         view.delegate = self
-        view.title = "Tenders & Quotes"
-        
+        var titleStr = "Tenders & Quotes"
+        if let siteName = userConstants.selectedSiteName {
+            titleStr += " - \(siteName)"
+        }
+        view.title = titleStr
+
         guard let siteID = UserConstants.shared.selectedSiteID else {
             view.loadingStatus = .failed
             return
@@ -416,25 +515,41 @@ class DashboardVC: UIViewController {
         // loading with empty data
         view.tableData = [
             DashboardTableData(columnHeaderText: "Tender ID".uppercased(), columnData: []),
-            DashboardTableData(columnHeaderText: "# of Quotes".uppercased(), columnData: []),
             DashboardTableData(columnHeaderText: "End Date".uppercased(), columnData: []),
             DashboardTableData(columnHeaderText: "Status".uppercased(), columnData: []),
         ]
         view.loadingStatus = .loading
         view.reloadSpreadsheetView()
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2.0) { [weak self] in
-            guard let strongSelf = self else { return }
-            view.tableData = [
-                DashboardTableData(columnHeaderText: "Tender ID".uppercased(), columnData: []),
-                DashboardTableData(columnHeaderText: "# of Quotes".uppercased(), columnData: []),
-                DashboardTableData(columnHeaderText: "End Date".uppercased(), columnData: []),
-                DashboardTableData(columnHeaderText: "Status".uppercased(), columnData: []),
-            ]
-            if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
-                view.loadingStatus = .noResponse
-            }else {
-                view.loadingStatus = .default
+        let apiService = ApiService.projectContractsAPI(siteId: siteID)
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<ProjectContractsResponse>, Error>) in
+            guard self != nil else { return }
+            switch result {
+            case .success(let mappableResult):
+                switch mappableResult {
+                case .single(let response):
+                    if let projectContracts = response.projectContracts {
+                        let projectContracts = [ProjectContract](projectContracts.prefix(5))
+                        view.tableData = [
+                            DashboardTableData(columnHeaderText: "Tender ID".uppercased(), columnData: projectContracts.compactMap({ $0.projectContractId?.stringValue }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                            DashboardTableData(columnHeaderText: "End Date".uppercased(), columnData: projectContracts.compactMap({ $0.endDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss", newDateFormat: "dd/MM/yyyy") }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                            DashboardTableData(columnHeaderText: "Status".uppercased(), columnData: projectContracts.compactMap({ $0.status }).compactMap({ DashboardTableData.ColumnData(text: $0) })),
+                        ]
+                        if !view.tableData.isEmpty, view.tableData.max(by: { $0.columnData.count < $1.columnData.count })?.columnData.isEmpty ?? true {
+                            view.loadingStatus = .noResponse
+                        }else {
+                            view.loadingStatus = .default
+                        }
+                    }else {
+                        view.loadingStatus = .failed
+                    }
+                case .array:
+                    view.loadingStatus = .failed
+                    break
+                }
+            case .failure(let error):
+                print(apiService.api(), "Error:", error.localizedDescription)
+                view.loadingStatus = .failed
             }
             view.reloadSpreadsheetView()
         }
@@ -477,8 +592,8 @@ extension DashboardVC: DashboardTableViewDelegate {
             self.notificationsView.frame.size.height = height
             break
         case self.tendersAndQuotesView:
-            self.tendersAndQuotesViewHeight.constant = height
-            self.tendersAndQuotesView.frame.size.height = height
+            //self.tendersAndQuotesViewHeight.constant = height
+            //self.tendersAndQuotesView.frame.size.height = height
             break
         default:
             break
@@ -513,20 +628,19 @@ extension DashboardVC: DashboardTableViewDelegate {
     func dashboardTableViewViewAllBtnClicked(_ view: DashboardTableView, sender: SecondaryButton) {
         switch view {
         case self.activeProjectsView:
-            view.isViewAll = true
-            view.reloadSpreadsheetView()
+            let vc = siteContractsSB.instantiateViewController(withIdentifier: "SiteContractsVC") as! SiteContractsVC
+            self.homeVC?.navigationController?.pushViewController(vc, animated: true)
             break
         case self.actionsView:
             let vc = generalSB.instantiateViewController(withIdentifier: "ActionsVC") as! ActionsVC
             self.homeVC?.navigationController?.pushViewController(vc, animated: true)
             break
         case self.notificationsView:
-            view.isViewAll = true
-            view.reloadSpreadsheetView()
+            //TODO: RK - Open Notification Screen
+            let vc = notificationSB.instantiateViewController(withIdentifier: "NotificationListVC") as! NotificationListVC
+            self.navigationController?.pushViewController(vc, animated: true)
             break
         case self.tendersAndQuotesView:
-            view.isViewAll = true
-            view.reloadSpreadsheetView()
             break
         default:
             break
@@ -537,7 +651,7 @@ extension DashboardVC: DashboardTableViewDelegate {
 
 extension DashboardVC: SiteSearchDelegate {
     
-    func siteSearchDidSelectSite(_ site: SiteModel) {
+    func siteSearchDidSelectSite(_ site: CreateSiteRequestModel) {
         self.selectedSite = site
     }
 }

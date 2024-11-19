@@ -62,3 +62,11 @@ extension UIViewController {
     }
 
 }
+
+extension UIViewController {
+    
+    func getPresentedVC<T: UIViewController>(ofType type: T.Type) -> T? {
+        return (self.presentedViewController as? UINavigationController)?.viewControllers.first(where: { $0 is T }) as? T
+    }
+    
+}

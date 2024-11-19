@@ -22,7 +22,11 @@ class ActionBtnViewXIB: NibView {
         if let saveBtn = saveBtn {
             addCornerToView(saveBtn)
         }
+        
+        self.cancelBtn.titleLabel?.font = UIFont(name: .MontserratSemiBold, size: 17)
+        self.saveBtn.titleLabel?.font = UIFont(name: .MontserratSemiBold, size: 17)
     }
+    
     
     @IBAction func cancelBtnAction(_ sender: Any) {
         

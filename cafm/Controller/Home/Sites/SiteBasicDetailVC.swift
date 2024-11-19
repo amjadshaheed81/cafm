@@ -34,6 +34,7 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
     @IBOutlet weak var selectSubView: UIView!
     @IBOutlet weak var selectImageViewHeight: NSLayoutConstraint!
     @IBOutlet weak var deleteBtnHeight: NSLayoutConstraint!
+    @IBOutlet weak var uploadSiteImageBtn: UIButton!
     
     //local detail setup
     @IBOutlet weak var localDetailMainViewHeightCons: NSLayoutConstraint!
@@ -83,8 +84,8 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
     //store api response detail
     var suggestionsResponse: SuggestionsResponse?
     var addressResponse: AddressResponse?
-    var siteResponseModel: SiteResponseModel?
-    var siteScheduleResponseModel: SiteScheduleResponseModel?
+    var siteResponseModel: CreateSiteRequestModel?
+    var siteScheduleResponseModel: CreateSiteRequestModel?
     var siteImageResponse: SiteImageResponse?
     let scheduleTimeModel = SiteScheduleRequestModel()
 
@@ -154,6 +155,7 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         
         self.keyBoardHeight = keyboardFrame.cgRectValue.height
+        globalKeyBoradHeight = self.keyBoardHeight
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
@@ -215,7 +217,8 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
         
         self.saveTimingActionBtn.saveBtn.addTarget(self, action: #selector(saveTimingSaveBtnTapped), for: .touchUpInside)
         self.saveTimingActionBtn.cancelBtn.addTarget(self, action: #selector(saveTimingCancelBtnTapped), for: .touchUpInside)
-
+        
+        CAFMFilePicker(delegate: self).configureFileMenu(on: self, sender: self.uploadSiteImageBtn, tag: 1, allowPhotos: true, supportedTypes: [.image])
     }
         
     func emptySiteDetails(isNeedToEmptyDetail: Bool = false) {
@@ -387,7 +390,7 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
         self.keyContactViewHeight.constant = 100.0
         self.addKeyContactMainViewHeight.constant = !self.isForViewOnly ? 280 : 0.0
         self.openMainViewHeightCons.constant = !self.isForViewOnly ? 568.0 : 530.0
-        self.localDetailMainViewHeightCons.constant = 390.0
+        self.localDetailMainViewHeightCons.constant = 360.0
         self.saveTimingActionBtnHeight.constant = !self.isForViewOnly ? 45.0 : 0.0
         self.localDetailBtnActionHeight.constant = !self.isForViewOnly ? 45.0 : 0.0
         self.deleteBtnHeight.constant = 45.0
@@ -706,7 +709,7 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
 
         let apiService = ApiService.updateTimingAPI(userModel: request)
         
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteScheduleResponseModel>, Error>) in
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
             DispatchQueue.main.async { [weak self] in
                 guard let self else {return}
                 switch result {
@@ -785,13 +788,13 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
             return
         }
 
-        let model = UpdateKeyContactRequestModel()
+        let model = GetKeyContactsDetailResponse()
         model.contactName = keyContactsName
         model.phone = keyContactsPhone
         model.email = keyContactsEmail
         model.actionManager = keyContactsRole.replacingOccurrences(of: " ", with: "").lowercased()
         model.siteId = self.siteResponseModel?.siteId ?? 0
-        model.id = "-1"
+        model.id = -1
         
         let appearance = SCLAlertView.SCLAppearance(
             showCloseButton: false
@@ -960,7 +963,7 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
         
         var siteInfoMessage = request.siteId == nil ? "Site has been created successfully." : "Site has been updated successfully."
         
-        APIClient.request(request.siteId == nil ? createSiteApiService : updateSiteApiService) { [weak self] (result: Result<APIClient.MappableResult<SiteResponseModel>, Error>) in
+        APIClient.request(request.siteId == nil ? createSiteApiService : updateSiteApiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
             DispatchQueue.main.async { [weak self] in
                 scl.hideView()
                 guard let self else {return}
@@ -1475,6 +1478,20 @@ extension SiteBasicDetailVC: UICollectionViewDelegate, UICollectionViewDataSourc
 //set profile image setup
 extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
     
+    // Present camera
+    private func presentCamera(from viewController: UIViewController, tag: Int) {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            //SCLAlertView().showError("Error", subTitle: "Camera is not available.")
+            return
+        }
+        
+        let cameraPicker = UIImagePickerController()
+        cameraPicker.sourceType = .camera
+        cameraPicker.delegate = self
+        cameraPicker.view.tag = tag
+        viewController.present(cameraPicker, animated: true)
+    }
+    
     @objc func selectPhoto() {
         let status = PHPhotoLibrary.authorizationStatus()
         switch status {
@@ -1523,7 +1540,7 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                             guard let fileURL = url else {
                                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                                 guard let self else {return}
-                                showAlert(vc: self, message: "Please try again")
+                                self.showAlert(message: "Please try again")
                                 return
                             }
                             // Process the image here as needed
@@ -1544,14 +1561,14 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
         print("Selected image name: \(fileName)")
         
         // Check the image size and proceed similarly to your original code
-        if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+        if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
             let imageSize = imageData.count
-            let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+            let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
             DispatchQueue.main.async { [weak self] in
                 guard let self else {return}
                 if imageSize > maxFileSize {
                     // Image size exceeds 1 MB, show an alert
-                    showAlert(vc: self, message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                    showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                 } else {
                     print("Image size is within the limit: \(imageSize) bytes")
                     let name = (fileName as NSString).deletingPathExtension
@@ -1561,7 +1578,7 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                         do {
                             try FileManager.default.removeItem(at: fileURL)
                         } catch {
-                            showAlert(vc: self,message: "Please try again")
+                            showAlert(message: "Please try again")
                             return
                         }
                     }
@@ -1569,7 +1586,7 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                         try imageData.write(to: fileURL, options: .atomic)
                         self.uploadSiteImageDetail(from: fileURL)
                     } catch {
-                        showAlert(vc: self,message: "Please try again")
+                        showAlert(message: "Please try again")
                         print("Error saving image: \(error)")
                     }
                 }
@@ -1586,13 +1603,13 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                     print("Selected image name: \(fileName)")
                     
                     print("Selected the correct image!")
-                    if let imageData = pickedImage.jpegData(compressionQuality: 1.0) {
+                    if let imageData = pickedImage.jpegData(compressionQuality: 0.8) {
                         let imageSize = imageData.count
-                        let maxFileSize = 1 * 1024 * 1024 // 1 MB in bytes
+                        let maxFileSize = uploadMaxSize * 1024 * 1024 // 1 MB in bytes
                         DispatchQueue.main.async { [weak self] in
                             guard let self else {return}
                             if imageSize > maxFileSize {
-                                showAlert(vc: self, message: "The selected image size is more than 1 MB. Please select a smaller image.")
+                                showAlert(message: "The selected image size is more than \(uploadMaxSize) MB. Please select a smaller image.")
                             } else {
                                 print("Image size is within the limit: \(imageSize) bytes")
                                 let name = (fileName as NSString).deletingPathExtension
@@ -1602,7 +1619,7 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                                     do {
                                         try FileManager.default.removeItem(at: fileURL)
                                     } catch {
-                                        showAlert(vc: self,message: "Please try again")
+                                        showAlert(message: "Please try again")
                                         return
                                     }
                                 }
@@ -1610,7 +1627,7 @@ extension SiteBasicDetailVC : UIImagePickerControllerDelegate {
                                     try imageData.write(to: fileURL, options: .atomic)
                                     self.uploadSiteImageDetail(from: fileURL)
                                 } catch {
-                                    showAlert(vc: self,message: "Please try again")
+                                    showAlert(message: "Please try again")
                                     print("Error saving image: \(error)")
                                 }
                             }
@@ -1773,7 +1790,7 @@ extension SiteBasicDetailVC: UITextFieldDelegate {
 
             self.tableView?.didSelectItem = { selectedItem in
                 print("Selected item: \(selectedItem)")
-                if let suggestionsResponse = self.suggestionsResponse?.suggestions {
+                if let selectedItem = selectedItem as? String ,let suggestionsResponse = self.suggestionsResponse?.suggestions {
                     if let suggestion = suggestionsResponse.first(where: { $0.address?.lowercased() == selectedItem.lowercased() }) {
                         self.getSearchResultAPI(with: suggestion.id ?? "")
                     }
@@ -2021,6 +2038,10 @@ extension SiteBasicDetailVC: UIDocumentPickerDelegate { //site image setup
         // Create an action sheet UIAlertController
         let alertController = UIAlertController(title: "Select an Option", message: nil, preferredStyle: .actionSheet)
         
+        let option0 = UIAlertAction(title: "Camera", style: .default) { _ in
+            self.presentCamera(from: self, tag: 0)
+        }
+        
         let option1 = UIAlertAction(title: "Image", style: .default) { _ in
             self.presentPhotoPicker()
         }
@@ -2033,6 +2054,7 @@ extension SiteBasicDetailVC: UIDocumentPickerDelegate { //site image setup
             self.handleGIFOption()
         }
         
+        alertController.addAction(option0)
         alertController.addAction(option1)
         alertController.addAction(option2)
         alertController.addAction(option3)
@@ -2284,6 +2306,44 @@ func extractCoordinates(from urlString: String) -> (latitude: CLLocationDegrees,
 extension SiteBasicDetailVC: CustomTextFieldDelegate {
     
     func customTextFieldTextDidChange(view: CustomTextField, textField: UITextField) {
+        
+    }
+    
+}
+
+extension SiteBasicDetailVC: CAFMFilePickerDelegate {
+    
+    func filePickerDidSelectFile(_ fileData: FilePickerModel, tag: Int) {
+        let fileName = fileData.fileName ?? ""
+        if let imageData = fileData.image?.jpegData(compressionQuality: 0.8) {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+                let name = (fileName as NSString).deletingPathExtension
+                let newfileName = (name.isEmpty ? UUID().uuidString : name) + ".png"
+                let fileURL = documentDirectory().appendingPathComponent(newfileName)
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    do {
+                        try FileManager.default.removeItem(at: fileURL)
+                    } catch {
+                        showAlert(message: "Please try again")
+                        return
+                    }
+                }
+                do {
+                    try imageData.write(to: fileURL, options: .atomic)
+                    self.uploadSiteImageDetail(from: fileURL)
+                } catch {
+                    showAlert(message: "Please try again")
+                    print("Error saving image: \(error)")
+                }
+            }
+        }else if let fileURL = fileData.fileURL {
+            self.uploadSiteImageDetail(from: fileURL)
+        }
+        
+    }
+    
+    func filePickerDidClose(tag: Int) {
         
     }
     

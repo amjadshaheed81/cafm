@@ -31,7 +31,6 @@ class UserManagementVC: UIViewController, SpreadsheetViewDataSource, Spreadsheet
     var searchUserRole: UserEnum = .role
     var userTypeArray = UserEnum.userTypeArray
     
-    
     var siteDetailsArray = [SiteModel]()
     var companyDetailsArray = [Company]()
     var searchSiteInd = 0
@@ -54,7 +53,7 @@ class UserManagementVC: UIViewController, SpreadsheetViewDataSource, Spreadsheet
         viewSpred.register(UINib(nibName: String(describing: CellTextXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: CellTextXib.self))
         viewSpred.register(UINib(nibName: String(describing: SiteViewXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: SiteViewXib.self))
         viewSpred.register(UINib(nibName: String(describing: StatusXIb.self), bundle: nil), forCellWithReuseIdentifier: String(describing: StatusXIb.self))
-        viewSpred.register(UINib(nibName: String(describing: ActionViewXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: ActionViewXib.self))
+        viewSpred.register(UINib(nibName: String(describing: UserActionCellXib.self), bundle: nil), forCellWithReuseIdentifier: String(describing: UserActionCellXib.self))
         self.title = "User Management"
         viewSpred.bounces = false
         viewSpred.dataSource = self
@@ -177,7 +176,7 @@ class UserManagementVC: UIViewController, SpreadsheetViewDataSource, Spreadsheet
     }
     
     func loadSiteDetailsData() {
-        let apiService = ApiService.siteAllDetails
+        let apiService = ApiService.siteAllDetails(sort: "asc", sortName: "siteName")
         
         APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteModel>, Error>) in
             switch result {
@@ -354,7 +353,7 @@ class UserManagementVC: UIViewController, SpreadsheetViewDataSource, Spreadsheet
         } else if column == 7 {
             return 100
         }else if column == 8 {
-            return 40+40+40+10+10+5+5
+            return 40+40+40+10+10+5+5+40+5
         }else {
             return 60
         }
@@ -514,16 +513,39 @@ class UserManagementVC: UIViewController, SpreadsheetViewDataSource, Spreadsheet
             cell.gridlines.right = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             return cell
         }else if indexPath.section == 8 && indexPath.row != 0 {
-            let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: "ActionViewXib", for: indexPath) as! ActionViewXib
+            let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: "UserActionCellXib", for: indexPath) as! UserActionCellXib
             cell.gridlines.top = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             cell.gridlines.bottom = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             cell.gridlines.left = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
             cell.gridlines.right = .solid(width: 1, color: UIColor.black.withAlphaComponent(0.175))
+            
+            cell.btnLock.addAction { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    let row = indexPath.row-1
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self else { return }
+                        let row = indexPath.row-1
+                        let vc = userManagemnetSB.instantiateViewController(withIdentifier: "ResetPassFromAdminVC") as! ResetPassFromAdminVC
+                        vc.delegate = self
+                        vc.userId = self.searchUserList[row].id ?? 0
+                        vc.emailID = self.searchUserList[row].email ?? ""
+                        self.present(vc, animated: true)
+                    }
+                }
+            }
+
             cell.btnView.addAction { [weak self] in
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
                     let row = indexPath.row-1
-                    
+                    let vc = userManagemnetSB.instantiateViewController(withIdentifier: "AddNewUserVC") as! AddNewUserVC
+                    vc.delegate = self
+                    vc.isOnlyView = true
+                    vc.siteDetailsArray = self.siteDetailsArray
+                    vc.user = self.searchUserList[row]
+                    vc.companyDetailsArray = self.companyDetailsArray
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
             cell.btnEditView.addAction { [weak self] in
@@ -616,6 +638,13 @@ extension UserManagementVC: AddAndUpdateUserDelegate {
         self.fetchData()
         let sclAlertView = SCLAlertView()
         sclAlertView.showSuccess("", subTitle: "User added successfully.")
+    }
+    
+    func passwordResteSucessFully() {
+        self.dismiss(animated: true)
+        self.fetchData()
+        let sclAlertView = SCLAlertView()
+        sclAlertView.showSuccess("", subTitle: "Password reset Success!")
     }
         
 }

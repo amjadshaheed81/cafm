@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -30,8 +30,8 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7u4-uF-Dmm">
                             <rect key="frame" x="0.0" y="0.0" width="400" height="44"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hP6-wn-w4Q">
-                                    <rect key="frame" x="15" y="0.0" width="40" height="44"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hP6-wn-w4Q">
+                                    <rect key="frame" x="15" y="0.0" width="275" height="44"/>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <nil key="highlightedColor"/>
@@ -40,9 +40,9 @@
                                     </variation>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RRL-Pr-vSZ" customClass="SecondaryButton" customModule="cafm" customModuleProvider="target">
-                                    <rect key="frame" x="290" y="7" width="100" height="30"/>
+                                    <rect key="frame" x="300" y="7" width="90" height="30"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="100" id="iyW-SJ-Xgg"/>
+                                        <constraint firstAttribute="width" constant="90" id="iyW-SJ-Xgg"/>
                                         <constraint firstAttribute="height" constant="30" id="kep-Pd-ujd"/>
                                     </constraints>
                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
@@ -60,8 +60,9 @@
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
+                                <constraint firstItem="RRL-Pr-vSZ" firstAttribute="leading" secondItem="hP6-wn-w4Q" secondAttribute="trailing" constant="10" id="Adc-TG-tyR"/>
                                 <constraint firstItem="RRL-Pr-vSZ" firstAttribute="centerY" secondItem="hP6-wn-w4Q" secondAttribute="centerY" id="LGw-g7-I9q"/>
-                                <constraint firstAttribute="height" constant="44" id="MsV-cj-s6n">
+                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44" id="MsV-cj-s6n">
                                     <variation key="heightClass=regular-widthClass=regular" constant="50"/>
                                 </constraint>
                                 <constraint firstAttribute="bottom" secondItem="hP6-wn-w4Q" secondAttribute="bottom" id="fT7-VI-Kpf"/>
@@ -146,7 +147,7 @@
     </objects>
     <resources>
         <namedColor name="AppTintColor">
-            <color red="0.2199999988079071" green="0.29399999976158142" blue="0.82700002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.2196078431372549" green="0.29411764705882354" blue="0.82745098039215681" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="ViewBorderColor">
             <color red="0.035294117647058823" green="0.098039215686274508" blue="0.28235294117647058" alpha="0.12999999523162842" colorSpace="custom" customColorSpace="sRGB"/>
