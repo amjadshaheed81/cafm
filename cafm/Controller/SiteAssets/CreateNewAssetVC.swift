@@ -282,6 +282,17 @@ class CreateNewAssetVC: UIViewController {
             let saveBtn = getPrimaryNavigationBtn(title: "Save")
             saveBtn.addTarget(self, action: #selector(self.navSaveBtnClicked(_:)), for: .touchUpInside)
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveBtn)
+        }else if UserDefaults.standard.userRole == .admin || UserDefaults.standard.userRole == .manager {
+            let saveBtn = getPrimaryNavigationBtn(title: "Edit")
+            saveBtn.addTarget(self, action: #selector(self.navEditBtnClicked(_:)), for: .touchUpInside)
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveBtn)
+        }else {
+            let userRole = UserDefaults.standard.userRole
+            if userRole == .admin || userRole == .manager {
+                let saveBtn = getPrimaryNavigationBtn(title: "Edit")
+                saveBtn.addTarget(self, action: #selector(self.navEditBtnClicked(_:)), for: .touchUpInside)
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveBtn)
+            }
         }
     }
     
@@ -299,8 +310,34 @@ class CreateNewAssetVC: UIViewController {
         self.keyBoardHeight = 0.0
     }
     
+    @objc func navEditBtnClicked(_ sender: UIButton) {
+        if let navigationController = self.navigationController {
+            for controller in navigationController.viewControllers {
+                if controller is AssetRegisterVC {
+                    let vc = siteAssetsSB.instantiateViewController(withIdentifier: "CreateNewAssetVC") as! CreateNewAssetVC
+                    vc.isViewModeEdit = true
+                    vc.selectedAssetId = self.selectedAssetId
+                    self.navigationController?.popViewController(animated: false)
+                    controller.navigationController?.pushViewController(vc, animated: true)
+                    return
+                }
+            }
+        }else {
+            let vc = siteAssetsSB.instantiateViewController(withIdentifier: "CreateNewAssetVC") as! CreateNewAssetVC
+            vc.isViewModeEdit = true
+            vc.selectedAssetId = self.selectedAssetId
+            self.navigationController?.popViewController(animated: false)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        self.isViewModeEdit = true
+        self.configureNavigationBar()
+        self.setupViews()
+        self.reloadViews()
+    }
+    
     @objc func navSaveBtnClicked(_ sender: UIButton) {
         let model = AssetDetailsResponse()
+        model.isSelected = nil
         model.assetId = self.assetModel?.assetId
         self.assetNameXIB.tfData.endEditing(true)
         if let text = self.assetNameXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
@@ -312,37 +349,41 @@ class CreateNewAssetVC: UIViewController {
         self.manufacturerXIB.tfData.endEditing(true)
         if let text = self.manufacturerXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
             model.manufacturer = text
-        }else {
-            SCLAlertView.showErrorAlert(title: "Error", message: "Please enter manufacturer", cancelButtonTitle: "OK")
-            return
         }
-        if let id = selectedParentFolderId {
-            model.folderId = id
-        }else {
-            SCLAlertView.showErrorAlert(title: "Error", message: "Please select folder", cancelButtonTitle: "OK")
-            return
-        }
+        //else {
+        //    SCLAlertView.showErrorAlert(title: "Error", message: "Please enter manufacturer", cancelButtonTitle: "OK")
+        //    return
+        //}
+        //if let id = selectedParentFolderId {
+        //    model.folderId = id
+        //}else {
+        //    SCLAlertView.showErrorAlert(title: "Error", message: "Please select folder", cancelButtonTitle: "OK")
+        //    return
+        //}
         self.modelXIB.tfData.endEditing(true)
         if let text = self.modelXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
             model.model = text
-        }else {
-            SCLAlertView.showErrorAlert(title: "Error", message: "Please enter model", cancelButtonTitle: "OK")
-            return
         }
+        //else {
+        //    SCLAlertView.showErrorAlert(title: "Error", message: "Please enter model", cancelButtonTitle: "OK")
+        //    return
+        //}
         self.serialNumberXIB.tfData.endEditing(true)
         if let text = self.serialNumberXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
             model.serialNumber = text
-        }else {
-            SCLAlertView.showErrorAlert(title: "Error", message: "Please enter serial number", cancelButtonTitle: "OK")
-            return
         }
+        //else {
+        //    SCLAlertView.showErrorAlert(title: "Error", message: "Please enter serial number", cancelButtonTitle: "OK")
+        //    return
+        //}
         if self.selectedAssetFileName != nil && (self.selectedAssetImage != nil || self.selectedAssetFileURL != nil) {
         }else if self.assetImageView.image != nil {
             model.image = self.assetModel?.image
-        }else {
-            SCLAlertView.showErrorAlert(title: "Error", message: "Please select asset image.", cancelButtonTitle: "OK")
-            return
         }
+        //else {
+        //    SCLAlertView.showErrorAlert(title: "Error", message: "Please select asset image.", cancelButtonTitle: "OK")
+        //    return
+        //}
         if let id = self.selectedASSET_CATEGORY_id {
             model.category = self.ASSET_CATEGORY_ItemArray.first(where: { $0.id == id })?.lovValue
         }else {
@@ -922,12 +963,12 @@ class CreateNewAssetVC: UIViewController {
             if let text = self.transactionIdXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
                 model.transactionId = text
             }else {
-                if index == 1 {
-                    SCLAlertView.showErrorAlert(title: "Error", message: "Please enter transaction ID", cancelButtonTitle: "OK")
-                    return
-                }else {
-                    model.transactionId = assetModel.transactionId
-                }
+                //if index == 1 {
+                //    SCLAlertView.showErrorAlert(title: "Error", message: "Please enter transaction ID", cancelButtonTitle: "OK")
+                //    return
+                //}else {
+                model.transactionId = assetModel.transactionId
+                //}
             }
             self.costXIB.tfData.endEditing(true)
             if let text = self.costXIB.tfData.text?.trimmingSpacesAndLines(), !text.isEmpty {
@@ -944,33 +985,33 @@ class CreateNewAssetVC: UIViewController {
             }else if let value = assetModel.invoiceFile {
                 model.invoiceFile = value
             }else {
-                if index == 1 {
-                    SCLAlertView.showErrorAlert(title: "Error", message: "Please select invoice file", cancelButtonTitle: "OK")
-                    return
-                }else {
-                    model.invoiceFile = assetModel.invoiceFile
-                }
+                //if index == 1 {
+                //    SCLAlertView.showErrorAlert(title: "Error", message: "Please select invoice file", cancelButtonTitle: "OK")
+                //    return
+                //}else {
+                model.invoiceFile = assetModel.invoiceFile
+                //}
             }
             
             if let id = self.selectedInternalExternal {
                 model.position = id
             }else {
-                if index == 2 {
-                    SCLAlertView.showErrorAlert(title: "Error", message: "Please select Internal/External", cancelButtonTitle: "OK")
-                    return
-                }else {
-                    model.position = assetModel.position
-                }
+                //if index == 2 {
+                //    SCLAlertView.showErrorAlert(title: "Error", message: "Please select Internal/External", cancelButtonTitle: "OK")
+                //    return
+                //}else {
+                model.position = assetModel.position
+                //}
             }
             if let id = self.selectedFloorId {
                 model.floor = self.siteLayoutItemArray.first(where: { $0.nodeType == .floor && $0.id == id })?.nodeName
             }else {
-                if index == 2 {
-                    SCLAlertView.showErrorAlert(title: "Error", message: "Please select floor", cancelButtonTitle: "OK")
-                    return
-                }else {
-                    model.floor = assetModel.floor
-                }
+                //if index == 2 {
+                //    SCLAlertView.showErrorAlert(title: "Error", message: "Please select floor", cancelButtonTitle: "OK")
+                //    return
+                //}else {
+                model.floor = assetModel.floor
+                //}
             }
             if let id = self.selectedRoomId {
                 model.room = self.siteLayoutItemArray.first(where: { $0.nodeType == .room && $0.id == id })?.nodeName

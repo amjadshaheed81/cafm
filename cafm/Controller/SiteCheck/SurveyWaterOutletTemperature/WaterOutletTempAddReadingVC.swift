@@ -87,6 +87,11 @@ class WaterOutletTempAddReadingVC: UIViewController {
         self.loadData()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.adjustSpreadsheetView()
+    }
+    
     func configureNavigationBar() {
         self.title = "Add Reading"
         
@@ -212,6 +217,7 @@ extension WaterOutletTempAddReadingVC {
     
 }
 
+//MARK: - setup views
 extension WaterOutletTempAddReadingVC {
     
     func setupViews() {        

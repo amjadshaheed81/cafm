@@ -37,9 +37,12 @@
 		194233DC2CB6FC720074FDB7 /* WaterDomecsticRAVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194233DB2CB6FC720074FDB7 /* WaterDomecsticRAVC.swift */; };
 		19469A612C7A50BC002B562A /* ActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19469A602C7A50BC002B562A /* ActionsVC.swift */; };
 		19479B372C7B7A7900D32C99 /* AddRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19479B362C7B7A7900D32C99 /* AddRequestModel.swift */; };
+		19488BC22D0CAB1A004831CD /* TextViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19488BC12D0CAB1A004831CD /* TextViewVC.swift */; };
 		194E8FCB2C7F833A002DFDC8 /* FloorLayoutPlanVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E8FCA2C7F833A002DFDC8 /* FloorLayoutPlanVC.swift */; };
 		194FBA172CAAF1FB00EE5344 /* StatusPassFailedXib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194FBA162CAAF1FB00EE5344 /* StatusPassFailedXib.swift */; };
 		194FBA192CAAF21800EE5344 /* StatusPassFailedXib.xib in Resources */ = {isa = PBXBuildFile; fileRef = 194FBA182CAAF21800EE5344 /* StatusPassFailedXib.xib */; };
+		19547D022CF35BFD00C0EC24 /* StatutoryRegisterReportVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19547D012CF35BFD00C0EC24 /* StatutoryRegisterReportVC.swift */; };
+		19547D052CF35C3E00C0EC24 /* ActionsReportVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19547D042CF35C3E00C0EC24 /* ActionsReportVC.swift */; };
 		195721222C9DF81E006AD6B3 /* SiteCheckModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195721212C9DF81E006AD6B3 /* SiteCheckModel.swift */; };
 		19582C3D2CB82BB000A45AAB /* EnergyCostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19582C3C2CB82BB000A45AAB /* EnergyCostVC.swift */; };
 		195892F72CA1D08E002A434C /* CellTextWithBtnXib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195892F62CA1D08E002A434C /* CellTextWithBtnXib.swift */; };
@@ -59,6 +62,7 @@
 		196F425E2C84671A0039809F /* SiteInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196F425D2C84671A0039809F /* SiteInformationVC.swift */; };
 		196F42602C8467370039809F /* SiteInformationDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196F425F2C8467370039809F /* SiteInformationDetailVC.swift */; };
 		196F42622C8476100039809F /* SiteInformationEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196F42612C8476100039809F /* SiteInformationEnum.swift */; };
+		197095242CFC98AD00B48F17 /* RotationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197095232CFC98AD00B48F17 /* RotationSupport.swift */; };
 		1971CB412C9EA88A0011F718 /* FaultsIdentifiedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971CB402C9EA88A0011F718 /* FaultsIdentifiedVC.swift */; };
 		1974389B2C99C2B500307B40 /* StatutoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1974389A2C99C2B500307B40 /* StatutoryModel.swift */; };
 		197652212CB84CE20029DF25 /* WaterDomecsticRAResponseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197652202CB84CE20029DF25 /* WaterDomecsticRAResponseVC.swift */; };
@@ -113,6 +117,9 @@
 		199A9B882C7B552000C2D56B /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A9B872C7B552000C2D56B /* Company.swift */; };
 		199B0BB62C7B8E8500FD1935 /* BadgeLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199B0BB52C7B8E8500FD1935 /* BadgeLabelCell.swift */; };
 		199B0BB82C7B8E9200FD1935 /* BadgeLabelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 199B0BB72C7B8E9200FD1935 /* BadgeLabelCell.xib */; };
+		19A10C042CFC300000BAF756 /* BasicReportsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A10C032CFC300000BAF756 /* BasicReportsVC.swift */; };
+		19A10C062CFC302200BAF756 /* BasicReportsQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A10C052CFC302200BAF756 /* BasicReportsQuestion.swift */; };
+		19A10DE72CFC75C800BAF756 /* BasicReportsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A10DE62CFC75C800BAF756 /* BasicReportsTableVC.swift */; };
 		19A316182CC6C3A6009C415A /* AddEnergyReadingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A316172CC6C3A6009C415A /* AddEnergyReadingsVC.swift */; };
 		19A36B3D2C79922800CAFBF4 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A36B3C2C79922800CAFBF4 /* UsersModel.swift */; };
 		19A36B4A2C79924600CAFBF4 /* StatusXIb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A36B3E2C79924500CAFBF4 /* StatusXIb.swift */; };
@@ -132,6 +139,7 @@
 		19A60EC52C72533C008957FC /* GlobalFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A60EC42C72533C008957FC /* GlobalFunction.swift */; };
 		19A6774E2CCDE1670040427C /* CategoriesManagementSB.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A6774D2CCDE1670040427C /* CategoriesManagementSB.storyboard */; };
 		19A677512CCDE1880040427C /* AddNewCategoryAdminVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A677502CCDE1880040427C /* AddNewCategoryAdminVC.swift */; };
+		19A8DD582D5304FD00CB0FD9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19A8DD572D5304FD00CB0FD9 /* StoreKit.framework */; };
 		19A962DB2C9F0D9C00A2F06D /* CustomTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A962DA2C9F0D9C00A2F06D /* CustomTextFieldCell.swift */; };
 		19A962DF2C9F0DB900A2F06D /* CustomTextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19A962DE2C9F0DB900A2F06D /* CustomTextFieldCell.xib */; };
 		19AA6CBC2CBA905B001EDE5F /* UploadStatutoryDocVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA6CBB2CBA905B001EDE5F /* UploadStatutoryDocVC.swift */; };
@@ -147,6 +155,7 @@
 		19B399062CB9AE1C00DDC5FC /* WaterOutletTempVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B399052CB9AE1C00DDC5FC /* WaterOutletTempVC.swift */; };
 		19B3D7862C7981B300BEC592 /* UserManagementSB.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19B3D7852C7981B300BEC592 /* UserManagementSB.storyboard */; };
 		19B3D7892C7981D900BEC592 /* UserManagementVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B3D7882C7981D900BEC592 /* UserManagementVC.swift */; };
+		19B5704C2D04DB8A000E3F89 /* SaveMarkersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B5704B2D04DB8A000E3F89 /* SaveMarkersVC.swift */; };
 		19B6C05D2C90A8380098BBCC /* StatutoryRegisterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B6C05C2C90A8380098BBCC /* StatutoryRegisterVC.swift */; };
 		19B79F892C837F8E00B52268 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B79F882C837F8E00B52268 /* CollectionViewCell.swift */; };
 		19B883F52CC4CDBE000F3084 /* AddNewDropDownValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B883F42CC4CDBE000F3084 /* AddNewDropDownValue.swift */; };
@@ -194,6 +203,7 @@
 		960329592CA7B39D0016C3BC /* ViewFolderFileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960329582CA7B39D0016C3BC /* ViewFolderFileVC.swift */; };
 		960845CA2C7C63D000112796 /* ActionBtnViewXIB.xib in Resources */ = {isa = PBXBuildFile; fileRef = 960845C92C7C63D000112796 /* ActionBtnViewXIB.xib */; };
 		960845CC2C7C63E000112796 /* ActionBtnViewXIB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960845CB2C7C63E000112796 /* ActionBtnViewXIB.swift */; };
+		96087A1A2D075ED1001839AC /* QRScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96087A192D075ED1001839AC /* QRScannerViewController.swift */; };
 		9608EC632C73595D00350138 /* UIImageview+Extention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9608EC622C73595D00350138 /* UIImageview+Extention.swift */; };
 		96097EF72C71F33E002B3D5C /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 96097EE52C71F33E002B3D5C /* Montserrat-Medium.ttf */; };
 		96097EF82C71F33E002B3D5C /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 96097EE62C71F33E002B3D5C /* Montserrat-ThinItalic.ttf */; };
@@ -305,9 +315,12 @@
 		194233DB2CB6FC720074FDB7 /* WaterDomecsticRAVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterDomecsticRAVC.swift; sourceTree = "<group>"; };
 		19469A602C7A50BC002B562A /* ActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsVC.swift; sourceTree = "<group>"; };
 		19479B362C7B7A7900D32C99 /* AddRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRequestModel.swift; sourceTree = "<group>"; };
+		19488BC12D0CAB1A004831CD /* TextViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewVC.swift; sourceTree = "<group>"; };
 		194E8FCA2C7F833A002DFDC8 /* FloorLayoutPlanVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorLayoutPlanVC.swift; sourceTree = "<group>"; };
 		194FBA162CAAF1FB00EE5344 /* StatusPassFailedXib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPassFailedXib.swift; sourceTree = "<group>"; };
 		194FBA182CAAF21800EE5344 /* StatusPassFailedXib.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StatusPassFailedXib.xib; sourceTree = "<group>"; };
+		19547D012CF35BFD00C0EC24 /* StatutoryRegisterReportVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatutoryRegisterReportVC.swift; sourceTree = "<group>"; };
+		19547D042CF35C3E00C0EC24 /* ActionsReportVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsReportVC.swift; sourceTree = "<group>"; };
 		195721212C9DF81E006AD6B3 /* SiteCheckModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteCheckModel.swift; sourceTree = "<group>"; };
 		19582C3C2CB82BB000A45AAB /* EnergyCostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnergyCostVC.swift; sourceTree = "<group>"; };
 		195892F62CA1D08E002A434C /* CellTextWithBtnXib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTextWithBtnXib.swift; sourceTree = "<group>"; };
@@ -327,6 +340,7 @@
 		196F425D2C84671A0039809F /* SiteInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteInformationVC.swift; sourceTree = "<group>"; };
 		196F425F2C8467370039809F /* SiteInformationDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteInformationDetailVC.swift; sourceTree = "<group>"; };
 		196F42612C8476100039809F /* SiteInformationEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteInformationEnum.swift; sourceTree = "<group>"; };
+		197095232CFC98AD00B48F17 /* RotationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationSupport.swift; sourceTree = "<group>"; };
 		1971CB402C9EA88A0011F718 /* FaultsIdentifiedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaultsIdentifiedVC.swift; sourceTree = "<group>"; };
 		1974389A2C99C2B500307B40 /* StatutoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatutoryModel.swift; sourceTree = "<group>"; };
 		197652202CB84CE20029DF25 /* WaterDomecsticRAResponseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterDomecsticRAResponseVC.swift; sourceTree = "<group>"; };
@@ -383,6 +397,9 @@
 		199A9B872C7B552000C2D56B /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		199B0BB52C7B8E8500FD1935 /* BadgeLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeLabelCell.swift; sourceTree = "<group>"; };
 		199B0BB72C7B8E9200FD1935 /* BadgeLabelCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BadgeLabelCell.xib; sourceTree = "<group>"; };
+		19A10C032CFC300000BAF756 /* BasicReportsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReportsVC.swift; sourceTree = "<group>"; };
+		19A10C052CFC302200BAF756 /* BasicReportsQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReportsQuestion.swift; sourceTree = "<group>"; };
+		19A10DE62CFC75C800BAF756 /* BasicReportsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReportsTableVC.swift; sourceTree = "<group>"; };
 		19A316172CC6C3A6009C415A /* AddEnergyReadingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEnergyReadingsVC.swift; sourceTree = "<group>"; };
 		19A36B3C2C79922800CAFBF4 /* UsersModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		19A36B3E2C79924500CAFBF4 /* StatusXIb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusXIb.swift; sourceTree = "<group>"; };
@@ -402,6 +419,7 @@
 		19A60EC42C72533C008957FC /* GlobalFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFunction.swift; sourceTree = "<group>"; };
 		19A6774D2CCDE1670040427C /* CategoriesManagementSB.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CategoriesManagementSB.storyboard; sourceTree = "<group>"; };
 		19A677502CCDE1880040427C /* AddNewCategoryAdminVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCategoryAdminVC.swift; sourceTree = "<group>"; };
+		19A8DD572D5304FD00CB0FD9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		19A962DA2C9F0D9C00A2F06D /* CustomTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldCell.swift; sourceTree = "<group>"; };
 		19A962DE2C9F0DB900A2F06D /* CustomTextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomTextFieldCell.xib; sourceTree = "<group>"; };
 		19AA6CBB2CBA905B001EDE5F /* UploadStatutoryDocVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadStatutoryDocVC.swift; sourceTree = "<group>"; };
@@ -417,6 +435,7 @@
 		19B399052CB9AE1C00DDC5FC /* WaterOutletTempVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterOutletTempVC.swift; sourceTree = "<group>"; };
 		19B3D7852C7981B300BEC592 /* UserManagementSB.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = UserManagementSB.storyboard; sourceTree = "<group>"; };
 		19B3D7882C7981D900BEC592 /* UserManagementVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserManagementVC.swift; sourceTree = "<group>"; };
+		19B5704B2D04DB8A000E3F89 /* SaveMarkersVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveMarkersVC.swift; sourceTree = "<group>"; };
 		19B6C05C2C90A8380098BBCC /* StatutoryRegisterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatutoryRegisterVC.swift; sourceTree = "<group>"; };
 		19B79F882C837F8E00B52268 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		19B883F42CC4CDBE000F3084 /* AddNewDropDownValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewDropDownValue.swift; sourceTree = "<group>"; };
@@ -466,6 +485,7 @@
 		960329582CA7B39D0016C3BC /* ViewFolderFileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFolderFileVC.swift; sourceTree = "<group>"; };
 		960845C92C7C63D000112796 /* ActionBtnViewXIB.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ActionBtnViewXIB.xib; sourceTree = "<group>"; };
 		960845CB2C7C63E000112796 /* ActionBtnViewXIB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBtnViewXIB.swift; sourceTree = "<group>"; };
+		96087A192D075ED1001839AC /* QRScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewController.swift; sourceTree = "<group>"; };
 		9608EC622C73595D00350138 /* UIImageview+Extention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageview+Extention.swift"; sourceTree = "<group>"; };
 		96097EE52C71F33E002B3D5C /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
 		96097EE62C71F33E002B3D5C /* Montserrat-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ThinItalic.ttf"; sourceTree = "<group>"; };
@@ -538,6 +558,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19A8DD582D5304FD00CB0FD9 /* StoreKit.framework in Frameworks */,
 				192592B72C70F3AE00696C22 /* Highcharts.xcframework in Frameworks */,
 				347268D44882FB1513ABA3A8 /* Pods_cafm.framework in Frameworks */,
 			);
@@ -705,6 +726,23 @@
 			path = StatusPassFailedXib;
 			sourceTree = "<group>";
 		};
+		19547CFE2CF35BC900C0EC24 /* StatutoryRegister */ = {
+			isa = PBXGroup;
+			children = (
+				19547D012CF35BFD00C0EC24 /* StatutoryRegisterReportVC.swift */,
+				19488BC12D0CAB1A004831CD /* TextViewVC.swift */,
+			);
+			path = StatutoryRegister;
+			sourceTree = "<group>";
+		};
+		19547D032CF35C3300C0EC24 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				19547D042CF35C3E00C0EC24 /* ActionsReportVC.swift */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
 		195892F52CA1D076002A434C /* CellTextWithBtnXib */ = {
 			isa = PBXGroup;
 			children = (
@@ -734,6 +772,9 @@
 		196D47582CCCC32000F5553A /* Reports */ = {
 			isa = PBXGroup;
 			children = (
+				19A10C002CFC2E3A00BAF756 /* BasicReports */,
+				19547D032CF35C3300C0EC24 /* Actions */,
+				19547CFE2CF35BC900C0EC24 /* StatutoryRegister */,
 				1935BC442CD936FC003D5702 /* ContractReport */,
 				19E969A22CD8E3C600A1B4DE /* EnergyReport */,
 				19CEC0CE2CD0873000F7DEED /* SiteChecks */,
@@ -980,6 +1021,7 @@
 				192DC79A2C9EF78D00982E59 /* LOVTypeEnum.swift */,
 				1905E3A92C9F344B00678632 /* CAFMDatePicker.swift */,
 				1905E3AB2C9F493B00678632 /* CAFMFileUtils.swift */,
+				197095232CFC98AD00B48F17 /* RotationSupport.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -1070,6 +1112,16 @@
 				199818332C93521400CE5215 /* OptionBtnXibCell.xib */,
 			);
 			path = OptionBtnXibCell;
+			sourceTree = "<group>";
+		};
+		19A10C002CFC2E3A00BAF756 /* BasicReports */ = {
+			isa = PBXGroup;
+			children = (
+				19A10C052CFC302200BAF756 /* BasicReportsQuestion.swift */,
+				19A10C032CFC300000BAF756 /* BasicReportsVC.swift */,
+				19A10DE62CFC75C800BAF756 /* BasicReportsTableVC.swift */,
+			);
+			path = BasicReports;
 			sourceTree = "<group>";
 		};
 		19A36B3B2C79922200CAFBF4 /* Model */ = {
@@ -1170,6 +1222,7 @@
 				19ABD18E2C8B66D500A6159B /* CreateNewAssetVC.swift */,
 				96DC02D42C8C8B87009FC5E8 /* CloneAssetVC.swift */,
 				198B8E6D2C8D7EDA0021F494 /* DatePickerVC.swift */,
+				96087A192D075ED1001839AC /* QRScannerViewController.swift */,
 			);
 			path = SiteAssets;
 			sourceTree = "<group>";
@@ -1379,6 +1432,7 @@
 		57C2F20B11230FD54AEEA02D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				19A8DD572D5304FD00CB0FD9 /* StoreKit.framework */,
 				192592B62C70F3AE00696C22 /* Highcharts.xcframework */,
 				89A826E2FD6A11C9DD9BB66E /* Pods_cafm.framework */,
 			);
@@ -1628,6 +1682,7 @@
 				19E22BF62C839D3C00CB5ECB /* FileViewVC.swift */,
 				196F425D2C84671A0039809F /* SiteInformationVC.swift */,
 				196F425F2C8467370039809F /* SiteInformationDetailVC.swift */,
+				19B5704B2D04DB8A000E3F89 /* SaveMarkersVC.swift */,
 			);
 			path = CreateNewSite;
 			sourceTree = "<group>";
@@ -1873,6 +1928,7 @@
 				197B93E12CA70EE90098D0DF /* AssessmentQuestionsVC.swift in Sources */,
 				969B34AA2C823CE00031DA91 /* OpenSetTimingXIB.swift in Sources */,
 				965A70F12CB43DD0009DB54B /* CompanyManagementVC.swift in Sources */,
+				197095242CFC98AD00B48F17 /* RotationSupport.swift in Sources */,
 				19BE73382CD392CC00171C3A /* CategoriesManagementVC.swift in Sources */,
 				197FD81F2C7C93C2004EA80D /* EmptyView.swift in Sources */,
 				192592BE2C70F7F700696C22 /* DashboardVC.swift in Sources */,
@@ -1892,10 +1948,12 @@
 				19827DAA2C704D950044C126 /* SceneDelegate.swift in Sources */,
 				962EC1312C7651A6001EE1B9 /* SettingsVC.swift in Sources */,
 				966D2BD52C95B73200D6CADE /* ViewActionBtnXIB.swift in Sources */,
+				96087A1A2D075ED1001839AC /* QRScannerViewController.swift in Sources */,
 				190FFD182C7285980053879C /* EventCalendarVC.swift in Sources */,
 				968A93BB2C71FB44003A7A22 /* ViewHelper.swift in Sources */,
 				19B399062CB9AE1C00DDC5FC /* WaterOutletTempVC.swift in Sources */,
 				19768ACF2CC55ED8006B3C9B /* CreateEACVC.swift in Sources */,
+				19A10DE72CFC75C800BAF756 /* BasicReportsTableVC.swift in Sources */,
 				9679BD5A2C797DC400CFFBEA /* CreateNewSiteVC.swift in Sources */,
 				19C65CEA2C835B0400D70FAB /* FolderViewXib.swift in Sources */,
 				19E969A42CD8E3E300A1B4DE /* EnergyReportVC.swift in Sources */,
@@ -1951,6 +2009,9 @@
 				1961EA8B2CCCAD1E007B49D7 /* NotificationListVC.swift in Sources */,
 				9669638A2CC54E0E00F2ED87 /* ViewActionVC.swift in Sources */,
 				19ABD18F2C8B66D500A6159B /* CreateNewAssetVC.swift in Sources */,
+				19488BC22D0CAB1A004831CD /* TextViewVC.swift in Sources */,
+				19A10C042CFC300000BAF756 /* BasicReportsVC.swift in Sources */,
+				19A10C062CFC302200BAF756 /* BasicReportsQuestion.swift in Sources */,
 				19813A892CBA3AC100AF9C68 /* StatutoryDocumnetVC.swift in Sources */,
 				96B6E7C12C7B1B33003FAD32 /* RiskViewXIB.swift in Sources */,
 				199000892C7A14A4001DF555 /* OptionBtnXib.swift in Sources */,
@@ -1969,12 +2030,14 @@
 				19582C3D2CB82BB000A45AAB /* EnergyCostVC.swift in Sources */,
 				19813A8C2CBA502B00AF9C68 /* CellTextSelectionXib.swift in Sources */,
 				199217242CD475DD006657AC /* CellTextForCatXib.swift in Sources */,
+				19547D022CF35BFD00C0EC24 /* StatutoryRegisterReportVC.swift in Sources */,
 				195C0BEF2C95B8C400487404 /* AddSiteCheckVC.swift in Sources */,
 				960329592CA7B39D0016C3BC /* ViewFolderFileVC.swift in Sources */,
 				196D475E2CCD851F00F5553A /* AssetReportVC.swift in Sources */,
 				19BB5D1F2C7AD3F60033EEC2 /* AddNewUserVC.swift in Sources */,
 				19A677512CCDE1880040427C /* AddNewCategoryAdminVC.swift in Sources */,
 				199A9B882C7B552000C2D56B /* Company.swift in Sources */,
+				19547D052CF35C3E00C0EC24 /* ActionsReportVC.swift in Sources */,
 				19A316182CC6C3A6009C415A /* AddEnergyReadingsVC.swift in Sources */,
 				96DC02D22C8C8B44009FC5E8 /* AssetRegisterVC.swift in Sources */,
 				96D06F452CB447510019BF42 /* AddNewCompanyVC.swift in Sources */,
@@ -1991,6 +2054,7 @@
 				9608EC632C73595D00350138 /* UIImageview+Extention.swift in Sources */,
 				19ABD1972C8B8A2500A6159B /* CheckboxLabelXIB.swift in Sources */,
 				19CD14BD2CA7B27E00B377B1 /* FileUpdateAndPreviewXib.swift in Sources */,
+				19B5704C2D04DB8A000E3F89 /* SaveMarkersVC.swift in Sources */,
 				190E75E52CBAD02800A142DB /* WaterOutletTempAddReadingVC.swift in Sources */,
 				969B34AF2C8243CF0031DA91 /* CheckBoxXIB.swift in Sources */,
 				1905E3AC2C9F493B00678632 /* CAFMFileUtils.swift in Sources */,
@@ -2157,8 +2221,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = A67KLT24T5;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 47SNQW37S2;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cafm/Info.plist;
@@ -2176,7 +2240,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tdkglobalit.cafm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2194,8 +2258,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = A67KLT24T5;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 47SNQW37S2;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cafm/Info.plist;
@@ -2213,7 +2277,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tdkglobalit.cafm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

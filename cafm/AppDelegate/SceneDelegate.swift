@@ -42,6 +42,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if userEmailId == nil, userPassword == nil {
             vc = loginSB.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         }else {
+            backUPUserEmailId = userEmailId
+            backUPUserPassword = userPassword
             vc = generalSB.instantiateViewController(withIdentifier: "HomeVC") as! HomeVC
         }
         

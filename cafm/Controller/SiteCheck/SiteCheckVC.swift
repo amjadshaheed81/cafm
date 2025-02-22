@@ -10,7 +10,7 @@ import UIKit
 import SpreadsheetView
 import SCLAlertView
 
-class SiteCheckVC: UIViewController {
+class SiteCheckVC: AllOrientationsViewController {
     
     @IBOutlet weak var emptyView: EmptyView!
     @IBOutlet weak var mainView: UIView!

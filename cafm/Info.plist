@@ -47,5 +47,15 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to scan QR codes.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We need to use Face ID to authenticate you</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>We need to use biometric authentication for secure login</string>
 </dict>
 </plist>

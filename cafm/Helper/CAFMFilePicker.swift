@@ -117,7 +117,7 @@ final class CAFMFilePicker: NSObject {
     
 }
 
-let uploadMaxSize = 5
+let uploadMaxSize = 20
 
 extension CAFMFilePicker: PHPickerViewControllerDelegate {
     

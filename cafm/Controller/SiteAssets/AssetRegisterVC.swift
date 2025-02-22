@@ -90,10 +90,12 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
     }
 
     var isFromReports: Bool = false
+    var selectedMarker: MarkerModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.configureNavigationBackButton()
+        self.configureNavigationBar()
         self.initialSetUp()
     }
     
@@ -144,7 +146,6 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
     }
     
     func initialSetUp() {
-        self.title = "Asset Register"
         if self.isFromReports {
             self.isModalInPresentation = true
             let closeBtn = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(self.navCloseBtnClicked(_:)))
@@ -243,6 +244,27 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
             //summary data api calling
             self.loadAssetRegisterData(apiService: assetRegisterData)
         }
+    }
+    
+    func configureNavigationBar() {
+        self.title = "Asset Register"
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "camera.viewfinder"), style: .plain, target: self, action: #selector(self.cameraViewFinder(_:)))
+    }
+    
+    @objc func cameraViewFinder(_ sender: UIBarButtonItem) {
+        let vc = siteAssetsSB.instantiateViewController(withIdentifier: "QRScannerViewController") as! QRScannerViewController
+        vc.complition = { [weak self] assertID in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {
+                    return
+                }
+                let vc = siteAssetsSB.instantiateViewController(withIdentifier: "CreateNewAssetVC") as! CreateNewAssetVC
+                vc.isViewModeEdit = true
+                vc.selectedAssetId = assertID
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+        self.present(vc, animated: true)
     }
     
     func setUpSpreedSheetView() {
@@ -358,20 +380,48 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
     func loadAssetRegisterData(apiService: AssetRegisterData) {
         
         loadingStatus = .loading
+        self.assetDetailsResponse = []
+        self.assetDetailsResponseList = []
         
-        let apiService = ApiService.getRegistedAssetDetail(model: apiService)
-        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<AssetsResponse>, Error>) in
+        let apiServiceD = ApiService.getRegistedAssetDetail(model: apiService)
+        APIClient.request(apiServiceD) { [weak self] (result: Result<APIClient.MappableResult<AssetsResponse>, Error>) in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let mappableResult):
                 switch mappableResult {
                 case .array:
                     strongSelf.loadingStatus = .failed
+                    strongSelf.spreedSheetView.reloadData()
                     break
                 case .single(let single):
-                    if let array = single.assets {
+                    if var array = single.assets {
+                        switch apiService {
+                        case .assetSummaryAPI(siteId: let siteId):
+                            array = array.filter({ data in
+                                return data.doorItem == false && data.patItem == false && data.pfpItem == false
+                            })
+                        case .assetDoorAPI(siteId: let siteId):
+                            array = array.filter({ data in
+                                return data.doorItem == true
+                            })
+                            break
+                        case .assetPatAPI(siteId: let siteId):
+                            array = array.filter({ data in
+                                return data.patItem == true
+                            })
+                            break
+                        case .assetPFPAPI(siteId: let siteId):
+                            array = array.filter({ data in
+                                return data.pfpItem == true
+                            })
+                            break
+                        case .none:
+                            break
+                        }
+                        array = array.sorted(by: {$0.assetId ?? 0 < $1.assetId ?? 0})
                         if array.isEmpty {
                             strongSelf.loadingStatus = .noResponse
+                            strongSelf.spreedSheetView.reloadData()
                         }else {
                             strongSelf.loadingStatus = .default
                             strongSelf.assetDetailsResponse = array
@@ -386,8 +436,9 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
                     break
                 }
             case .failure(let error):
-                print(apiService.api(), "Error:", error.localizedDescription)
+                print(apiServiceD.api(), "Error:", error.localizedDescription)
                 strongSelf.loadingStatus = .failed
+                strongSelf.spreedSheetView.reloadData()
             }
         }
     }
@@ -410,6 +461,22 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
                     if !array.isEmpty {
                         strongSelf.loadingStatus = .default
                         strongSelf.siteLayoutDataArray = array
+                        
+                        if let selectedMarker = strongSelf.selectedMarker {
+                            if let floor = strongSelf.siteLayoutDataArray.filter({ $0.nodeType == .floor }).first(where: { $0.id == selectedMarker.roomId }) {
+                                if let firstIndex = strongSelf.siteLayoutDataArray.firstIndex(where: { $0.id == floor.id }) {
+                                    strongSelf.searchAssetFloorInd = firstIndex + 1
+                                    strongSelf.viewFloorXIB.lblText.text = floor.nodeName
+                                }
+                                if let room = strongSelf.siteLayoutDataArray.filter({ $0.nodeType == .room && $0.parentNode == floor.id }).first(where: { $0.nodeName?.contains(selectedMarker.label ?? "") ?? false }) {
+                                    if let firstIndex = strongSelf.siteLayoutDataArray.firstIndex(where: { $0.id == room.id }) {
+                                        strongSelf.searchAssetRoomInd = firstIndex + 1
+                                        strongSelf.viewRoomXIB.lblText.text = room.nodeName
+                                    }
+                                }
+                            }
+                        }
+                        
                         strongSelf.setAssetFloorXib()
                         strongSelf.setAssetLocationXib()
                         strongSelf.setAssetRoomXib()
@@ -419,7 +486,7 @@ class AssetRegisterVC: UIViewController, UITextFieldDelegate {
             case .failure(let error):
                 print(apiService.api(), "Error:", error.localizedDescription)
             }
-        }   
+        }
     }
     
     func setAssetFloorXib() {
@@ -2134,16 +2201,20 @@ enum AssetRegisterData {
     case assetPFPAPI(siteId: Int)
     case none
     
+    var baseApi: String {
+        return ApiService.baseApi
+    }
+    
     func url() -> String {
         switch self {
         case .assetSummaryAPI(let siteId):
-            return "http://cpc-beta.ukwest.cloudapp.azure.com/api/site/\(siteId)/assets"
+            return self.baseApi+"/api/site/\(siteId)/assets"
         case .assetDoorAPI(let siteId):
-            return "http://cpc-beta.ukwest.cloudapp.azure.com/api/site/\(siteId)/assets?doorItem=true"
+            return self.baseApi+"/api/site/\(siteId)/assets?doorItem=true"
         case .assetPatAPI(let siteId):
-            return "http://cpc-beta.ukwest.cloudapp.azure.com/api/site/\(siteId)/assets?patItem=true"
+            return self.baseApi+"/api/site/\(siteId)/assets?patItem=true"
         case .assetPFPAPI(let siteId):
-            return "http://cpc-beta.ukwest.cloudapp.azure.com/api/site/\(siteId)/assets?pfpItem=true"
+            return self.baseApi+"/api/site/\(siteId)/assets?pfpItem=true"
         case .none:
             return ""
         }

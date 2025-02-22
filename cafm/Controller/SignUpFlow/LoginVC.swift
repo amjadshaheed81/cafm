@@ -7,8 +7,9 @@
 
 import UIKit
 import SCLAlertView
+import LocalAuthentication
 
-class LoginVC: UIViewController, UITextFieldDelegate {
+class LoginVC: PortraitViewController, UITextFieldDelegate {
     
     @IBOutlet weak var tfEmail: UITextField!
     @IBOutlet weak var signInButton: UIButton!
@@ -24,6 +25,58 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         self.tfEmail.delegate = self
         self.tfPassword.delegate = self
         self.initialViewSetup()
+        authenticateUser()
+    }
+    
+    // Biometric authentication method
+    func authenticateUser() {
+        let context = LAContext()
+        var error: NSError?
+
+        // Check if biometric authentication is available
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Authenticate to access your app") { success, authenticationError in
+                DispatchQueue.main.async {
+                    if success {
+                        // Authentication successful
+                        self.showMainContent() // Example: show main content
+                    } else {
+                        // Authentication failed
+                        self.showError(message: "Authentication failed. Please try again.")
+                    }
+                }
+            }
+        } else {
+            // No biometrics available, fallback to passcode
+            context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Authenticate to access your app") { success, authenticationError in
+                DispatchQueue.main.async {
+                    if success {
+                        self.showMainContent()
+                    } else {
+                        self.showError(message: "Authentication failed. Please try again.")
+                    }
+                }
+            }
+        }
+    }
+
+    func showMainContent() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return}
+            self.tfEmail.text = backUPUserEmailId
+            self.tfPassword.text = backUPUserPassword
+        }
+    }
+
+    func showError(message: String) {
+        // Handle authentication failure (e.g., show an alert)
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+            }
+        }))
+        present(alert, animated: true, completion: nil)
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
@@ -186,6 +239,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
                     }else {
                         userEmailId = self.tfEmail.text
                         userPassword = self.tfPassword.text
+                        backUPUserEmailId = self.tfEmail.text
+                        backUPUserPassword = self.tfPassword.text
                         UserConstants.shared.currentUserID = loginDetail.user?.id
                         jwtToken = "JWTSESSIONID="+(loginDetail.jwtToken ?? "")
                         sasToken = loginDetail.sasToken

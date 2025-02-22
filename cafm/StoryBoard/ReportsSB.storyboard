@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_12" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -16,11 +16,11 @@
             <objects>
                 <viewController storyboardIdentifier="ReportsVC" title="Reports" id="Y6W-OH-hqX" customClass="ReportsVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Be6-ee-dqN">
-                                <rect key="frame" x="0.0" y="59" width="393" height="60"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="60"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="fd0-FX-JSb"/>
@@ -91,14 +91,14 @@
                                 </cells>
                             </collectionView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wmd-TG-Zep">
-                                <rect key="frame" x="0.0" y="119" width="393" height="1"/>
+                                <rect key="frame" x="0.0" y="122" width="440" height="1"/>
                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="YZG-tv-I1j"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dqO-sF-j06">
-                                <rect key="frame" x="0.0" y="120" width="393" height="698"/>
+                                <rect key="frame" x="0.0" y="123" width="440" height="799"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                         </subviews>
@@ -131,34 +131,34 @@
             <objects>
                 <viewController storyboardIdentifier="PortfolioReportVC" id="WZb-Yf-Fbm" customClass="PortfolioReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3Bo-XR-X42">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YX7-DV-K5n" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P3S-un-xaV">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7my-L1-1Xq">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="1361"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="1361"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZfV-jo-uOM" userLabel="View1">
-                                                <rect key="frame" x="0.0" y="20" width="393" height="530"/>
+                                                <rect key="frame" x="0.0" y="20" width="440" height="530"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NeX-Tc-CY4" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="-11" width="393" height="21"/>
+                                                        <rect key="frame" x="0.0" y="-11" width="440" height="21"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6ER-NT-Sgo" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" priority="250" constant="48" id="paa-GU-W3g"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gtL-8q-6Vo" userLabel="separator">
-                                                                <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="1" id="Zan-5w-bY7"/>
@@ -178,7 +178,7 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jvF-V6-VK7" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="20" width="373" height="500"/>
+                                                        <rect key="frame" x="10" y="20" width="420" height="500"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="500" id="sh4-yb-gRw"/>
@@ -225,14 +225,14 @@
                                                 </variation>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dHv-go-ujE" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="590" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="590" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="Xp1-7i-R8y"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="orh-aL-lKv" userLabel="switch">
-                                                <rect key="frame" x="10" y="640" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="640" width="420" height="40"/>
                                                 <subviews>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="scf-xD-2JT" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="4.6666666666666288" width="51" height="31"/>
@@ -241,7 +241,7 @@
                                                         </connections>
                                                     </switch>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hni-75-cP6" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="59" y="0.0" width="304" height="40"/>
+                                                        <rect key="frame" x="59" y="0.0" width="351" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -258,20 +258,20 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aqP-9j-1ys" userLabel="View2">
-                                                <rect key="frame" x="0.0" y="690" width="393" height="641"/>
+                                                <rect key="frame" x="0.0" y="690" width="440" height="641"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nmD-KX-zrx" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nKM-gf-3hW" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" priority="250" constant="48" id="HmU-fX-Ecb"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B4a-KK-z5Y" userLabel="separator">
-                                                                <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="1" id="da1-cC-I0X"/>
@@ -291,7 +291,7 @@
                                                         </constraints>
                                                     </view>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y4v-hy-Wf6">
-                                                        <rect key="frame" x="0.0" y="31" width="393" height="600"/>
+                                                        <rect key="frame" x="0.0" y="31" width="440" height="600"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qac-21-pjC" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="600"/>
@@ -337,7 +337,7 @@
                                                 </constraints>
                                             </view>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0s5-Zw-5Oh" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="118" y="1371" width="157" height="44"/>
+                                                <rect key="frame" x="132" y="1371" width="176" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="bc4-af-rJg"/>
                                                 </constraints>
@@ -421,41 +421,41 @@
             <objects>
                 <viewController storyboardIdentifier="PortfolioReportTableVC" id="TuI-KL-XBX" customClass="PortfolioReportTableVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="H1W-gg-HEK">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yev-wL-IAh" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hgv-ch-uAy">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AyE-Mc-yR9" customClass="CustomTextField" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="8" width="373" height="40"/>
+                                        <rect key="frame" x="10" y="8" width="420" height="40"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="lUQ-A5-7sN"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jvd-Aw-tf1" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="56" width="182.66666666666666" height="40"/>
+                                        <rect key="frame" x="10" y="56" width="206" height="40"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d7Z-6g-LbJ" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="200.66666666666663" y="56" width="182.33333333333337" height="40"/>
+                                        <rect key="frame" x="224" y="56" width="206" height="40"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="reL-Sw-vUr" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="104" width="182.66666666666666" height="40"/>
+                                        <rect key="frame" x="10" y="104" width="206" height="40"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tab-hW-jqB" customClass="ExportBtnXib" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="200.66666666666663" y="104" width="182.33333333333337" height="40"/>
+                                        <rect key="frame" x="224" y="104" width="206" height="40"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FxS-TF-w8F" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="154" width="373" height="595"/>
+                                        <rect key="frame" x="10" y="154" width="420" height="696"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F3R-I2-R7F" customClass="SpreadsheetView" customModule="SpreadsheetView">
                                                 <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
@@ -556,44 +556,44 @@
             <objects>
                 <viewController storyboardIdentifier="AssetReportVC" id="CjC-MJ-bM9" customClass="AssetReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JW0-EM-3LO">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GqP-g3-pco" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KnB-QA-iPa">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qha-gg-w7F">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="2722"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="2722"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y7G-A8-RQC" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="20" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="20" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="fm8-UY-Lgz"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AwB-u9-eZ0" userLabel="switch">
-                                                <rect key="frame" x="10" y="70" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="70" width="420" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zn8-wn-hdc" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="19.666666666666668" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lzA-sH-Zo8" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="29.666666666666664" y="4.6666666666666572" width="50.999999999999993" height="31"/>
+                                                        <rect key="frame" x="30" y="4.6666666666666572" width="51" height="31"/>
                                                         <connections>
                                                             <action selector="switchValueChanged:" destination="CjC-MJ-bM9" eventType="valueChanged" id="bpS-5U-OWI"/>
                                                             <action selector="switchValueChanged:" destination="JxB-WB-ws8" eventType="valueChanged" id="f75-rS-Rnj"/>
                                                         </connections>
                                                     </switch>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Individual Site" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="srK-Jm-t14" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="88.666666666666686" y="0.0" width="109.33333333333331" height="40"/>
+                                                        <rect key="frame" x="89" y="0.0" width="109.66666666666669" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -613,24 +613,24 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pgs-Rf-488" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="120" width="393" height="76"/>
+                                                <rect key="frame" x="0.0" y="120" width="440" height="76"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="76" id="oR4-3F-jeA"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="adN-54-hnJ" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="206" width="393" height="76"/>
+                                                <rect key="frame" x="0.0" y="206" width="440" height="76"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="76" id="baF-2M-RFn"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sRr-Hy-r7M" userLabel="View1">
-                                                <rect key="frame" x="0.0" y="302" width="393" height="510"/>
+                                                <rect key="frame" x="0.0" y="302" width="440" height="510"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rHf-mP-jg0" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="0.0" width="373" height="500"/>
+                                                        <rect key="frame" x="10" y="0.0" width="420" height="500"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="500" id="nQt-ec-J5Z"/>
@@ -674,10 +674,10 @@
                                                 </variation>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eke-cb-wkT" userLabel="View2">
-                                                <rect key="frame" x="0.0" y="842" width="393" height="1850"/>
+                                                <rect key="frame" x="0.0" y="842" width="440" height="1850"/>
                                                 <subviews>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wyT-JK-gMk">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="600"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="600"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EqI-hE-QQe" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="600"/>
@@ -711,7 +711,7 @@
                                                         </constraints>
                                                     </scrollView>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7I-hD-T4H">
-                                                        <rect key="frame" x="0.0" y="620" width="393" height="600"/>
+                                                        <rect key="frame" x="0.0" y="620" width="440" height="600"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ljb-eZ-0Bk" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="600"/>
@@ -745,7 +745,7 @@
                                                         </constraints>
                                                     </scrollView>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hvI-RG-6AG">
-                                                        <rect key="frame" x="0.0" y="1240" width="393" height="600"/>
+                                                        <rect key="frame" x="0.0" y="1240" width="440" height="600"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5g3-hl-eaN" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="600"/>
@@ -794,7 +794,7 @@
                                                 </constraints>
                                             </view>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p19-ju-9Km" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="131" y="2732" width="131" height="44"/>
+                                                <rect key="frame" x="146.66666666666669" y="2732" width="146.66666666666669" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="xOp-2g-hRV"/>
                                                 </constraints>
@@ -891,36 +891,36 @@
             <objects>
                 <viewController storyboardIdentifier="SiteChecksReportsVC" id="Bdc-AE-K4e" customClass="SiteChecksReportsVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mLZ-VJ-pfd">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHh-LB-z0X" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YdM-mZ-OjN">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HCF-PG-wId">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="1583"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="1583"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a9u-7T-zWJ" userLabel="switch">
-                                                <rect key="frame" x="10" y="20" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="20" width="420" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MUu-Ir-lmH" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="19.666666666666668" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M3O-kh-EBP" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="29.666666666666664" y="4.6666666666666714" width="50.999999999999993" height="31"/>
+                                                        <rect key="frame" x="30" y="4.6666666666666714" width="51" height="31"/>
                                                         <connections>
                                                             <action selector="switchValueChanged:" destination="Bdc-AE-K4e" eventType="touchUpInside" id="neQ-8L-k3Q"/>
                                                         </connections>
                                                     </switch>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Individual Site" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fcF-4k-wi1" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="88.666666666666686" y="0.0" width="109.33333333333331" height="40"/>
+                                                        <rect key="frame" x="89" y="0.0" width="109.66666666666669" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -941,41 +941,41 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7nP-FS-4eb" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="70" width="181.66666666666666" height="40"/>
+                                                <rect key="frame" x="10" y="70" width="205" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="4zR-MM-DVP"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bmJ-Lw-D46" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="201.66666666666663" y="70" width="181.33333333333337" height="40"/>
+                                                <rect key="frame" x="225" y="70" width="205" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="iSx-oI-ZbS"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GRe-M0-a2H" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="120" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="120" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="yxF-jL-kEh"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DL0-12-WTd" userLabel="View1">
-                                                <rect key="frame" x="0.0" y="170" width="393" height="441"/>
+                                                <rect key="frame" x="0.0" y="170" width="440" height="441"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z2F-A2-7XZ" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OUl-Mu-Ij2" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" priority="250" constant="48" id="V7V-SW-1wV"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="633-bg-E1U" userLabel="separator">
-                                                                <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="1" id="Lbk-v1-Kze"/>
@@ -995,7 +995,7 @@
                                                         </constraints>
                                                     </view>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FGy-iM-6ah">
-                                                        <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                        <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mao-11-j1Y" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1041,20 +1041,20 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fAS-rn-0sR" userLabel="View2">
-                                                <rect key="frame" x="0.0" y="641" width="393" height="441"/>
+                                                <rect key="frame" x="0.0" y="641" width="440" height="441"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HWG-sp-6Nj" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X0X-oa-W5e" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" priority="250" constant="48" id="WST-Hf-hvO"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TFE-JD-Zcj" userLabel="separator">
-                                                                <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="1" id="gqA-hB-ovv"/>
@@ -1074,7 +1074,7 @@
                                                         </constraints>
                                                     </view>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zd3-6v-dAm">
-                                                        <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                        <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N9u-2i-v7y" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1120,20 +1120,20 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lmq-aX-YfA" userLabel="View3">
-                                                <rect key="frame" x="0.0" y="1112" width="393" height="441"/>
+                                                <rect key="frame" x="0.0" y="1112" width="440" height="441"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tye-vE-Qv7" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tsf-Rz-oKO" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" priority="250" constant="48" id="4aE-w0-szK"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RSa-Rf-1PV" userLabel="separator">
-                                                                <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                 <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="1" id="yVP-T4-Dky"/>
@@ -1153,7 +1153,7 @@
                                                         </constraints>
                                                     </view>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jXG-4J-q7h">
-                                                        <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                        <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zQH-hQ-2pS" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1199,7 +1199,7 @@
                                                 </constraints>
                                             </view>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57k-Oz-Ytd" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="118" y="1593" width="157" height="44"/>
+                                                <rect key="frame" x="132" y="1593" width="176" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="j4I-vB-dXo"/>
                                                 </constraints>
@@ -1302,38 +1302,38 @@
             <objects>
                 <viewController storyboardIdentifier="EnergyReportVC" id="ogp-oa-gZK" customClass="EnergyReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="S0n-7T-xNj">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hUy-ab-BPi" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8BH-U2-BXl">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dbZ-b8-03U">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="2639"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="2639"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NZM-8R-3WR">
-                                                <rect key="frame" x="0.0" y="0.0" width="393" height="1264"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="440" height="1264"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rzm-y4-c54" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="20" width="373" height="40"/>
+                                                        <rect key="frame" x="10" y="20" width="420" height="40"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="THb-Iz-9Rt"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uSj-PF-xaY" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="70" width="373" height="40"/>
+                                                        <rect key="frame" x="10" y="70" width="420" height="40"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="lA0-8I-RJw"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kkq-ha-SK7" userLabel="switch">
-                                                        <rect key="frame" x="10" y="120" width="373" height="40"/>
+                                                        <rect key="frame" x="10" y="120" width="420" height="40"/>
                                                         <subviews>
                                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YRm-TH-uP5" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="4.6666666666666572" width="51" height="31"/>
@@ -1342,7 +1342,7 @@
                                                                 </connections>
                                                             </switch>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ize-Me-bf1" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="59" y="0.0" width="304" height="40"/>
+                                                                <rect key="frame" x="59" y="0.0" width="351" height="40"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -1360,34 +1360,34 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JoM-1f-t7U" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="170" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="170" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="lYj-uh-EPE"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hYK-V3-YmA" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="256" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="256" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="FzY-h0-BgV"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RT4-ud-m3i" userLabel="View1">
-                                                        <rect key="frame" x="0.0" y="342" width="393" height="441"/>
+                                                        <rect key="frame" x="0.0" y="342" width="440" height="441"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HLr-OR-gxl" userLabel="TitleView">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IQi-9W-Exq" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" priority="250" constant="48" id="XLR-dZ-8sv"/>
                                                                         </constraints>
                                                                     </view>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uqu-oc-4ae" userLabel="separator">
-                                                                        <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                        <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                         <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="1" id="Uyn-O0-uge"/>
@@ -1407,7 +1407,7 @@
                                                                 </constraints>
                                                             </view>
                                                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NKS-iQ-BYI">
-                                                                <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                                <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTK-7k-jPv" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                         <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1453,20 +1453,20 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="04V-8e-8Qy" userLabel="View2">
-                                                        <rect key="frame" x="0.0" y="813" width="393" height="441"/>
+                                                        <rect key="frame" x="0.0" y="813" width="440" height="441"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MXb-14-e05" userLabel="TitleView">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1A7-gC-2Bw" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" priority="250" constant="48" id="QSm-c6-c2f"/>
                                                                         </constraints>
                                                                     </view>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZF6-HY-gcG" userLabel="separator">
-                                                                        <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                        <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                         <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="1" id="8Dh-yO-gVU"/>
@@ -1486,7 +1486,7 @@
                                                                 </constraints>
                                                             </view>
                                                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NX0-Vh-tfq">
-                                                                <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                                <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fdw-FD-xok" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                         <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1559,13 +1559,13 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XId-9d-moq">
-                                                <rect key="frame" x="0.0" y="1284" width="393" height="1325"/>
+                                                <rect key="frame" x="0.0" y="1284" width="440" height="1325"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eSO-v2-zEA" userLabel="TitleView">
-                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="49"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compare 2 Sites" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NXR-g6-Uaq" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                                <rect key="frame" x="10" y="10" width="373" height="29"/>
+                                                                <rect key="frame" x="10" y="10" width="420" height="29"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="24"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -1581,48 +1581,48 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3RI-9l-6Ib" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="59" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="59" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="OTo-aL-pYY"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4TH-fa-Ymm" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="145" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="145" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="rc7-cv-h2Q"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EzX-4R-wKO" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="231" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="231" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="2T1-Gv-rxN"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7mh-qZ-7Ob" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="317" width="373" height="76"/>
+                                                        <rect key="frame" x="10" y="317" width="420" height="76"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="76" id="7ig-dI-6iA"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2RR-BX-qdN" userLabel="View1">
-                                                        <rect key="frame" x="0.0" y="403" width="393" height="441"/>
+                                                        <rect key="frame" x="0.0" y="403" width="440" height="441"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ORt-o0-fIH" userLabel="TitleView">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-cU-PIz" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" priority="250" constant="48" id="LTJ-VF-5AH"/>
                                                                         </constraints>
                                                                     </view>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AVJ-5M-Go8" userLabel="separator">
-                                                                        <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                        <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                         <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="1" id="TER-W3-afn"/>
@@ -1642,7 +1642,7 @@
                                                                 </constraints>
                                                             </view>
                                                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XOl-Bs-nQ9">
-                                                                <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                                <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0qh-9K-4Hq" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                         <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1688,20 +1688,20 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hbi-5K-oM4" userLabel="View2">
-                                                        <rect key="frame" x="0.0" y="874" width="393" height="441"/>
+                                                        <rect key="frame" x="0.0" y="874" width="440" height="441"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FAL-of-Iik" userLabel="TitleView">
-                                                                <rect key="frame" x="0.0" y="0.0" width="393" height="21"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="440" height="21"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OPa-xW-TUy" customClass="TitleBadgeView" customModule="cafm" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="440" height="0.0"/>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" priority="250" constant="48" id="jrj-np-tCN"/>
                                                                         </constraints>
                                                                     </view>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ova-Hr-nCf" userLabel="separator">
-                                                                        <rect key="frame" x="0.0" y="10" width="393" height="1"/>
+                                                                        <rect key="frame" x="0.0" y="10" width="440" height="1"/>
                                                                         <color key="backgroundColor" name="ViewBorder2Color"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="1" id="7jw-RJ-i0K"/>
@@ -1721,7 +1721,7 @@
                                                                 </constraints>
                                                             </view>
                                                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P5X-H6-QbS">
-                                                                <rect key="frame" x="0.0" y="31" width="393" height="400"/>
+                                                                <rect key="frame" x="0.0" y="31" width="440" height="400"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SwJ-yK-0Il" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                         <rect key="frame" x="10" y="0.0" width="373" height="400"/>
@@ -1794,7 +1794,7 @@
                                                 </constraints>
                                             </view>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nia-si-5NU" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="98.333333333333329" y="2649" width="196.33333333333337" height="44"/>
+                                                <rect key="frame" x="110" y="2649" width="220" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="vzX-PC-SWo"/>
                                                 </constraints>
@@ -1891,57 +1891,57 @@
             <objects>
                 <viewController storyboardIdentifier="ContractReportVC" id="JxB-WB-ws8" customClass="ContractReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VOo-wA-58w">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SxB-v3-BHd" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bwL-IY-9cp">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dR6-sx-Rbk">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="770"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="770"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lBV-6D-35L" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="20" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="20" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="pjP-Ea-yMQ"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CsQ-af-GF7" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="70" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="70" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="J7T-zJ-you"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zIO-e3-yyT" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="120" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="120" width="420" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="7AT-bX-GCJ"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r8Q-3O-gde" userLabel="switch">
-                                                <rect key="frame" x="10" y="170" width="373" height="40"/>
+                                                <rect key="frame" x="10" y="170" width="420" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="niN-Io-SRz" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="19.666666666666668" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wh2-bb-EU6" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="29.666666666666664" y="4.6666666666666572" width="50.999999999999993" height="31"/>
+                                                        <rect key="frame" x="30" y="4.6666666666666572" width="51" height="31"/>
                                                         <connections>
                                                             <action selector="switchValueChanged:" destination="JxB-WB-ws8" eventType="valueChanged" id="Jnd-GC-vJZ"/>
                                                         </connections>
                                                     </switch>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Individual Site" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LFG-Bz-gAx" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
-                                                        <rect key="frame" x="88.666666666666686" y="0.0" width="109.33333333333331" height="40"/>
+                                                        <rect key="frame" x="89" y="0.0" width="109.66666666666669" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -1961,10 +1961,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RjF-si-jJv" userLabel="View1">
-                                                <rect key="frame" x="0.0" y="220" width="393" height="520"/>
+                                                <rect key="frame" x="0.0" y="220" width="440" height="520"/>
                                                 <subviews>
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YYl-5f-4bQ">
-                                                        <rect key="frame" x="0.0" y="10" width="393" height="500"/>
+                                                        <rect key="frame" x="0.0" y="10" width="440" height="500"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iIF-Wp-hze" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
                                                                 <rect key="frame" x="10" y="0.0" width="373" height="500"/>
@@ -2007,7 +2007,7 @@
                                                 </constraints>
                                             </view>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o8d-Tm-y9a" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
-                                                <rect key="frame" x="98.333333333333329" y="780" width="196.33333333333337" height="44"/>
+                                                <rect key="frame" x="110" y="780" width="220" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="hdH-KL-Rvj"/>
                                                 </constraints>
@@ -2087,15 +2087,535 @@
             </objects>
             <point key="canvasLocation" x="94" y="2873"/>
         </scene>
+        <!--Statutory Register ReportVC-->
+        <scene sceneID="w0w-ff-hfl">
+            <objects>
+                <viewController storyboardIdentifier="StatutoryRegisterReportVC" id="Tg8-fm-21m" customClass="StatutoryRegisterReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="6Z0-FY-aOt">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xvx-hm-8cG" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qe0-Vo-LK3">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gYU-WH-Ush">
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="656"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VGe-LD-ZBm" customClass="OptionBtnWithTitleXIB" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="20" width="440" height="76"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="76" id="GmH-9p-fiI"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fQh-xV-GTU" userLabel="View1">
+                                                <rect key="frame" x="0.0" y="106" width="440" height="520"/>
+                                                <subviews>
+                                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mDi-og-9cQ">
+                                                        <rect key="frame" x="0.0" y="10" width="440" height="500"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Kq-ht-hup" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
+                                                                <rect key="frame" x="10" y="0.0" width="373" height="500"/>
+                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="373" id="WLx-hs-cLK"/>
+                                                                </constraints>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="color" keyPath="ShadowColor">
+                                                                        <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="ShadowOpacity">
+                                                                        <real key="value" value="0.5"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="size" keyPath="ShadowOffset">
+                                                                        <size key="value" width="0.0" height="0.0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                                                        <real key="value" value="3"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
+                                                            </view>
+                                                        </subviews>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="500" id="ATe-K2-656"/>
+                                                            <constraint firstItem="1Kq-ht-hup" firstAttribute="height" secondItem="mDi-og-9cQ" secondAttribute="height" id="FIu-iO-Ajh"/>
+                                                            <constraint firstItem="1Kq-ht-hup" firstAttribute="top" secondItem="mDi-og-9cQ" secondAttribute="top" id="UiK-WZ-JWn"/>
+                                                            <constraint firstItem="1Kq-ht-hup" firstAttribute="leading" secondItem="mDi-og-9cQ" secondAttribute="leading" constant="10" id="VYq-TW-upy"/>
+                                                            <constraint firstAttribute="trailing" secondItem="1Kq-ht-hup" secondAttribute="trailing" constant="10" id="lae-zN-4BI"/>
+                                                            <constraint firstAttribute="bottom" secondItem="1Kq-ht-hup" secondAttribute="bottom" id="v04-T2-bRP"/>
+                                                        </constraints>
+                                                    </scrollView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="mDi-og-9cQ" firstAttribute="top" secondItem="fQh-xV-GTU" secondAttribute="top" constant="10" id="6as-Rw-fEF"/>
+                                                    <constraint firstAttribute="bottom" secondItem="mDi-og-9cQ" secondAttribute="bottom" constant="10" id="GrD-6d-etb"/>
+                                                    <constraint firstItem="mDi-og-9cQ" firstAttribute="leading" secondItem="fQh-xV-GTU" secondAttribute="leading" id="Hhe-BL-BNy"/>
+                                                    <constraint firstAttribute="trailing" secondItem="mDi-og-9cQ" secondAttribute="trailing" id="l3s-Hl-7ET"/>
+                                                </constraints>
+                                            </view>
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wnE-G7-m73" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="110" y="666" width="220" height="44"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="44" id="fog-sF-SUv"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                                <inset key="titleEdgeInsets" minX="-5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="-5" maxY="0.0"/>
+                                                <state key="normal" title="Statutory Register">
+                                                    <imageReference key="image" image="chevron.right" catalog="system" symbolScale="small"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="statutoryRegisterReportBtnClicked:" destination="Tg8-fm-21m" eventType="touchUpInside" id="mk4-5z-wuz"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="VGe-LD-ZBm" secondAttribute="trailing" id="1SC-NI-lnQ"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="fQh-xV-GTU" secondAttribute="bottom" constant="30" id="3a0-pD-pTp"/>
+                                            <constraint firstAttribute="trailing" secondItem="fQh-xV-GTU" secondAttribute="trailing" id="LmB-bp-aul"/>
+                                            <constraint firstAttribute="height" priority="250" id="Lqx-Yi-wmv"/>
+                                            <constraint firstItem="fQh-xV-GTU" firstAttribute="top" secondItem="VGe-LD-ZBm" secondAttribute="bottom" constant="10" id="aTI-eH-5h3"/>
+                                            <constraint firstItem="wnE-G7-m73" firstAttribute="top" secondItem="fQh-xV-GTU" secondAttribute="bottom" constant="40" id="cem-pW-MMa"/>
+                                            <constraint firstItem="VGe-LD-ZBm" firstAttribute="leading" secondItem="gYU-WH-Ush" secondAttribute="leading" id="gnd-mN-XfW"/>
+                                            <constraint firstItem="fQh-xV-GTU" firstAttribute="leading" secondItem="gYU-WH-Ush" secondAttribute="leading" id="lrM-Yh-sIA"/>
+                                            <constraint firstItem="VGe-LD-ZBm" firstAttribute="top" secondItem="gYU-WH-Ush" secondAttribute="top" constant="20" id="n7n-3I-a1X"/>
+                                            <constraint firstItem="wnE-G7-m73" firstAttribute="centerX" secondItem="gYU-WH-Ush" secondAttribute="centerX" id="yTm-7o-n7W"/>
+                                            <constraint firstItem="wnE-G7-m73" firstAttribute="width" secondItem="gYU-WH-Ush" secondAttribute="width" multiplier="1:2" id="yao-Vu-A2B"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="gYU-WH-Ush" firstAttribute="top" secondItem="Qe0-Vo-LK3" secondAttribute="top" id="4YN-sp-YKh"/>
+                                    <constraint firstItem="gYU-WH-Ush" firstAttribute="leading" secondItem="Qe0-Vo-LK3" secondAttribute="leading" id="Vb3-cB-bIj"/>
+                                    <constraint firstAttribute="trailing" secondItem="gYU-WH-Ush" secondAttribute="trailing" id="gMn-BE-XMK"/>
+                                    <constraint firstAttribute="bottom" secondItem="gYU-WH-Ush" secondAttribute="bottom" id="uxG-rb-3hR"/>
+                                    <constraint firstItem="gYU-WH-Ush" firstAttribute="width" secondItem="Qe0-Vo-LK3" secondAttribute="width" id="vQW-dl-uPz"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="NEA-20-z63"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="xvx-hm-8cG" firstAttribute="top" secondItem="NEA-20-z63" secondAttribute="top" id="8Hd-gF-knc"/>
+                            <constraint firstItem="Qe0-Vo-LK3" firstAttribute="top" secondItem="NEA-20-z63" secondAttribute="top" id="BHp-t5-5wU"/>
+                            <constraint firstItem="xvx-hm-8cG" firstAttribute="bottom" secondItem="NEA-20-z63" secondAttribute="bottom" id="L7h-fy-04t"/>
+                            <constraint firstItem="Qe0-Vo-LK3" firstAttribute="leading" secondItem="NEA-20-z63" secondAttribute="leading" id="OmJ-jP-njN"/>
+                            <constraint firstItem="xvx-hm-8cG" firstAttribute="leading" secondItem="NEA-20-z63" secondAttribute="leading" id="jYo-Lz-RZ8"/>
+                            <constraint firstItem="Qe0-Vo-LK3" firstAttribute="bottom" secondItem="NEA-20-z63" secondAttribute="bottom" id="nbf-AO-Cth"/>
+                            <constraint firstItem="xvx-hm-8cG" firstAttribute="trailing" secondItem="NEA-20-z63" secondAttribute="trailing" id="rY8-cJ-Y8K"/>
+                            <constraint firstItem="Qe0-Vo-LK3" firstAttribute="trailing" secondItem="NEA-20-z63" secondAttribute="trailing" id="tAK-3L-1Rl"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="chartContainerView" destination="1Kq-ht-hup" id="3Af-4T-NE0"/>
+                        <outlet property="chartContainerViewWidth" destination="WLx-hs-cLK" id="ltt-zN-tuF"/>
+                        <outlet property="chartScrollView" destination="mDi-og-9cQ" id="TPY-c2-KxQ"/>
+                        <outlet property="chartScrollViewHeight" destination="ATe-K2-656" id="9jh-oO-R96"/>
+                        <outlet property="emptyView" destination="xvx-hm-8cG" id="g5i-bY-PFf"/>
+                        <outlet property="mainView" destination="gYU-WH-Ush" id="akA-0d-CcR"/>
+                        <outlet property="requirementXIB" destination="VGe-LD-ZBm" id="Ymq-Ox-6Av"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="djS-wM-y8Y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="94" y="3618"/>
+        </scene>
+        <!--Text ViewVC-->
+        <scene sceneID="oyO-bv-dZF">
+            <objects>
+                <viewController storyboardIdentifier="TextViewVC" id="V5J-DJ-Gxe" customClass="TextViewVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="e1v-nf-fdv">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="lgn-14-jbI">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Whl-HI-5Hi"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="lgn-14-jbI" firstAttribute="top" secondItem="Whl-HI-5Hi" secondAttribute="top" id="GUD-50-IE2"/>
+                            <constraint firstItem="lgn-14-jbI" firstAttribute="leading" secondItem="Whl-HI-5Hi" secondAttribute="leading" id="HxS-Aw-UFo"/>
+                            <constraint firstItem="Whl-HI-5Hi" firstAttribute="trailing" secondItem="lgn-14-jbI" secondAttribute="trailing" id="p3J-1g-H07"/>
+                            <constraint firstItem="Whl-HI-5Hi" firstAttribute="bottom" secondItem="lgn-14-jbI" secondAttribute="bottom" id="tlE-0l-iUt"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="textView" destination="lgn-14-jbI" id="51s-ZP-EIS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2x4-Mp-fmC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="983" y="3618"/>
+        </scene>
+        <!--Actions ReportVC-->
+        <scene sceneID="Io9-3i-Vcv">
+            <objects>
+                <viewController storyboardIdentifier="ActionsReportVC" id="etE-j7-eq3" customClass="ActionsReportVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="dP0-Ra-PyY">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q3b-jF-NbX" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vbc-u9-4vT">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AXp-qv-S7d">
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="806"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K3I-Zw-Ybd" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="20" width="420" height="40"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="hxy-bX-F0n"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="owd-5A-oLf" userLabel="switch">
+                                                <rect key="frame" x="10" y="70" width="420" height="40"/>
+                                                <subviews>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bbP-bc-Emd" customClass="DefaultSwitch" customModule="cafm" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="4.6666666666666572" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="switchValueChanged:" destination="etE-j7-eq3" eventType="valueChanged" id="S9C-AP-pD1"/>
+                                                        </connections>
+                                                    </switch>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PEa-ez-5z2" customClass="DefaultFontLabel" customModule="cafm" customModuleProvider="target">
+                                                        <rect key="frame" x="59" y="0.0" width="351" height="40"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="bbP-bc-Emd" firstAttribute="leading" secondItem="owd-5A-oLf" secondAttribute="leading" id="HDt-iT-94w"/>
+                                                    <constraint firstItem="bbP-bc-Emd" firstAttribute="centerY" secondItem="owd-5A-oLf" secondAttribute="centerY" id="Kqd-jo-HIf"/>
+                                                    <constraint firstAttribute="bottom" secondItem="PEa-ez-5z2" secondAttribute="bottom" id="La8-OF-Bc1"/>
+                                                    <constraint firstItem="PEa-ez-5z2" firstAttribute="leading" secondItem="bbP-bc-Emd" secondAttribute="trailing" constant="10" id="bdh-8c-nec"/>
+                                                    <constraint firstAttribute="trailing" secondItem="PEa-ez-5z2" secondAttribute="trailing" constant="10" id="dKy-3T-3wG"/>
+                                                    <constraint firstItem="PEa-ez-5z2" firstAttribute="top" secondItem="owd-5A-oLf" secondAttribute="top" id="rIb-io-zNK"/>
+                                                </constraints>
+                                            </view>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Date Range" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CwP-WJ-Brg">
+                                                <rect key="frame" x="10" y="130" width="420" height="21"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="21" id="gbR-pE-pSx"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                                <color key="textColor" name="PrimaryTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="azt-b4-vya" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="156" width="420" height="40"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="MnX-sT-zpB"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kff-0t-iGQ" customClass="OptionBtnXib" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="206" width="420" height="40"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="1Lh-pw-WEy"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s75-tS-zcN" userLabel="View1">
+                                                <rect key="frame" x="0.0" y="256" width="440" height="520"/>
+                                                <subviews>
+                                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LxP-xD-jcg">
+                                                        <rect key="frame" x="0.0" y="10" width="440" height="500"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Fh-q9-dbX" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
+                                                                <rect key="frame" x="10" y="0.0" width="373" height="500"/>
+                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="373" id="SRR-KM-EWy"/>
+                                                                </constraints>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="color" keyPath="ShadowColor">
+                                                                        <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="ShadowOpacity">
+                                                                        <real key="value" value="0.5"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="size" keyPath="ShadowOffset">
+                                                                        <size key="value" width="0.0" height="0.0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                                                        <real key="value" value="3"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
+                                                            </view>
+                                                        </subviews>
+                                                        <constraints>
+                                                            <constraint firstAttribute="bottom" secondItem="8Fh-q9-dbX" secondAttribute="bottom" id="5TF-5h-OhK"/>
+                                                            <constraint firstAttribute="height" constant="500" id="8TX-kP-1XW"/>
+                                                            <constraint firstItem="8Fh-q9-dbX" firstAttribute="height" secondItem="LxP-xD-jcg" secondAttribute="height" id="FvO-LU-ZUS"/>
+                                                            <constraint firstItem="8Fh-q9-dbX" firstAttribute="top" secondItem="LxP-xD-jcg" secondAttribute="top" id="QNe-F0-GPn"/>
+                                                            <constraint firstAttribute="trailing" secondItem="8Fh-q9-dbX" secondAttribute="trailing" constant="10" id="RFL-4z-QBS"/>
+                                                            <constraint firstItem="8Fh-q9-dbX" firstAttribute="leading" secondItem="LxP-xD-jcg" secondAttribute="leading" constant="10" id="dsu-D7-gkb"/>
+                                                        </constraints>
+                                                    </scrollView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="LxP-xD-jcg" firstAttribute="top" secondItem="s75-tS-zcN" secondAttribute="top" constant="10" id="5ZU-zD-dah"/>
+                                                    <constraint firstAttribute="bottom" secondItem="LxP-xD-jcg" secondAttribute="bottom" constant="10" id="FgZ-f0-D7L"/>
+                                                    <constraint firstItem="LxP-xD-jcg" firstAttribute="leading" secondItem="s75-tS-zcN" secondAttribute="leading" id="GPk-ng-hr2"/>
+                                                    <constraint firstAttribute="trailing" secondItem="LxP-xD-jcg" secondAttribute="trailing" id="TeS-AB-hqX"/>
+                                                </constraints>
+                                            </view>
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uie-Za-ZoG" customClass="PrimaryButton" customModule="cafm" customModuleProvider="target">
+                                                <rect key="frame" x="110" y="816" width="220" height="44"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="44" id="WF5-pk-Jhh"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                                <inset key="titleEdgeInsets" minX="-5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="-5" maxY="0.0"/>
+                                                <state key="normal" title="Contract Report">
+                                                    <imageReference key="image" image="chevron.right" catalog="system" symbolScale="small"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="actionsReportBtnClicked:" destination="etE-j7-eq3" eventType="touchUpInside" id="UKM-Jp-STv"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="uie-Za-ZoG" firstAttribute="width" secondItem="AXp-qv-S7d" secondAttribute="width" multiplier="1:2" id="0pI-Tw-MLf"/>
+                                            <constraint firstItem="owd-5A-oLf" firstAttribute="trailing" secondItem="K3I-Zw-Ybd" secondAttribute="trailing" id="0qk-vb-5EU"/>
+                                            <constraint firstItem="K3I-Zw-Ybd" firstAttribute="top" secondItem="AXp-qv-S7d" secondAttribute="top" constant="20" id="1zq-ga-zoh"/>
+                                            <constraint firstItem="s75-tS-zcN" firstAttribute="leading" secondItem="AXp-qv-S7d" secondAttribute="leading" id="2XC-gV-ATQ"/>
+                                            <constraint firstItem="s75-tS-zcN" firstAttribute="top" secondItem="kff-0t-iGQ" secondAttribute="bottom" constant="10" id="2db-lT-6fe"/>
+                                            <constraint firstAttribute="trailing" secondItem="CwP-WJ-Brg" secondAttribute="trailing" constant="10" id="Aso-gc-CN5"/>
+                                            <constraint firstItem="owd-5A-oLf" firstAttribute="top" secondItem="K3I-Zw-Ybd" secondAttribute="bottom" constant="10" id="Cd1-fp-pZS"/>
+                                            <constraint firstItem="owd-5A-oLf" firstAttribute="leading" secondItem="K3I-Zw-Ybd" secondAttribute="leading" id="E6l-7Z-3wi"/>
+                                            <constraint firstItem="K3I-Zw-Ybd" firstAttribute="leading" secondItem="AXp-qv-S7d" secondAttribute="leading" constant="10" id="GMF-L4-cqv"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="s75-tS-zcN" secondAttribute="bottom" constant="30" id="Lbb-R9-yyU"/>
+                                            <constraint firstItem="azt-b4-vya" firstAttribute="top" secondItem="CwP-WJ-Brg" secondAttribute="bottom" constant="5" id="Oln-Y9-wfM"/>
+                                            <constraint firstAttribute="trailing" secondItem="K3I-Zw-Ybd" secondAttribute="trailing" constant="10" id="YeZ-Ly-VpN"/>
+                                            <constraint firstItem="kff-0t-iGQ" firstAttribute="leading" secondItem="azt-b4-vya" secondAttribute="leading" id="aGy-D5-ltQ"/>
+                                            <constraint firstItem="owd-5A-oLf" firstAttribute="height" secondItem="K3I-Zw-Ybd" secondAttribute="height" id="agD-VW-GLP"/>
+                                            <constraint firstAttribute="trailing" secondItem="s75-tS-zcN" secondAttribute="trailing" id="dfo-aL-n15"/>
+                                            <constraint firstAttribute="trailing" secondItem="azt-b4-vya" secondAttribute="trailing" constant="10" id="ezP-os-m7n"/>
+                                            <constraint firstItem="uie-Za-ZoG" firstAttribute="top" secondItem="s75-tS-zcN" secondAttribute="bottom" constant="40" id="fUx-KF-GVF"/>
+                                            <constraint firstItem="uie-Za-ZoG" firstAttribute="centerX" secondItem="AXp-qv-S7d" secondAttribute="centerX" id="gRD-bL-KCY"/>
+                                            <constraint firstItem="azt-b4-vya" firstAttribute="leading" secondItem="AXp-qv-S7d" secondAttribute="leading" constant="10" id="jmO-1p-hhd"/>
+                                            <constraint firstItem="CwP-WJ-Brg" firstAttribute="top" secondItem="owd-5A-oLf" secondAttribute="bottom" constant="20" id="ors-xf-9Lf"/>
+                                            <constraint firstItem="kff-0t-iGQ" firstAttribute="top" secondItem="azt-b4-vya" secondAttribute="bottom" constant="10" id="qEC-EQ-3xf"/>
+                                            <constraint firstAttribute="height" priority="250" id="ue7-4R-Xom"/>
+                                            <constraint firstItem="kff-0t-iGQ" firstAttribute="trailing" secondItem="azt-b4-vya" secondAttribute="trailing" id="vVQ-le-doq"/>
+                                            <constraint firstItem="CwP-WJ-Brg" firstAttribute="leading" secondItem="AXp-qv-S7d" secondAttribute="leading" constant="10" id="x6v-aF-5hm"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="AXp-qv-S7d" secondAttribute="trailing" id="7IU-ug-wHb"/>
+                                    <constraint firstItem="AXp-qv-S7d" firstAttribute="top" secondItem="vbc-u9-4vT" secondAttribute="top" id="QiM-db-mgW"/>
+                                    <constraint firstItem="AXp-qv-S7d" firstAttribute="width" secondItem="vbc-u9-4vT" secondAttribute="width" id="VWw-qi-XrI"/>
+                                    <constraint firstItem="AXp-qv-S7d" firstAttribute="leading" secondItem="vbc-u9-4vT" secondAttribute="leading" id="nJh-lq-eCL"/>
+                                    <constraint firstAttribute="bottom" secondItem="AXp-qv-S7d" secondAttribute="bottom" id="okJ-o0-MpM"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="fkv-az-cjp"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="q3b-jF-NbX" firstAttribute="bottom" secondItem="fkv-az-cjp" secondAttribute="bottom" id="OEc-cA-KDM"/>
+                            <constraint firstItem="vbc-u9-4vT" firstAttribute="trailing" secondItem="fkv-az-cjp" secondAttribute="trailing" id="QTT-y5-sT9"/>
+                            <constraint firstItem="vbc-u9-4vT" firstAttribute="top" secondItem="fkv-az-cjp" secondAttribute="top" id="UE7-hU-hpg"/>
+                            <constraint firstItem="vbc-u9-4vT" firstAttribute="bottom" secondItem="fkv-az-cjp" secondAttribute="bottom" id="UWg-ko-wgb"/>
+                            <constraint firstItem="q3b-jF-NbX" firstAttribute="trailing" secondItem="fkv-az-cjp" secondAttribute="trailing" id="UfC-dz-pL6"/>
+                            <constraint firstItem="vbc-u9-4vT" firstAttribute="leading" secondItem="fkv-az-cjp" secondAttribute="leading" id="dB2-wA-OPi"/>
+                            <constraint firstItem="q3b-jF-NbX" firstAttribute="leading" secondItem="fkv-az-cjp" secondAttribute="leading" id="hbW-Ph-TGz"/>
+                            <constraint firstItem="q3b-jF-NbX" firstAttribute="top" secondItem="fkv-az-cjp" secondAttribute="top" id="iTl-TI-1YH"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="areaXIB" destination="K3I-Zw-Ybd" id="ukc-hZ-enT"/>
+                        <outlet property="chartContainerView" destination="8Fh-q9-dbX" id="PR1-j0-2fS"/>
+                        <outlet property="chartContainerViewWidth" destination="SRR-KM-EWy" id="AhC-i7-fcs"/>
+                        <outlet property="chartScrollView" destination="LxP-xD-jcg" id="3ZZ-5q-Lm0"/>
+                        <outlet property="chartScrollViewHeight" destination="8TX-kP-1XW" id="VNH-S2-cy8"/>
+                        <outlet property="emptyView" destination="q3b-jF-NbX" id="7HZ-OA-ele"/>
+                        <outlet property="endDateRangeXIB" destination="kff-0t-iGQ" id="bAZ-1B-TyL"/>
+                        <outlet property="mainView" destination="AXp-qv-S7d" id="ylC-9P-gR3"/>
+                        <outlet property="siteSwitch" destination="bbP-bc-Emd" id="5C0-v7-6gQ"/>
+                        <outlet property="siteSwitchLbl" destination="PEa-ez-5z2" id="YDk-Rv-sdU"/>
+                        <outlet property="startDateRangeXIB" destination="azt-b4-vya" id="lBB-Vh-d5m"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Spo-Wm-TOu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="94" y="4354"/>
+        </scene>
+        <!--Basic ReportsVC-->
+        <scene sceneID="hw0-Ey-CDF">
+            <objects>
+                <viewController storyboardIdentifier="BasicReportsVC" id="sT2-up-mCF" customClass="BasicReportsVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="e3B-Nq-rfQ">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RRH-kU-jyY" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DOE-pQ-NUQ">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <subviews>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ggY-yS-4GF">
+                                        <rect key="frame" x="0.0" y="0.0" width="440" height="860"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </tableView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="ggY-yS-4GF" firstAttribute="top" secondItem="DOE-pQ-NUQ" secondAttribute="top" id="83x-pq-3tu"/>
+                                    <constraint firstAttribute="bottom" secondItem="ggY-yS-4GF" secondAttribute="bottom" id="GxN-0w-VcZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="ggY-yS-4GF" secondAttribute="trailing" id="PxY-2z-qua"/>
+                                    <constraint firstItem="ggY-yS-4GF" firstAttribute="leading" secondItem="DOE-pQ-NUQ" secondAttribute="leading" id="lzF-SA-KHH"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="b3k-jI-FBE"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="RRH-kU-jyY" firstAttribute="leading" secondItem="b3k-jI-FBE" secondAttribute="leading" id="51T-d3-wd0"/>
+                            <constraint firstItem="RRH-kU-jyY" firstAttribute="trailing" secondItem="b3k-jI-FBE" secondAttribute="trailing" id="9lK-ot-Bc8"/>
+                            <constraint firstItem="RRH-kU-jyY" firstAttribute="top" secondItem="b3k-jI-FBE" secondAttribute="top" id="JMo-U1-5nL"/>
+                            <constraint firstItem="RRH-kU-jyY" firstAttribute="bottom" secondItem="b3k-jI-FBE" secondAttribute="bottom" id="czm-hU-AfA"/>
+                            <constraint firstItem="b3k-jI-FBE" firstAttribute="trailing" secondItem="DOE-pQ-NUQ" secondAttribute="trailing" id="kpB-ei-Nbg"/>
+                            <constraint firstItem="b3k-jI-FBE" firstAttribute="bottom" secondItem="DOE-pQ-NUQ" secondAttribute="bottom" id="rW1-Dn-SIG"/>
+                            <constraint firstItem="DOE-pQ-NUQ" firstAttribute="top" secondItem="b3k-jI-FBE" secondAttribute="top" id="wKa-fG-z2p"/>
+                            <constraint firstItem="DOE-pQ-NUQ" firstAttribute="leading" secondItem="b3k-jI-FBE" secondAttribute="leading" id="z2a-t1-QQt"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="emptyView" destination="RRH-kU-jyY" id="294-Ko-rBn"/>
+                        <outlet property="mainView" destination="DOE-pQ-NUQ" id="n0B-PA-WQr"/>
+                        <outlet property="tableView" destination="ggY-yS-4GF" id="sEb-GF-qub"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="X0E-Ki-nUG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="94" y="5073"/>
+        </scene>
+        <!--Basic Reports TableVC-->
+        <scene sceneID="YhU-LR-ozp">
+            <objects>
+                <viewController storyboardIdentifier="BasicReportsTableVC" id="vzV-5L-0BE" customClass="BasicReportsTableVC" customModule="cafm" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vRU-6a-9Hl">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ROx-Lh-3wf" customClass="EmptyView" customModule="cafm" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kwI-pp-VWb">
+                                <rect key="frame" x="0.0" y="62" width="440" height="860"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HbF-Yy-gbi" customClass="DesignableView" customModule="cafm" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="10" width="420" height="840"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="48S-z5-Av6" customClass="SpreadsheetView" customModule="SpreadsheetView">
+                                                <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="200" id="AHP-L6-CNa"/>
+                                                    <constraint firstAttribute="width" constant="300" id="dYU-Q1-oxb"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="48S-z5-Av6" firstAttribute="top" secondItem="HbF-Yy-gbi" secondAttribute="top" id="eFd-P9-jZ9"/>
+                                            <constraint firstItem="48S-z5-Av6" firstAttribute="leading" secondItem="HbF-Yy-gbi" secondAttribute="leading" id="nAR-H6-9cH"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="48S-z5-Av6" secondAttribute="bottom" id="uH9-hE-osQ"/>
+                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="48S-z5-Av6" secondAttribute="trailing" id="yrH-eu-mv1"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="ShadowOpacity">
+                                                <real key="value" value="0.5"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="size" keyPath="ShadowOffset">
+                                                <size key="value" width="0.0" height="0.0"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                                <real key="value" value="3"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="ShadowColor">
+                                                <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="HbF-Yy-gbi" firstAttribute="top" secondItem="kwI-pp-VWb" secondAttribute="top" constant="10" id="0UN-p6-UjQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="HbF-Yy-gbi" secondAttribute="trailing" constant="10" id="DoU-O2-8kD"/>
+                                    <constraint firstItem="HbF-Yy-gbi" firstAttribute="leading" secondItem="kwI-pp-VWb" secondAttribute="leading" constant="10" id="KHs-RX-D8g"/>
+                                    <constraint firstAttribute="bottom" secondItem="HbF-Yy-gbi" secondAttribute="bottom" constant="10" id="y0T-fI-LlH"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="lKu-Md-ex9"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="ROx-Lh-3wf" firstAttribute="top" secondItem="lKu-Md-ex9" secondAttribute="top" id="6Fx-2T-Asy"/>
+                            <constraint firstItem="ROx-Lh-3wf" firstAttribute="leading" secondItem="lKu-Md-ex9" secondAttribute="leading" id="6Sq-5Q-UeK"/>
+                            <constraint firstItem="kwI-pp-VWb" firstAttribute="bottom" secondItem="lKu-Md-ex9" secondAttribute="bottom" id="B6l-23-AqP"/>
+                            <constraint firstItem="ROx-Lh-3wf" firstAttribute="bottom" secondItem="lKu-Md-ex9" secondAttribute="bottom" id="F01-vy-hHa"/>
+                            <constraint firstItem="ROx-Lh-3wf" firstAttribute="trailing" secondItem="lKu-Md-ex9" secondAttribute="trailing" id="ahR-hJ-kcF"/>
+                            <constraint firstItem="kwI-pp-VWb" firstAttribute="top" secondItem="lKu-Md-ex9" secondAttribute="top" id="dhJ-Ia-HfE"/>
+                            <constraint firstItem="kwI-pp-VWb" firstAttribute="trailing" secondItem="lKu-Md-ex9" secondAttribute="trailing" id="ey9-3O-dZt"/>
+                            <constraint firstItem="kwI-pp-VWb" firstAttribute="leading" secondItem="lKu-Md-ex9" secondAttribute="leading" id="opT-kD-75y"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="emptyView" destination="ROx-Lh-3wf" id="fSy-Li-3qW"/>
+                        <outlet property="mainView" destination="kwI-pp-VWb" id="ctS-GO-dlZ"/>
+                        <outlet property="spreadsheetContainerView" destination="HbF-Yy-gbi" id="a8R-Wa-aTg"/>
+                        <outlet property="spreadsheetView" destination="48S-z5-Av6" id="zcg-rg-XMh"/>
+                        <outlet property="spreadsheetViewHeight" destination="AHP-L6-CNa" id="7Zg-US-oWa"/>
+                        <outlet property="spreadsheetViewWidth" destination="dYU-Q1-oxb" id="DYF-2A-b9b"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Yyq-Hu-8Mx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="984" y="5073"/>
+        </scene>
     </scenes>
     <resources>
         <image name="chevron.right" catalog="system" width="97" height="128"/>
         <namedColor name="AppTintColor">
             <color red="0.2196078431372549" green="0.29411764705882354" blue="0.82745098039215681" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <namedColor name="PrimaryTextColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="0.87000000476837158" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="ViewBorder2Color">
             <color red="0.78431372549019607" green="0.80784313725490198" blue="0.85490196078431369" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

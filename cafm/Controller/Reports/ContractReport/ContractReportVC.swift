@@ -66,12 +66,26 @@ class ContractReportVC: UIViewController {
     private let kResponseDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //"yyyy-MM-dd HH:mm:ss"
     private let yyyyMMddStr = "yyyy-MM-dd"
+    private var viewShouldLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.viewShouldLayoutSubviews = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if self.viewShouldLayoutSubviews {
+            self.setupChart()
+            self.viewShouldLayoutSubviews.toggle()
+        }
     }
     
     @IBAction func energyReportBtnClicked(_ sender: UIButton) {
@@ -198,6 +212,7 @@ extension ContractReportVC {
     
 }
 
+//MARK: - setup views
 extension ContractReportVC {
     
     func setupViews() {
@@ -355,18 +370,17 @@ extension ContractReportVC {
         let view: UIView! = self.chartContainerView
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
-        
-        self.chartContainerViewWidth.constant = screenWidth-10-10
+        print("LogLog", self.view.frame.width)
+        self.chartContainerViewWidth.constant = self.view.frame.width-10-10
         view.frame.size.width = self.chartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
         chartView.addCorner(value: 12)
         chartView.addBorder(width: 1, color: UIColor(appColor: .Separator2))
         chartView.backgroundColor = UIColor.clear
-        chartView.plugins = ["variable-pie"]
         
         let chart = HIChart()
-        chart.type = "variablepie"
+        chart.type = "pie"
         
         let options = HIOptions()
         
@@ -384,8 +398,7 @@ extension ContractReportVC {
         
         let tooltip = HITooltip()
         tooltip.headerFormat = ""
-        tooltip.pointFormat = "{point.name}: <b>{point.y}</b>"
-        //tooltip.pointFormat = "Total Budget by Category <br/>{point.name}: £{point.y} ({point.7}%)"
+        tooltip.pointFormat = "{point.name}"
         options.tooltip = tooltip
         
         let legends = HILegend()
@@ -394,40 +407,35 @@ extension ContractReportVC {
         options.legend = legends
         
         let plotOptions = HIPlotOptions()
-        plotOptions.variablepie = HIVariablepie()
-        plotOptions.variablepie.allowPointSelect = true
-        plotOptions.variablepie.cursor = "pointer"
+        plotOptions.pie = HIPie()
+        plotOptions.pie.allowPointSelect = true
+        plotOptions.pie.cursor = "pointer"
         
         //let dataLabels = HIDataLabels()
         //dataLabels.enabled = false
-        //plotOptions.variablepie.dataLabels = [dataLabels]
-        plotOptions.variablepie.showInLegend = true
+        //plotOptions.pie.dataLabels = [dataLabels]
+        plotOptions.pie.showInLegend = true
         options.plotOptions = plotOptions
-
+        
+        let pie = HIPie()
+        pie.borderWidth = 0
+        //pie.innerSize = "0%"
+        
+        let borderRadius = HIBorderRadiusOptionsObject()
+        borderRadius.radius = 0
+        pie.borderRadius = borderRadius
+        
         let chartColors = ["#1E3A8A", "#2563EB", "#60A5FA", "#93C5FD", "#0A2540", "#0077B6", "#CAF0F8"]
         var chartData: [HIData] = []
         for (index, item) in itemArray.enumerated() {
             let data = HIData()
-            data.name = item.label
+            data.name = "\(item.label): £\(item.dataValue)"
             data.y = NSNumber(floatLiteral: item.dataValue)
-            data.z = NSNumber(floatLiteral: (item.dataValue/itemArray.reduce(Double.zero, { $0 + $1.dataValue }))*100)
             data.color = HIColor(uiColor: UIColor(hexString: chartColors[index%chartColors.count]))
             chartData.append(data)
         }
-        
-        let variablepie = HIVariablepie()
-        variablepie.innerSize = "40%"
-        variablepie.zMin = 0
-        variablepie.name = "Total Budget by Category"
-        variablepie.data = chartData
-        
-        variablepie.borderWidth = 1
-        variablepie.borderColor = HIColor(uiColor: UIColor.white)
-        let borderRadius = HIBorderRadiusOptionsObject()
-        borderRadius.radius = 5
-        variablepie.borderRadius = borderRadius
-        
-        options.series = [variablepie]
+        pie.data = chartData
+        options.series = [pie]
         
         options.chart = chart
         chartView.options = options

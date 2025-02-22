@@ -35,7 +35,7 @@
                                         <rect key="frame" x="31.333333333333336" y="12.33333333333333" width="18" height="15.66666666666667"/>
                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Create New" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="GOc-ve-Ghk">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Create New" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="GOc-ve-Ghk">
                                         <rect key="frame" x="54.333333333333336" y="9.9999999999999982" width="89.333333333333314" height="20.333333333333329"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -44,9 +44,7 @@
                                 </subviews>
                                 <color key="backgroundColor" name="AppTintColor"/>
                                 <constraints>
-                                    <constraint firstItem="RCM-zR-f84" firstAttribute="leading" relation="lessThanOrEqual" secondItem="c5b-zR-8UL" secondAttribute="leading" constant="31.329999999999998" id="01d-YG-5DC"/>
                                     <constraint firstAttribute="height" constant="40" id="4LL-8u-HSO"/>
-                                    <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="GOc-ve-Ghk" secondAttribute="trailing" constant="36.329999999999998" id="5Xo-O1-1hz"/>
                                     <constraint firstItem="GOc-ve-Ghk" firstAttribute="centerY" secondItem="c5b-zR-8UL" secondAttribute="centerY" id="PuA-de-pwv"/>
                                     <constraint firstItem="GOc-ve-Ghk" firstAttribute="centerX" secondItem="c5b-zR-8UL" secondAttribute="centerX" constant="9" id="WNc-wr-54Y"/>
                                     <constraint firstItem="RCM-zR-f84" firstAttribute="top" secondItem="c5b-zR-8UL" secondAttribute="top" constant="10" id="vjC-On-A8c"/>
@@ -61,11 +59,11 @@
                                 <rect key="frame" x="203" y="162" width="180" height="40"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.and.arrow.down" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="aNu-vL-s6R">
-                                        <rect key="frame" x="41" y="8.6666666666666643" width="19" height="21.333333333333336"/>
+                                        <rect key="frame" x="50" y="8.6666666666666643" width="19" height="21.333333333333336"/>
                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Export" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="5Lc-yl-Ixa">
-                                        <rect key="frame" x="65" y="9.9999999999999982" width="68" height="20.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Export" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="5Lc-yl-Ixa">
+                                        <rect key="frame" x="74" y="9.9999999999999982" width="50" height="20.333333333333329"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -73,11 +71,9 @@
                                 </subviews>
                                 <color key="backgroundColor" name="AppTintColor"/>
                                 <constraints>
-                                    <constraint firstItem="aNu-vL-s6R" firstAttribute="leading" relation="lessThanOrEqual" secondItem="hcl-dP-RV8" secondAttribute="leading" constant="41" id="2mW-4R-MwD"/>
                                     <constraint firstItem="aNu-vL-s6R" firstAttribute="centerY" secondItem="5Lc-yl-Ixa" secondAttribute="centerY" id="5Ib-TU-CnM"/>
                                     <constraint firstItem="5Lc-yl-Ixa" firstAttribute="centerX" secondItem="hcl-dP-RV8" secondAttribute="centerX" constant="9" id="6WP-kC-Q20"/>
                                     <constraint firstItem="aNu-vL-s6R" firstAttribute="top" secondItem="hcl-dP-RV8" secondAttribute="top" constant="10" id="aoF-E4-Z4V"/>
-                                    <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="5Lc-yl-Ixa" secondAttribute="trailing" constant="65" id="fLo-uH-oBP"/>
                                     <constraint firstItem="5Lc-yl-Ixa" firstAttribute="leading" secondItem="aNu-vL-s6R" secondAttribute="trailing" constant="5" id="uPk-Vf-plD"/>
                                     <constraint firstAttribute="bottom" secondItem="aNu-vL-s6R" secondAttribute="bottom" constant="10" id="ynV-ye-MAr"/>
                                 </constraints>

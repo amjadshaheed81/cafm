@@ -369,6 +369,13 @@ class CreateSiteRequestModel: Mappable {
     
     var riskScoreModel: RiskScore?
     
+    var siteAreaOccupancyData : SiteAreaOccupancyData?
+    var siteInfoData : SiteInfoData?
+    var siteLandScapeData : SiteLandScapeData?
+    var siteLiftsData : SiteLiftsData?
+    var siteSafetyData : SiteSafetyData?
+    var siteEnergyData : SiteEnergyData?
+    
     required init?(map: Map) {
         // Initialize if needed
     }
@@ -418,7 +425,260 @@ class CreateSiteRequestModel: Mappable {
         siteEnergySurvey <- map["siteEnergySurvey"]
         assetEntity <- map["assetEntity"]
         riskScores <- map["riskScores"]
+        siteAreaOccupancyData <- map["siteAreaOccupancyData"]
+        siteInfoData <- map["siteInfoData"]
+        siteLandScapeData <- map["siteLandScapeData"]
+        siteLiftsData <- map["siteLiftsData"]
+        siteSafetyData <- map["siteSafetyData"]
+        siteEnergyData <- map["siteEnergyData"]
     }
+}
+
+class SiteAreaOccupancyData : Mappable {
+    var siteId : Int?
+    var totalBuildingArea : Double?
+    var clientOccupiedArea : Double?
+    var tenantOccupiedArea : Double?
+    var maxOccupancy : String?
+    var numberOfStaff : Int?
+    var tenantInOccupation : Bool?
+    var tenantName : String?
+    var vacantAreaInBuilding : Bool?
+    var numOfFloors : Int?
+    var carParkSpaceAboveGround : Int?
+    var carParkSpaceBelowGround : Int?
+    var numOfBasementLevels : Int?
+    var meetingClients : String?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        siteId <- map["siteId"]
+        totalBuildingArea <- map["totalBuildingArea"]
+        clientOccupiedArea <- map["clientOccupiedArea"]
+        tenantOccupiedArea <- map["tenantOccupiedArea"]
+        maxOccupancy <- map["maxOccupancy"]
+        numberOfStaff <- map["numberOfStaff"]
+        tenantInOccupation <- map["tenantInOccupation"]
+        tenantName <- map["tenantName"]
+        vacantAreaInBuilding <- map["vacantAreaInBuilding"]
+        numOfFloors <- map["numOfFloors"]
+        carParkSpaceAboveGround <- map["carParkSpaceAboveGround"]
+        carParkSpaceBelowGround <- map["carParkSpaceBelowGround"]
+        numOfBasementLevels <- map["numOfBasementLevels"]
+        meetingClients <- map["meetingClients"]
+    }
+    
+}
+
+class SiteEnergyData : Mappable {
+    var siteId : Int?
+    var utilGas : Bool?
+    var utilElectricity : Bool?
+    var utilWater : Bool?
+    var utilTelecom : Bool?
+    var utilMainsDrainage : Bool?
+    var airConditioning : Bool?
+    var coolingTower : Bool?
+    var waterIsolationValveInternal : String?
+    var waterTankLocation : String?
+    var waterTanks : Bool?
+    var hotWaterCalorifier : Int?
+    var hotWaterCalorifierLocation : String?
+    var pressureVessel : Int?
+    var gasBoiler : Bool?
+    var gasBoilerLocation : String?
+    var gasSupplyIsolation : String?
+    var gasSupplyExternalIsolation : String?
+    var electricInstallationLocation : String?
+    var electricSubStationOnSite : Bool?
+    var externalLighting : Bool?
+    var backupGenerator : Bool?
+    var backupGeneratorLocation : String?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        
+        siteId <- map["siteId"]
+        utilGas <- map["utilGas"]
+        utilElectricity <- map["utilElectricity"]
+        utilWater <- map["utilWater"]
+        utilTelecom <- map["utilTelecom"]
+        utilMainsDrainage <- map["utilMainsDrainage"]
+        airConditioning <- map["airConditioning"]
+        coolingTower <- map["coolingTower"]
+        waterIsolationValveInternal <- map["waterIsolationValveInternal"]
+        waterTankLocation <- map["waterTankLocation"]
+        waterTanks <- map["waterTanks"]
+        hotWaterCalorifier <- map["hotWaterCalorifier"]
+        hotWaterCalorifierLocation <- map["hotWaterCalorifierLocation"]
+        pressureVessel <- map["pressureVessel"]
+        gasBoiler <- map["gasBoiler"]
+        gasBoilerLocation <- map["gasBoilerLocation"]
+        gasSupplyIsolation <- map["gasSupplyIsolation"]
+        gasSupplyExternalIsolation <- map["gasSupplyExternalIsolation"]
+        electricInstallationLocation <- map["electricInstallationLocation"]
+        electricSubStationOnSite <- map["electricSubStationOnSite"]
+        externalLighting <- map["externalLighting"]
+        backupGenerator <- map["backupGenerator"]
+        backupGeneratorLocation <- map["backupGeneratorLocation"]
+    }
+    
+}
+
+class SiteInfoData : Mappable {
+    var siteId : Int?
+    var buildYear : String?
+    var buildingUnderClientControl : Bool?
+    var canteenInBuilding : Bool?
+    var dedicatedKitchenArea : Bool?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        
+        siteId <- map["siteId"]
+        buildYear <- map["buildYear"]
+        buildingUnderClientControl <- map["buildingUnderClientControl"]
+        canteenInBuilding <- map["canteenInBuilding"]
+        dedicatedKitchenArea <- map["dedicatedKitchenArea"]
+    }
+    
+}
+
+class SiteLandScapeData : Mappable {
+    var siteId : Int?
+    var hardLandScaping : Bool?
+    var softLandScaping : Bool?
+    var riverPondLakes : Bool?
+    var tallTrees : Bool?
+    var drainageInterceptors : Bool?
+    var thirdPartyTelEquipment : Bool?
+    var electricalOverHeadPowerLines : Bool?
+    var vacantLandAdjacent : String?
+    var floodRisk : String?
+    var railwayLineAdjacent : String?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        
+        siteId <- map["siteId"]
+        hardLandScaping <- map["hardLandScaping"]
+        softLandScaping <- map["softLandScaping"]
+        riverPondLakes <- map["riverPondLakes"]
+        tallTrees <- map["tallTrees"]
+        drainageInterceptors <- map["drainageInterceptors"]
+        thirdPartyTelEquipment <- map["thirdPartyTelEquipment"]
+        electricalOverHeadPowerLines <- map["electricalOverHeadPowerLines"]
+        vacantLandAdjacent <- map["vacantLandAdjacent"]
+        floodRisk <- map["floodRisk"]
+        railwayLineAdjacent <- map["railwayLineAdjacent"]
+    }
+    
+}
+
+class SiteLiftsData : Mappable {
+    var siteId : Int?
+    var disabledHoistLift : Int?
+    var goodsTractionLift : Int?
+    var goodsHydraulicLift : Int?
+    var passengerTractionLift : Int?
+    var passengerHydraulicLift : Int?
+    var passengerMonospaceLift : Int?
+    var fireFightingLift : Int?
+    var fireEvacuationLift : Int?
+    var internalStairways : Int?
+    var externalStairways : Int?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        
+        siteId <- map["siteId"]
+        disabledHoistLift <- map["disabledHoistLift"]
+        goodsTractionLift <- map["goodsTractionLift"]
+        goodsHydraulicLift <- map["goodsHydraulicLift"]
+        passengerTractionLift <- map["passengerTractionLift"]
+        passengerHydraulicLift <- map["passengerHydraulicLift"]
+        passengerMonospaceLift <- map["passengerMonospaceLift"]
+        fireFightingLift <- map["fireFightingLift"]
+        fireEvacuationLift <- map["fireEvacuationLift"]
+        internalStairways <- map["internalStairways"]
+        externalStairways <- map["externalStairways"]
+    }
+    
+}
+
+class SiteSafetyData : Mappable {
+    var siteId : Int?
+    var extFabric : String?
+    var extMetallicFireEscapeStaircases : Int?
+    var extTimberFireEscapeStaircases : Int?
+    var verticalLadder : Int?
+    var confinedSpaces : Bool?
+    var accessibleUnguardedRoofAreas : Bool?
+    var fragileRoof : Bool?
+    var lightingConductoreInstalltion : Bool?
+    var fireAlarmSystem : Bool?
+    var firePanelLocation : String?
+    var oilStorageOnSite : Bool?
+    var lpgCylinderStorageOnSite : Bool?
+    var lpgStorageOnSite : Bool?
+    var lpgBulkStorageOnSite : Bool?
+    var sprinklerSystem : Bool?
+    var hoseReels : Bool?
+    var securityGuardEmployed : Bool?
+    var internalCCTV : Bool?
+    var externalCCTV : Bool?
+    var automaticBarrier : Bool?
+    var automaticGatesSliding : Bool?
+    var automaticGatesHinged : Bool?
+    var manualSwingGates : Bool?
+    
+    required init?(map: Map) {
+        // Initialization if needed
+    }
+    
+    func mapping(map: Map) {
+        
+        siteId <- map["siteId"]
+        extFabric <- map["extFabric"]
+        extMetallicFireEscapeStaircases <- map["extMetallicFireEscapeStaircases"]
+        extTimberFireEscapeStaircases <- map["extTimberFireEscapeStaircases"]
+        verticalLadder <- map["verticalLadder"]
+        confinedSpaces <- map["confinedSpaces"]
+        accessibleUnguardedRoofAreas <- map["accessibleUnguardedRoofAreas"]
+        fragileRoof <- map["fragileRoof"]
+        lightingConductoreInstalltion <- map["lightingConductoreInstalltion"]
+        fireAlarmSystem <- map["fireAlarmSystem"]
+        firePanelLocation <- map["firePanelLocation"]
+        oilStorageOnSite <- map["oilStorageOnSite"]
+        lpgCylinderStorageOnSite <- map["lpgCylinderStorageOnSite"]
+        lpgStorageOnSite <- map["lpgStorageOnSite"]
+        lpgBulkStorageOnSite <- map["lpgBulkStorageOnSite"]
+        sprinklerSystem <- map["sprinklerSystem"]
+        hoseReels <- map["hoseReels"]
+        securityGuardEmployed <- map["securityGuardEmployed"]
+        internalCCTV <- map["internalCCTV"]
+        externalCCTV <- map["externalCCTV"]
+        automaticBarrier <- map["automaticBarrier"]
+        automaticGatesSliding <- map["automaticGatesSliding"]
+        automaticGatesHinged <- map["automaticGatesHinged"]
+        manualSwingGates <- map["manualSwingGates"]
+    }
+    
 }
 
 class Suggestion: Mappable {
@@ -672,6 +932,48 @@ class SiteLayoutModel: Mappable {
         fileName <- map["fileName"]
         nodeId <- map["nodeId"]
         response <- map["response"]
+    }
+}
+
+class MarkerModel: Mappable {
+    var id: Int?
+    var label: String?
+    var roomId: Int?
+    var siteId: Int?
+    var leftPosition: String?
+    var topPosition: String?
+    var leftPositionDouble: CGFloat?
+    var topPositionDouble: CGFloat?
+    
+    var xPos: CGFloat? {
+        if let leftPosition, let value = Double(leftPosition) {
+            return value
+        }else {
+            return leftPositionDouble
+        }
+    }
+    
+    var yPos: CGFloat? {
+        if let topPosition, let value = Double(topPosition) {
+            return value
+        }else {
+            return topPositionDouble
+        }
+    }
+    
+    init() { }
+    
+    required init?(map: Map) { }
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        label <- map["label"]
+        roomId <- map["roomId"]
+        siteId <- map["siteId"]
+        leftPosition <- map["leftPosition"]
+        topPosition <- map["topPosition"]
+        leftPositionDouble <- map["leftPosition"]
+        topPositionDouble <- map["topPosition"]
     }
 }
 
@@ -1155,9 +1457,9 @@ class CompanyDetails: Mappable {
 // Response Model
 class UsersResponse: Mappable {
     var users: [User]?
-
+    
     required init?(map: Map) {}
-
+    
     func mapping(map: Map) {
         users <- map["users"]
     }
@@ -1179,13 +1481,13 @@ class ContractDetailsModel: Mappable {
     var description: String?
     var contractorQuotes: [ContractorQuote]?
     var frequency: String?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for mapping JSON to the object
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to variables
     func mapping(map: Map) {
         projectContractId     <- map["projectContractId"]
@@ -1209,13 +1511,13 @@ class FolderRequest: Mappable {
     
     var mandatoryFolders: [Int]?
     var removeMandatoryFolders: [Int]?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for mapping JSON to the object
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to variables
     func mapping(map: Map) {
         mandatoryFolders        <- map["mandatoryFolders"]
@@ -1227,13 +1529,13 @@ class AssetRequest: Mappable {
     
     var addAssets: [Int]?
     var removeAssets: [Int]?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for mapping JSON to the object
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to variables
     func mapping(map: Map) {
         addAssets      <- map["addAssets"]
@@ -1242,20 +1544,20 @@ class AssetRequest: Mappable {
 }
 
 class ScheduleRequest: Mappable {
-
+    
     var scheduleId: Int?
     var projectContractId: Int?
     var visitPurpose: String?
     var status: String?
     var visitDate: String?
     var rescheduleDate: String?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for mapping JSON to the object
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to variables
     func mapping(map: Map) {
         scheduleId        <- map["scheduleId"]
@@ -1268,7 +1570,7 @@ class ScheduleRequest: Mappable {
 }
 
 class CalenderEventRequest: Mappable {
-
+    
     var siteId: Int?
     var startDate: String?
     var endDate: String?
@@ -1276,13 +1578,13 @@ class CalenderEventRequest: Mappable {
     var eventType: String?
     var userId: Int?
     var includeCompanyUsers: Bool?
-
+    
     // Default initializer
     init() {}
-
+    
     // Required initializer for mapping JSON to the object
     required init?(map: Map) {}
-
+    
     // Mapping function to map JSON keys to variables
     func mapping(map: Map) {
         siteId              <- map["siteId"]
@@ -1490,7 +1792,7 @@ class LoginRequestModel: Mappable {
         email <- map["email"]
         password <- map["password"]
     }
-
+    
 }
 
 class ProjectContractResponse: Mappable {
@@ -1599,9 +1901,9 @@ class ProjectContractFolderModel: Mappable {
     var id: Int?
     var name: String?
     var files: [FileModel]?
-
+    
     required init?(map: Map) {}
-
+    
     func mapping(map: Map) {
         id    <- map["id"]
         name  <- map["name"]
@@ -1614,9 +1916,9 @@ class FileModel: Mappable {
     var version: Int?
     var name: String?
     var url: String?
-
+    
     required init?(map: Map) {}
-
+    
     func mapping(map: Map) {
         id      <- map["id"]
         version <- map["version"]
@@ -1637,13 +1939,13 @@ class ContractorQuote: Mappable {
     var projectContractId: Int?
     
     init() {
-            
+        
     }
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {
     }
-
+    
     // Mapping function
     func mapping(map: Map) {
         quoteId            <- map["quoteId"]
@@ -1671,9 +1973,9 @@ class PreActionResponseModel: Mappable {
     var raisedByUserId: Int?
     var raisedByUserName: String?
     var status: String?
-
+    
     required init?(map: Map) {}
-
+    
     func mapping(map: Map) {
         raisedDate <- map["raisedDate"]
         taggedAsset <- map["taggedAsset"]
@@ -1698,14 +2000,14 @@ class CreatePreActionRequestModel: Mappable {
     var actionId: Int?
     var raisedByUserId: Int?
     var taggedAsset: String?
-
+    
     init() { }
     
     // Required initializer for ObjectMapper
     required init?(map: Map) {
         // This can be left empty or used to validate mandatory fields
     }
-
+    
     // Mapping function that maps the JSON keys to the properties
     func mapping(map: Map) {
         category          <- map["category"]
@@ -1730,12 +2032,12 @@ class CreatePreActrionResponseModel: Mappable {
     var description: String?
     var raisedByUserId: Int?
     var status: String?
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {
         // This can be left empty or used to validate mandatory fields
     }
-
+    
     // Mapping function that maps the JSON keys to the properties
     func mapping(map: Map) {
         taggedAsset      <- map["taggedAsset"]
@@ -1754,7 +2056,7 @@ class CreatePreActrionResponseModel: Mappable {
 class StatusRequestModel: Mappable {
     var status: String?
     var actionTaken: String?
-
+    
     init() { }
     
     // Default initializer
@@ -1762,10 +2064,10 @@ class StatusRequestModel: Mappable {
         self.status = status
         self.actionTaken = actionTaken
     }
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) {}
-
+    
     // Mapping function for ObjectMapper
     func mapping(map: Map) {
         status      <- map["status"]
@@ -1804,7 +2106,7 @@ class ClientAction: Mappable {
     
     // Initialize mapping
     required init?(map: Map) {}
-
+    
     // Mapping function
     func mapping(map: Map) {
         type           <- map["type"]
@@ -1946,17 +2248,17 @@ class DropDownSubCategory: Mappable {
 //    var email: String?
 //    var otp: String?
 //    var password: String?
-//    
+//
 //    init() {}
-//    
+//
 //    init(email: String, otp: String, password: String) {
 //        self.email = email
 //        self.otp = otp
 //        self.password = password
 //    }
-//    
+//
 //    required init?(map: Map) {}
-//    
+//
 //    func mapping(map: Map) {
 //        email       <- map["email"]
 //        otp         <- map["otp"]
@@ -2066,11 +2368,11 @@ class ActionResponseModel: Mappable {
     var createdAt: String?
     var completedAt: String?
     var completedBy: String?
-
+    
     required init?(map: Map) {
         // Empty initializer for Mappable protocol
     }
-
+    
     func mapping(map: Map) {
         actionId           <- map["actionId"]
         type               <- map["type"]
@@ -2104,11 +2406,11 @@ class AddCommentsRequestModel: Mappable {
     var userId: Int?
     var actionId: String?
     var createdAt: String?
-
+    
     required init?(map: Map) {}
     
     init() {}
-
+    
     func mapping(map: Map) {
         text       <- map["text"]
         date       <- map["date"]
@@ -2126,9 +2428,9 @@ class AddedCommentResponseModel: Mappable {
     var image: String?  // Assuming `image` is a URL or base64 encoded string; update type if needed
     var createdAt: String?
     var user: Any?  // Adjust the type if you have a specific model for `user`
-
+    
     required init?(map: Map) {}
-
+    
     func mapping(map: Map) {
         commentId   <- map["commentId"]
         text        <- map["text"]
@@ -2146,10 +2448,10 @@ class APIErrorResponse: Mappable {
     var error: String?
     var message: String?
     var path: String?
-
+    
     // Required initializer for ObjectMapper
     required init?(map: Map) { }
-
+    
     // Mapping function to bind JSON keys to properties
     func mapping(map: Map) {
         timestamp <- map["timestamp"]

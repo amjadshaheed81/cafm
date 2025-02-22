@@ -67,7 +67,7 @@ class FloorLayoutPlanVC: UIViewController {
     
     var siteLayoutDataArray: [SiteLayoutModel] = [] {
         didSet {
-            self.floorSiteLayoutDataArray = self.siteLayoutDataArray.filter { $0.nodeType == .floor }
+            self.floorSiteLayoutDataArray = self.getFloorList(from: self.siteLayoutDataArray)
         }
     }
     
@@ -327,6 +327,35 @@ class FloorLayoutPlanVC: UIViewController {
         SCLAlertView.showErrorAlert(title: "Error", message: subTitle, cancelButtonTitle: "OK")
     }
     
+    func getFloorList(from siteLayout: [SiteLayoutModel]) -> [SiteLayoutModel] {
+        let orderMap: [String: Int] = [
+            "Basement": 1,
+            "Ground Floor": 2,
+            "1st Floor": 3,
+            "2nd Floor": 4,
+            "3rd Floor": 5,
+            "4th Floor": 6,
+            "5th Floor": 7,
+            "6th Floor": 8,
+            "7th Floor": 9,
+            "Vertical": 10
+        ]
+        
+        // Filter floors with required conditions
+        let filteredList = siteLayout.filter {
+            $0.nodeType == .floor && !($0.floorPlanUrl?.isEmpty ?? true)
+        }
+        
+        // Sort floors based on the predefined order map
+        let sortedList = filteredList.sorted {
+            let aOrder = orderMap[$0.nodeName ?? ""] ?? Int.max // Default to high value if not found
+            let bOrder = orderMap[$1.nodeName ?? ""] ?? Int.max
+            return aOrder < bOrder
+        }
+        
+        return sortedList
+    }
+    
 }
 
 extension FloorLayoutPlanVC: EmptyViewDelegate {
@@ -399,8 +428,6 @@ extension FloorLayoutPlanVC: HIChartViewDelegate {
                 }
             }
         }
-        
-        print(organizationData)
         
         let options = HIOptions()
         
@@ -850,8 +877,8 @@ extension FloorLayoutPlanVC: UICollectionViewDelegate, UICollectionViewDataSourc
             self.view.layoutIfNeeded()
         }else {
             if self.selectedFloorMapSiteIndex == nil {
-                self.selectedFloorMapSiteIndex = 0
-                self.showFloorMapForSite(at: 0)
+                //self.selectedFloorMapSiteIndex = 0
+                //self.showFloorMapForSite(at: 0)
             }
             self.floorMapMainView.isHidden = false
             self.floorMapCollectionView.reloadData()
@@ -869,12 +896,14 @@ extension FloorLayoutPlanVC: UICollectionViewDelegate, UICollectionViewDataSourc
             
             let collectionViewHeight = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratMedium, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
             
-            let height: CGFloat = 40+25+20+collectionViewHeight+screenWidth+10
+            let height: CGFloat = 40+25+10+collectionViewHeight+min(screenWidth, screenHeight)+10
             self.floorMapMainViewHeight.constant = height
             self.floorMapMainView.frame.size.height = height
             
             self.floorMapCollectionViewHeight.constant = collectionViewHeight
             self.floorMapCollectionView.frame.size.height = collectionViewHeight
+            
+            self.scrollView.contentInset.bottom = -(min(screenWidth, screenHeight)+10)
             
             self.view.layoutIfNeeded()
         }
@@ -883,22 +912,12 @@ extension FloorLayoutPlanVC: UICollectionViewDelegate, UICollectionViewDataSourc
     func showFloorMapForSite(at index: Int) {
         if self.floorSiteLayoutDataArray.count > index {
             let item = self.floorSiteLayoutDataArray[index]
-            if let floorPlanUrl = item.floorPlanUrl, let url = URL(string: floorPlanUrl) {
-                SDWebImageManager.shared.cancelAll()
-                self.floorMapEmptyView.isHidden = true
-                self.floorMapImageView.isHidden = false
-                let animation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topLeftBottomRight)
-                self.floorMapImageView.showAnimatedGradientSkeleton(usingGradient: SkeletonGradient(baseColor: UIColor.clouds, secondaryColor: UIColor.silver), animation: animation)
-                self.floorMapImageView.sd_setImage(with: url) { [weak self] image, error, _, _ in
-                    guard let strongSelf = self else { return }
-                    if strongSelf.floorMapImageView.image != nil {
-                        strongSelf.floorMapImageView.hideSkeleton()
-                    }
-                }
-            }else {
-                self.floorMapEmptyView.isHidden = false
-                self.floorMapImageView.isHidden = true
-            }
+            let vc = generalSB.instantiateViewController(withIdentifier: "SaveMarkersVC") as! SaveMarkersVC
+            vc.siteLayoutModel = item
+            vc.siteLayoutDataArray = self.siteLayoutDataArray
+            //let nav = UINavigationController(rootViewController: vc)
+            //self.present(nav, animated: true)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -918,18 +937,18 @@ extension FloorLayoutPlanVC: UICollectionViewDelegate, UICollectionViewDataSourc
             cell.mainLbl.text = text
         }
         
-        if self.selectedFloorMapSiteIndex == indexPath.row {
-            cell.selectionView.isHidden = false
-            cell.mainLbl.textColor = UIColor(appColor: .AppTint)
-        }else {
-            cell.selectionView.isHidden = true
-            cell.mainLbl.textColor = UIColor(appColor: .GrayText)
-        }
+        //if self.selectedFloorMapSiteIndex == indexPath.row {
+        //    cell.selectionView.isHidden = false
+        //    cell.mainLbl.textColor = UIColor(appColor: .AppTint)
+        //}else {
+        cell.selectionView.isHidden = true
+        cell.mainLbl.textColor = UIColor(appColor: .GrayText)
+        //}
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.selectedFloorMapSiteIndex = indexPath.row
+        //self.selectedFloorMapSiteIndex = indexPath.row
         self.floorMapCollectionView.reloadData()
         self.floorMapCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         self.showFloorMapForSite(at: indexPath.row)

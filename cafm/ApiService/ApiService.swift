@@ -59,6 +59,7 @@ enum ApiService {
     case getAllUserByUserType(userType: String)
     case userManageAPI(userModel: User)
     case getAllCompanies
+    case getAllAction(area: String?)
     case siteActionsAPI(siteId: Int)
     case siteActionsPUTapi(siteModel: ActionModel)
     case getSearchAddressAPI(searchText: String)
@@ -80,6 +81,8 @@ enum ApiService {
     case deleteSiteDetails(userId: Int)
     case getAllSiteDetailsBySiteID(userId: Int)
     case siteLayoutAPI(siteId: Int)
+    case siteSaveMarkerAPI(siteId: Int)
+    case saveSiteMarkerAPI(model: MarkerModel)
     case siteCreateNode(node: SiteLayoutModel)
     case siteUploadFloorPlan
     case getSiteSiteInfo(siteId: Int, query: String)
@@ -98,6 +101,7 @@ enum ApiService {
     case deleteSiteAssets(id: Int)
     case documentSiteParentFoldersAPI(siteId: Int)
     case siteAssetsAPI(siteId: Int)
+    case siteAllWithDetails(withDetails: Bool?)
     case lovAPI(lovType: LOVTypeEnum, desc: String? = nil, filter1: String? = nil)
     case put_siteAssetsAPI(siteId: Int)
     case siteAssetsDetails(assetId: Int)
@@ -121,6 +125,7 @@ enum ApiService {
     case deleteScheduleVisitAPI(scheduleId: Int)
     case terminateContract(projectId: Int)
     case statutoryRegister(siteId: Int)
+    case statutoryRegisterAll
     case contracterContractsDetails(contractId: Int)
     case getSelectedSiteContractDetails(siteId: Int?, contractId: Int?, area: String?)
     case userManagerAddSite(userID: Int, addedSites: [Int], removedSites: [Int])
@@ -251,6 +256,11 @@ enum ApiService {
             return ApiService.baseApi+"/api/user/manage"
         case .getAllCompanies:
             return ApiService.baseApi+"/api/companies/all"
+        case .getAllAction(area: let area):
+            let api = ApiService.baseApi+"/api/site/actions/all"
+            return apiWithQueryParameters(string: api, queryItems: [
+                URLQueryItem(name: "area", value: area),
+            ])
         case .siteActionsAPI(let siteId):
             return ApiService.baseApi+"/api/site/actions/\(siteId)"
         case .siteActionsPUTapi:
@@ -289,6 +299,10 @@ enum ApiService {
             return ApiService.baseApi+"/api/site/site/\(userId)"
         case .siteLayoutAPI(let siteId):
             return ApiService.baseApi+"/api/site/layout/\(siteId)"
+        case .siteSaveMarkerAPI(siteId: let siteId):
+            return ApiService.baseApi+"/api/site/SaveMarker/\(siteId)"
+        case .saveSiteMarkerAPI(model: let model):
+            return ApiService.baseApi+"/api/site/SaveMarker"
         case .siteCreateNode:
             return ApiService.baseApi+"/api/site/createNode"
         case .siteUploadFloorPlan:
@@ -329,6 +343,11 @@ enum ApiService {
             return ApiService.baseApi+"/api/document/site/\(siteId)/parent/folders"
         case .siteAssetsAPI(siteId: let siteId):
             return ApiService.baseApi+"/api/site/\(siteId)/assets"
+        case .siteAllWithDetails(withDetails: let withDetails):
+            let api = ApiService.baseApi+"/api/site/site/all"
+            return apiWithQueryParameters(string: api, queryItems: [
+                URLQueryItem(name: "withDetails", value: withDetails?.stringValue),
+            ])
         case .lovAPI(lovType: let lovType, desc: let desc, filter1: let filter1):
             if let desc, let filter1 {
                 return ApiService.baseApi+"/api/lov/\(lovType.rawValue)?desc=\(desc)&filter1=\(filter1)"
@@ -385,6 +404,8 @@ enum ApiService {
             return ApiService.baseApi+"/api/project/\(projectId)/terminate"
         case .statutoryRegister(siteId: let siteId):
             return ApiService.baseApi+"/api/document/\(siteId)/statutoryRegister"
+        case .statutoryRegisterAll:
+            return ApiService.baseApi+"/api/document/statutoryRegister/all"
         case .contracterContractsDetails(contractId: let contractId):
             return ApiService.baseApi+"/api/project/contracts?contractorCompanyId=\(contractId)"
         case .getSelectedSiteContractDetails(siteId: let siteId, contractId: let contractId, area: let area):
@@ -499,6 +520,12 @@ enum ApiService {
         switch self {
         case .projectContractsAPI, .actionSummaryAPI, .userCalendarEventsAPI, .userDetailsAPI, .siteCheckSiteAPI, .siteCheckAllAPI, .siteAllDetails, .siteDetailsRiskData, .getAllUserData, .siteActionsAPI, .getAllCompanies, .siteLayoutAPI, .getSearchAddressAPI, .getSearchResultAddressAPI, .getSiteSiteInfo, .folders, .getKeyContactsDetail(userId: _), .siteAssetsCategory:
             return .get
+        case .siteSaveMarkerAPI(siteId: let siteId):
+            return .get
+        case .saveSiteMarkerAPI(model: let model):
+            return .put
+        case .getAllAction(area: let area):
+            return .get
         case .loginApi(model: let model):
             return .post
         case .putUserCalendarAPI(model: let model):
@@ -607,6 +634,8 @@ enum ApiService {
             return .get
         case .siteAssetsAPI(siteId: let siteId):
             return .get
+        case .siteAllWithDetails(withDetails: let withDetails):
+            return .get
         case .lovAPI(lovType: let lovType, desc: let desc, filter1: let filter1):
             return .get
         case .put_siteAssetsAPI(siteId: let siteId):
@@ -650,6 +679,8 @@ enum ApiService {
         case .terminateContract(projectId: let projectId):
             return .get
         case .statutoryRegister(siteId: let siteId):
+            return .get
+        case .statutoryRegisterAll:
             return .get
         case .contracterContractsDetails(contractId: let contractId):
             return .get
@@ -731,6 +762,12 @@ enum ApiService {
     func parameters() -> [String: Any]? {
         switch self {
         case .projectContractsAPI, .actionSummaryAPI, .userCalendarEventsAPI, .userDetailsAPI, .siteCheckSiteAPI, .siteCheckAllAPI, .siteAllDetails, .siteDetailsRiskData, .getAllUserData, .siteActionsAPI, .getAllCompanies, .siteLayoutAPI, .getSearchAddressAPI, .getSearchResultAddressAPI, .deleteUser, .siteUploadFloorPlan, .getSiteSiteInfo:
+            return nil
+        case .siteSaveMarkerAPI(siteId: let siteId):
+            return nil
+        case .saveSiteMarkerAPI(model: let model):
+            return model.toJSON()
+        case .getAllAction(area: let area):
             return nil
         case .loginApi(model: let model):
             return model.toJSON()
@@ -858,6 +895,8 @@ enum ApiService {
             return nil
         case .siteAssetsAPI(siteId: let siteId):
             return nil
+        case .siteAllWithDetails(withDetails: let withDetails):
+            return nil
         case .lovAPI(lovType: let lovType, desc: let desc, filter1: let filter1):
             return nil
         case .put_siteAssetsAPI(siteId: let siteId):
@@ -901,6 +940,8 @@ enum ApiService {
         case .terminateContract(projectId: let projectId):
             return nil
         case .statutoryRegister(siteId: let siteId):
+            return nil
+        case .statutoryRegisterAll:
             return nil
         case .contracterContractsDetails(contractId: let contractId):
             return nil
@@ -1036,6 +1077,7 @@ class APIClient {
                     // Mapping a single Mappable object
                     completion(.success(.single(object)))
                 }else if let json = value as? [String: Any], let object = T(JSON: json), response.response?.statusCode == 401 {
+                    UserConstants.shared.logoutUser()
                     logOutScreen()
                     completion(.success(.single(object)))
                 }else {

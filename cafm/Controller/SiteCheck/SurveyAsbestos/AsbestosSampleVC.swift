@@ -60,6 +60,11 @@ class AsbestosSampleVC: UIViewController {
         self.loadData()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.adjustSpreadsheetView()
+    }
+    
     func configureNavigationBar() {
         self.title = "Asbestos Samples"
         let closeBtn = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(self.navCloseBtnClicked(_:)))

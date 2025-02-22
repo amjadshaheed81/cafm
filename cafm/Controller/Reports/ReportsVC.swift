@@ -21,9 +21,14 @@ class ReportsVC: UIViewController {
     weak var vc3: SiteChecksReportsVC!
     weak var vc4: EnergyReportVC!
     weak var vc5: ContractReportVC!
+    weak var vc6: StatutoryRegisterReportVC!
+    weak var vc7: ActionsReportVC!
+    weak var vc8: BasicReportsVC!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.configureNavigationBackButton()
+        
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
@@ -81,6 +86,42 @@ class ReportsVC: UIViewController {
             }
             showViewController(self.vc4)
             break
+        case .statutoryRegister:
+            self.selectedTab = tab
+            if vc6 == nil {
+                let vc = reportsSB.instantiateViewController(withIdentifier: "StatutoryRegisterReportVC") as! StatutoryRegisterReportVC
+                vc.homeVC = self
+                vc.isViewModeEdit = true
+                add(childVC: vc, to: self.containerView)
+                vc.view.isHidden = true
+                self.vc6 = vc
+            }
+            showViewController(self.vc6)
+            break
+        case .actions:
+            self.selectedTab = tab
+            if vc7 == nil {
+                let vc = reportsSB.instantiateViewController(withIdentifier: "ActionsReportVC") as! ActionsReportVC
+                vc.homeVC = self
+                vc.isViewModeEdit = true
+                add(childVC: vc, to: self.containerView)
+                vc.view.isHidden = true
+                self.vc7 = vc
+            }
+            showViewController(self.vc7)
+            break
+        case .basicReports:
+            self.selectedTab = tab
+            if vc8 == nil {
+                let vc = reportsSB.instantiateViewController(withIdentifier: "BasicReportsVC") as! BasicReportsVC
+                vc.homeVC = self
+                vc.isViewModeEdit = true
+                add(childVC: vc, to: self.containerView)
+                vc.view.isHidden = true
+                self.vc8 = vc
+            }
+            showViewController(self.vc8)
+            break
         }
     }
 }
@@ -95,6 +136,9 @@ extension ReportsVC {
         //case worksheet = "Worksheet"
         case energyReport = "Energy Report"
         //case siteChecks = "Site Checks"
+        case statutoryRegister = "Statutory Register"
+        case actions = "Actions"
+        case basicReports = "Basic Reports"
     }
 }
 

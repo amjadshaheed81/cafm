@@ -22,7 +22,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UILabel.appearance(whenContainedInInstancesOf: [CalendarSegment.self]).numberOfLines = 0
         return true
     }
-
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        guard let topVC = topViewController() else {
+            return .allButUpsideDown
+        }
+        
+        if topVC is PortraitViewController {
+            return .portrait
+        }else if topVC is LandscapeViewController {
+            return .landscape
+        }else if topVC is AllOrientationsViewController {
+            return .allButUpsideDown
+        }else {
+            return .allButUpsideDown
+        }
+    }
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -84,3 +100,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+func topViewController() -> UIViewController? {
+    let controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
+    if let navigationController = controller as? UINavigationController {
+        return navigationController.visibleViewController
+    }
+    if let tabController = controller as? UITabBarController {
+        if let selected = tabController.selectedViewController {
+            return selected
+        }
+    }
+    if let presented = controller?.presentedViewController {
+        return presented
+    }
+    return controller
+}

@@ -30,6 +30,7 @@ class CreateNewSiteVC: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         self.title = "Create New Site"
         
+        self.configureNavigationBackButton()
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         

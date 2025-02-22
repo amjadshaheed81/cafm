@@ -68,12 +68,27 @@ class AssetReportVC: UIViewController {
     private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //"yyyy-MM-dd HH:mm:ss"
     private let ddMMyyyyStr = "dd/MM/yyyy"
     private let yyyyMMddStr = "yyyy-MM-dd"
+    private var viewShouldLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.viewShouldLayoutSubviews = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if self.viewShouldLayoutSubviews {
+            self.setupAssetTypeChart()
+            self.setupPATResultChart()
+            self.viewShouldLayoutSubviews.toggle()
+        }
     }
     
     @IBAction func assetBtnClicked(_ sender: UIButton) {
@@ -175,6 +190,7 @@ extension AssetReportVC {
     
 }
 
+//MARK: - setup views
 extension AssetReportVC {
     
     func setupViews() {
@@ -257,7 +273,7 @@ extension AssetReportVC {
     func setupPATResultChart() {
         let data = self.chartData?.cost ?? []
         
-        self.PATResultChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(data.count)*20)+50)
+        self.PATResultChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(data.count)*20)+50)
         self.PATResultChartContainerView.frame.size.width = PATResultChartContainerViewWidth.constant
         
         let view: UIView! = self.PATResultChartContainerView
@@ -346,7 +362,7 @@ extension AssetReportVC {
     func setupPATResultChart2() {
         let data = self.chartData?.quantity ?? []
         
-        self.PATResultChart2ContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(data.count)*20)+50)
+        self.PATResultChart2ContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(data.count)*20)+50)
         self.PATResultChart2ContainerView.frame.size.width = PATResultChart2ContainerViewWidth.constant
         
         let view: UIView! = self.PATResultChart2ContainerView
@@ -432,7 +448,7 @@ extension AssetReportVC {
     func setupPATResultChart3() {
         let data = self.chartData?.costSite ?? []
         
-        self.PATResultChart3ContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(data.count)*20)+50)
+        self.PATResultChart3ContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(data.count)*20)+50)
         self.PATResultChart3ContainerView.frame.size.width = PATResultChart3ContainerViewWidth.constant
         
         let view: UIView! = self.PATResultChart3ContainerView

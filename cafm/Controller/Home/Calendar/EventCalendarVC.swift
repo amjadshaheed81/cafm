@@ -69,8 +69,10 @@ class EventCalendarVC: UIViewController {
         super.viewDidLayoutSubviews()
         if !didViewLayoutSubviews {
             let minHeight = self.scrollView.frame.height-(self.calendarContainerView.frame.height+1)
-            self.tableViewHeight.constant = minHeight
-            self.tableView.frame.size.height = minHeight
+            if minHeight > 0 {
+                self.tableViewHeight.constant = minHeight
+                self.tableView.frame.size.height = minHeight
+            }
             didViewLayoutSubviews.toggle()
         }
     }
@@ -214,7 +216,6 @@ class EventCalendarVC: UIViewController {
                 case .array(var array):
                     array = self?.getUniqueEvents(events: array) ?? array
                     strongSelf.loadingStatus = .default
-                    print(array.toJSONString())
                     array.forEach({ calendarEvent in
                         calendarEvent.start_date = calendarEvent.startDate?.transformToDate(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                         calendarEvent.end_date = calendarEvent.endDate?.transformToDate(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -565,7 +566,6 @@ extension EventCalendarVC: UITableViewDataSource, UITableViewDelegate {
         if self.itemArray.isEmpty {
         }else if self.itemArray.count > indexPath.row {
             let item = self.itemArray[indexPath.row]
-            print("LogLog", "shortText:", item.shortText ?? "NULL", "eventType:", item.eventType ?? "NULL", "section:", item.section ?? "NULL")
             guard let type = extractTypeAndID(from: item.section ?? "").type, let id = extractTypeAndID(from: item.section ?? "").id else {return}
             if type == "site-checks" {
                 getSiteCheckByCheckId(checkId: id)

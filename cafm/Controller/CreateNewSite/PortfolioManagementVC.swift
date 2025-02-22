@@ -498,6 +498,11 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
                 attributedText.append(postCodeString)
 
                 cell.lblText.attributedText = attributedText
+                cell.btnSelect.isHidden = false
+                cell.btnSelect.addAction { [weak self] in
+                    guard let self else {return}
+                    self.downalodSiteDetail(id: self.searchUserList[indexPath.row - 1].siteId ?? 0, name: self.searchUserList[indexPath.row - 1].siteName ?? "")
+                }
             } else if indexPath.section == 1 {
                 let address = searchUserList[indexPath.row - 1].address1 ?? ""
                 cell.lblText.text = address
@@ -578,6 +583,37 @@ class PortfolioManagementVC: UIViewController, SpreadsheetViewDataSource, Spread
 }
 
 extension PortfolioManagementVC {
+    
+    func downalodSiteDetail(id: Int, name : String) {
+        let appearance = SCLAlertView.SCLAppearance(
+            showCloseButton: false
+        )
+        let scl = SCLAlertView(appearance: appearance)
+        scl.showWait("", subTitle: "please wait...", closeButtonTitle: "")
+        let apiService = ApiService.getAllSiteDetailsBySiteID(userId: id)
+        
+        APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<CreateSiteRequestModel>, Error>) in
+            DispatchQueue.main.async { [weak self] in
+                scl.hideView()
+                guard let self else {return}
+                switch result {
+                case .success(let responseResult):
+                    if case .single(let responseResult) = responseResult {
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self else {return}
+                            if let home = self.navigationController?.viewControllers.first as? HomeVC, let dashBoard = home.vc1 {
+                                let sclAlertView = SCLAlertView()
+                                sclAlertView.showSuccess("", subTitle: "\(name) is selected.")
+                                dashBoard.siteSearchDidSelectSite(responseResult)
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    print("Error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
     
     func goFurtherToSiteDetailScreen(id: Int, isForViewOnly: Bool = false) {
         let appearance = SCLAlertView.SCLAppearance(

@@ -95,6 +95,7 @@ extension WaterDomecsticRAVC {
     
 }
 
+//MARK: - setup views
 extension WaterDomecsticRAVC {
     
     func setupViews() {

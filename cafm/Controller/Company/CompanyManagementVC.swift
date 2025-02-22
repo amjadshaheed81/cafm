@@ -43,7 +43,6 @@ class CompanyManagementVC: UIViewController {
         self.companyDetailSpreedSheetView.showsHorizontalScrollIndicator = false
         self.companyDetailSpreedSheetView.showsVerticalScrollIndicator = false
         self.companyDetailSpreedSheetView.addCorner()
-        self.companyDetailSpreedSheetView.addBorder(color: .gray.withAlphaComponent(0.4))
     }
     
     func getAllCompanies() {

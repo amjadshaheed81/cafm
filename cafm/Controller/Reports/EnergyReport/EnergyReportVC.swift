@@ -103,12 +103,29 @@ class EnergyReportVC: UIViewController {
     private let kResponseDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //"yyyy-MM-dd HH:mm:ss"
     private let yyyyMMddStr = "yyyy-MM-dd"
+    private var viewShouldLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.viewShouldLayoutSubviews = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if self.viewShouldLayoutSubviews {
+            self.setupEnergyCostChart()
+            self.setupEnergyReadingChart()
+            self.setupEnergyCostChart2()
+            self.setupEnergyReadingChart2()
+            self.viewShouldLayoutSubviews.toggle()
+        }
     }
     
     @IBAction func energyReportBtnClicked(_ sender: UIButton) {
@@ -249,6 +266,7 @@ extension EnergyReportVC {
     
 }
 
+//MARK: - setup views
 extension EnergyReportVC {
     
     func setupViews() {
@@ -601,7 +619,7 @@ extension EnergyReportVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.EnergyCostChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(12)*20)+50)
+        self.EnergyCostChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(12)*20)+50)
         view.frame.size.width = self.EnergyCostChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
@@ -746,7 +764,7 @@ extension EnergyReportVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.EnergyReadingChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(12)*20)+50)
+        self.EnergyReadingChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(12)*20)+50)
         view.frame.size.width = self.EnergyReadingChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
@@ -914,7 +932,7 @@ extension EnergyReportVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.EnergyCost2ChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(12)*20)+50)
+        self.EnergyCost2ChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(12)*20)+50)
         view.frame.size.width = self.EnergyCost2ChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
@@ -1026,7 +1044,7 @@ extension EnergyReportVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.EnergyReading2ChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(12)*20)+50)
+        self.EnergyReading2ChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(12)*20)+50)
         view.frame.size.width = self.EnergyReading2ChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)

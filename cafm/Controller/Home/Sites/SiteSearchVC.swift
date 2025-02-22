@@ -52,7 +52,7 @@ class SiteSearchVC: UIViewController {
         self.setup()
         
         self.setFavoriteSiteIDs()
-        self.filterSiteArray = UserConstants.shared.allSites
+        self.filterSiteArray = UserConstants.shared.allSites.filter({$0.status?.lowercased() == "open"})
         reloadTableView()
     }
     
@@ -235,7 +235,7 @@ extension SiteSearchVC: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.filterSiteArray = UserConstants.shared.allSites
+        self.filterSiteArray = UserConstants.shared.allSites.filter({$0.status?.lowercased() == "open"})
         self.tableView.reloadData()
         self.tableView.setContentOffset(CGPoint.zero, animated: true)
     }

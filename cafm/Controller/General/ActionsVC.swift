@@ -29,7 +29,7 @@ class ActionsVC: UIViewController {
     }()
     let loadingSCLAlertView = SCLAlertView(appearance: loadingSCLAppearance)
     
-    var headerColumnNames: [String] = []
+    private var headerColumnNames: [TableFields] = []
     var itemArray: [ActionModel] = []
     var searchItemArray: [ActionModel] = []
     var selectedStatus: ActionModel.Status = .default
@@ -55,17 +55,17 @@ class ActionsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var headerColumns = [
-            "Action Type",
-            "Description",
-            "Observation",
-            "Required Action",
-            "Due Date",
-            "Risk Score",
-            "Status"
+        var headerColumns: [TableFields] = [
+            //.ActionType,
+            //.Description,
+            .Observation,
+            .RequiredAction,
+            .DueDate,
+            .RiskScore,
+            .Status,
         ]
         if userRole != .siteUsers && userRole != .surveyor {
-            headerColumns.append("Actions")
+            headerColumns.append(.Actions)
         }
         self.headerColumnNames = headerColumns
         
@@ -265,6 +265,20 @@ class ActionsVC: UIViewController {
     
 }
 
+//MARK: - Fields enum
+extension ActionsVC {
+    enum TableFields: String {
+        case ActionType = "Action Type"
+        case Description = "Description"
+        case Observation = "Observation"
+        case RequiredAction = "Required Action"
+        case DueDate = "Due Date"
+        case RiskScore = "Risk Score"
+        case Status = "Status"
+        case Actions = "Actions"
+    }
+}
+
 extension ActionsVC: EmptyViewDelegate {
     func emptyViewDidTapView(_ view: EmptyView) {
         if self.loadingStatus.shouldReload {
@@ -360,18 +374,17 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, cellForItemAt indexPath: IndexPath) -> Cell? {
         let column = indexPath.section
+        guard self.headerColumnNames.count > column else { return nil }
+        let headerText = self.headerColumnNames[column]
         if indexPath.row == 0 {
             let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
             cell.setGridLines(width: 1, color: UIColor(appColor: .AppTint))
-            if self.headerColumnNames.count > column {
-                let headerText = self.headerColumnNames[column]
-                
-                cell.backgroundColor = UIColor(appColor: .AppTint)
-                cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
-                cell.mainLbl.textColor = UIColor.white
-                
-                cell.mainLbl.text = headerText
-            }
+            
+            cell.backgroundColor = UIColor(appColor: .AppTint)
+            cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
+            cell.mainLbl.textColor = UIColor.white
+            
+            cell.mainLbl.text = headerText.rawValue
             return cell
         }else if !self.loadingStatus.hasData {
             let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
@@ -387,7 +400,9 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
             let index = indexPath.row-1
             if self.searchItemArray.count > index {
                 let item = self.searchItemArray[index]
-                if column == 0 || column == 1 || column == 2 || column == 3 {
+                
+                switch headerText {
+                case .ActionType, .Description, .Observation, .RequiredAction:
                     let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
                     cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
                     
@@ -395,60 +410,27 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                     cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
                     cell.mainLbl.textColor = UIColor.black
                     
-                    if column == 0 {
+                    if headerText == .ActionType {
                         cell.mainLbl.text = item.type
-                    }else if column == 1 {
+                    }else if headerText == .Description {
                         cell.mainLbl.text = item.desc
-                    }else if column == 2 {
+                    }else if headerText == .Observation {
                         cell.mainLbl.text = item.observation
-                    }else if column == 3 {
+                    }else if headerText == .RequiredAction {
                         cell.mainLbl.text = item.requiredAction
                     }
                     return cell
-                }else if column == 4 {
-                    let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: BadgeLabelCell.className(), for: indexPath) as! BadgeLabelCell
-                    if let createdAt = item.createdAt {
-                        cell.mainLbl.text = calculateDueDays(createdAt: createdAt, dueInDays: item.dueDate, riskScore: item.riskScore ?? 0)
-                    }else {
-                        cell.mainLbl.text = ""
-                    }
-                    cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
-                    
-                    cell.backgroundColor = UIColor.white
-                    cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
-                    let riskScore = item.riskScore ?? 0
-
-                    if riskScore > 16 {
-                        // 17-25
-                        cell.badgeView.backgroundColor = UIColor(appColor: .RedStatus)
-                    }else if riskScore > 9 {
-                        // 10-16
-                        cell.badgeView.backgroundColor = UIColor(appColor: .AmberStatus)
-                    }else if riskScore > 4 {
-                        // 5-9
-                        cell.badgeView.backgroundColor = UIColor(appColor: .YellowRiskScore)
-                    }else {
-                        // 1-4
-                        cell.badgeView.backgroundColor = UIColor(appColor: .GreenStatus)
-                    }
-
-                    
-                    cell.badgeView.addCorner(value: 5)
-                    
-                    cell.mainLbl.textColor = UIColor.white
-                    return cell
-                }else if column == 5 || column == 6 {
+                case .DueDate, .RiskScore, .Status:
                     let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: BadgeLabelCell.className(), for: indexPath) as! BadgeLabelCell
                     cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
-                    
                     cell.backgroundColor = UIColor.white
                     cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
                     
-                    if column == 5 {
-                        cell.badgeView.addCorner()
+                    if headerText == .DueDate || headerText == .RiskScore {
+                        cell.badgeView.addCorner(value: 5)
                         cell.mainLbl.textColor = UIColor.white
-                        let riskScore = item.riskScore ?? 0
                         
+                        let riskScore = item.riskScore ?? 0
                         if riskScore > 16 {
                             // 17-25
                             cell.badgeView.backgroundColor = UIColor(appColor: .RedStatus)
@@ -463,17 +445,23 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
                             cell.badgeView.backgroundColor = UIColor(appColor: .GreenStatus)
                         }
                         
-                        cell.mainLbl.text = "\(riskScore)"
-                    }else if column == 6 {
+                        if headerText == .DueDate {
+                            if let createdAt = item.createdAt {
+                                cell.mainLbl.text = calculateDueDays(createdAt: createdAt, dueInDays: item.dueDate, riskScore: item.riskScore ?? 0)
+                            }else {
+                                cell.mainLbl.text = ""
+                            }
+                        }else if headerText == .RiskScore {
+                            cell.mainLbl.text = "\(riskScore)"
+                        }
+                    }else if headerText == .Status {
                         cell.badgeView.addCorner(value: 5)
-                        
                         cell.badgeView.backgroundColor = item.status?.textBGColor()
                         cell.mainLbl.textColor = item.status?.textColor()
-                        
                         cell.mainLbl.text = item.status?.rawValue
                     }
                     return cell
-                }else if column == 7 {
+                case .Actions:
                     let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: ActionButtonsCell.className(), for: indexPath) as! ActionButtonsCell
                     cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
                     
@@ -501,69 +489,65 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
             let totalColumn = self.headerColumnNames.count
             return [CellRange(from: IndexPath(row: 1, column: 0), to: IndexPath(row: 1, column: totalColumn-1))]
         }else {
-            var data = [CellRange(from: IndexPath(row: 0, column: 2), to: IndexPath(row: 0, column: 3))]
-            for (ind, value) in searchItemArray.enumerated() {
-                data.append(CellRange(from: IndexPath(row: ind+1, column: 2), to: IndexPath(row: ind+1, column: 3)))
-            }
-            return data
+            return []
         }
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, widthForColumn column: Int) -> CGFloat {
-        if column == 2 || column == 3 {
-            return 0
-        }
         if self.headerColumnNames.count > column {
             let headerText = self.headerColumnNames[column]
-            
             let refSize = CGSize(width: 12+30+12, height: 10+18+10)
             let widthAddition: CGFloat = 12+12
             let minWidth = refSize.width-widthAddition
             let maxWidth: CGFloat = isiPadDevice ? 300 : 200
             
-            let headerWidth = getLabelSize(text: headerText, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
+            let headerWidth = getLabelSize(text: headerText.rawValue, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
             
             if !self.loadingStatus.hasData {
                 let maxColumnWidth = getLabelSize(text: self.loadingStatus.rawValue, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition).width
                 return max(headerWidth, maxColumnWidth/CGFloat(self.headerColumnNames.count))
             }else {
-                if column == 0 || column == 1 || column == 2 || column == 3 {
+                switch headerText {
+                case .ActionType, .Description, .Observation, .RequiredAction:
                     var textArray: [String] = []
-                    if column == 0 {
+                    if headerText == .ActionType {
                         textArray = self.searchItemArray.compactMap({ $0.type })
-                    }else if column == 1 {
+                    }else if headerText == .Description {
                         textArray = self.searchItemArray.compactMap({ $0.desc })
-                    }else if column == 2 {
+                    }else if headerText == .Observation {
                         textArray = self.searchItemArray.compactMap({ $0.observation })
-                    }else if column == 3 {
+                    }else if headerText == .RequiredAction {
                         textArray = self.searchItemArray.compactMap({ $0.requiredAction })
                     }
+                    let maxWidth: CGFloat = isiPadDevice ? 400 : 300
                     let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
-                    return max(headerWidth, maxColumnWidth)
-                }else if column == 4 {
-                    var textArray: [String] = []
-                    let createAt = self.searchItemArray.compactMap({ $0.createdAt })
-                    let dueDate = self.searchItemArray.map({ $0.dueDate })
-                    let riskScore = self.searchItemArray.map({ $0.riskScore })
-                    for item in searchItemArray {
-                        textArray.append(calculateDueDays(createdAt: item.createdAt ?? "", dueInDays: item.dueDate ?? "", riskScore: item.riskScore ?? 0))
+                    
+                    if headerText == .ActionType || headerText == .Description {
+                        return 0
                     }
-                    let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
-                    return max(headerWidth, maxColumnWidth)+10.0+10.0
-                }else if column == 5 || column == 6 {
+                    return max(headerWidth, maxColumnWidth)
+                case .DueDate, .RiskScore, .Status:
                     let refSize = CGSize(width: 12+8+10+8+12, height: 10+4+18+4+10)
                     let widthAddition: CGFloat = 12+8+8+12
                     let minWidth = refSize.width-widthAddition
                     
                     var textArray: [String] = []
-                    if column == 5 {
+                    if headerText == .DueDate {
+                        textArray = self.searchItemArray.compactMap({ item in
+                            if let createdAt = item.createdAt {
+                                return calculateDueDays(createdAt: createdAt, dueInDays: item.dueDate, riskScore: item.riskScore ?? 0)
+                            }else {
+                                return ""
+                            }
+                        })
+                    }else if headerText == .RiskScore {
                         textArray = self.searchItemArray.compactMap({ "\($0.riskScore ?? 0)" })
-                    }else if column == 6 {
+                    }else if headerText == .Status {
                         textArray = self.searchItemArray.compactMap({ $0.status?.rawValue })
                     }
                     let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
                     return max(headerWidth, maxColumnWidth)
-                }else if column == 7 {
+                case .Actions:
                     return max(headerWidth, 12+40+8+40+12+40)
                 }
             }
@@ -578,43 +562,39 @@ extension ActionsVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
         let maxWidth: CGFloat = isiPadDevice ? 300 : 200
         
         if row == 0 {
-            let headerHeight = getMaxLabelSize(textArray: self.headerColumnNames, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
+            let headerHeight = getMaxLabelSize(textArray: self.headerColumnNames.compactMap({ $0.rawValue }), font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
             return headerHeight
+        }else if !self.loadingStatus.hasData {
+            return getLabelSize(text: self.loadingStatus.rawValue, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minHeight: minHeight, heightAddition: heightAddition).height
         }else {
-            if !self.loadingStatus.hasData {
-                return getLabelSize(text: self.loadingStatus.rawValue, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minHeight: minHeight, heightAddition: heightAddition).height
-            }else {
+            let index = row-1
+            if self.searchItemArray.count > index {
+                let item = self.searchItemArray[index]
+                
+                var textArray = [
+                    //item.type,
+                    //item.desc,
+                    item.observation,
+                    item.requiredAction,
+                ]
+                let maxWidth: CGFloat = isiPadDevice ? 400 : 300
+                let maxHeight = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
+                
+                var textArray1 = [
+                    "\(item.riskScore ?? 0)",
+                    item.status?.rawValue,
+                ]
+                if let createdAt = item.createdAt {
+                    textArray1.append(calculateDueDays(createdAt: createdAt, dueInDays: item.dueDate, riskScore: item.riskScore ?? 0))
+                }else {
+                    textArray1.append("")
+                }
                 let refSize1 = CGSize(width: 12+8+10+8+12, height: 10+4+18+4+10)
                 let heightAddition1: CGFloat = 10+4+4+10
                 let minHeight1 = refSize1.height-heightAddition1
+                let maxHeight1 = getMaxLabelSize(textArray: textArray1, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height
                 
-                let index = row-1
-                if self.searchItemArray.count > index {
-                    let item = self.searchItemArray[index]
-                    
-                    var textArray = [
-                        item.type,
-                        item.desc,
-//                        item.observation,
-//                        item.requiredAction,
-                    ]
-                    let textArray1 = [
-                        "\(item.riskScore ?? 0)",
-                        item.status?.rawValue,
-                    ]
-                    
-                    var textArray2: [String] = []
-                    let createAt = self.searchItemArray.compactMap({ $0.createdAt })
-                    let dueDate = self.searchItemArray.map({ $0.dueDate })
-                    for (inx, date) in createAt.enumerated() {
-                        textArray2.append(calculateDueDays(createdAt: date, dueInDays: dueDate[inx], riskScore: item.riskScore ?? 0))
-                    }
-                    
-                    let maxHeight = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
-                    let maxHeight1 = getMaxLabelSize(textArray: textArray1, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height + 40
-                    let maxHeight2 = getMaxLabelSize(textArray: textArray2, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight1, heightAddition: heightAddition1).height
-                    return max(maxHeight, maxHeight1, maxHeight2, 10+40+10)
-                }
+                return max(maxHeight, maxHeight1, 10+40+10)
             }
         }
         return 0

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,20 +21,29 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DZy-Bx-OBZ">
+                    <rect key="frame" x="0.0" y="0.0" width="266" height="104"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="DZy-Bx-OBZ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="7iS-Sr-6An"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="DQ7-b1-P1O" secondAttribute="bottom" constant="10" id="BUh-b3-AVp"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="DZy-Bx-OBZ" secondAttribute="trailing" id="Neu-2P-8K3"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="DZy-Bx-OBZ" secondAttribute="bottom" id="QwL-qT-Ote"/>
                 <constraint firstItem="DQ7-b1-P1O" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="aoN-LF-Z4p"/>
                 <constraint firstItem="DQ7-b1-P1O" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="12" id="cMc-i6-9Bg"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="DQ7-b1-P1O" secondAttribute="trailing" constant="12" id="mO8-Vl-VNo"/>
+                <constraint firstItem="DZy-Bx-OBZ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qzN-jT-9HO"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
+                <outlet property="btnSelect" destination="DZy-Bx-OBZ" id="b4J-so-x0M"/>
                 <outlet property="lblText" destination="DQ7-b1-P1O" id="dzc-Er-lS7"/>
             </connections>
-            <point key="canvasLocation" x="345" y="83"/>
+            <point key="canvasLocation" x="345" y="82.394366197183103"/>
         </view>
     </objects>
     <resources>

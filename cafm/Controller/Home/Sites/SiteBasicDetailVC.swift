@@ -173,6 +173,11 @@ class SiteBasicDetailVC: UIViewController, UINavigationControllerDelegate, MKMap
         self.emptySiteDetails(isNeedToEmptyDetail: true)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.collectionView.reloadData()
+    }
+    
     func updateScrollViewHeight() {
         DispatchQueue.main.async {
             self.mainView.layoutIfNeeded()
@@ -1427,6 +1432,7 @@ extension SiteBasicDetailVC: UICollectionViewDelegate, UICollectionViewDataSourc
         cell.txfiled.tag = indexPath.section
         cell.txfiled.delegate = self
         cell.txfiled.textColor = indexPath.row == 4 ? .clear : .black
+        cell.selectedButton.setTitle("Select", for: .normal)
         if indexPath.section == 0 {
             cell.txfiled.text = createSiteName
         }else if indexPath.section == 1 {

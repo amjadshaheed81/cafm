@@ -8,6 +8,20 @@
 import Foundation
 import ObjectMapper
 
+class StatutoryRegistersModel: Mappable {
+    var siteId: Int?
+    var siteName: String?
+    var statutoryRegisters: [StatutoryModel]?
+    
+    required init?(map: Map) {}
+    
+    func mapping(map: Map) {
+        siteId <- map["siteId"]
+        siteName <- map["siteName"]
+        statutoryRegisters <- map["statutoryRegisters"]
+    }
+}
+
 class StatutoryModel: Mappable {
     
     var id: Int?
@@ -20,6 +34,8 @@ class StatutoryModel: Mappable {
     var subType: String?
     var files: [File]?
     var sortOrder: String?
+    
+    var siteName: String?
 
     required init?(map: Map) {}
 

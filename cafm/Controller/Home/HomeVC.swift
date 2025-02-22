@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import LocalAuthentication
 
 class HomeVC: UIViewController, UITabBarDelegate {
     
@@ -25,7 +26,59 @@ class HomeVC: UIViewController, UITabBarDelegate {
         self.tabBar.delegate = self
         
         self.selectTabBarItem(index: self.selectedTabIndex)
+        
+//        authenticateUser()
     }
+    
+    // Biometric authentication method
+    func authenticateUser() {
+        let context = LAContext()
+        var error: NSError?
+
+        // Check if biometric authentication is available
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Authenticate to access your app") { success, authenticationError in
+                DispatchQueue.main.async {
+                    if success {
+                        // Authentication successful
+                        self.showMainContent() // Example: show main content
+                    } else {
+                        // Authentication failed
+                        self.showError(message: "Authentication failed. Please try again.")
+                    }
+                }
+            }
+        } else {
+            // No biometrics available, fallback to passcode
+            context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Authenticate to access your app") { success, authenticationError in
+                DispatchQueue.main.async {
+                    if success {
+                        self.showMainContent()
+                    } else {
+                        self.showError(message: "Authentication failed. Please try again.")
+                    }
+                }
+            }
+        }
+    }
+
+    func showMainContent() {
+        // Proceed to the main screen
+        print("Authentication successful!")
+    }
+
+    func showError(message: String) {
+        // Handle authentication failure (e.g., show an alert)
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {return}
+                self.navLogOutBtnClicked(UIBarButtonItem())
+            }
+        }))
+        present(alert, animated: true, completion: nil)
+    }
+
     
     func configureNavigationBar() {
         //        self.title = "Welcome"

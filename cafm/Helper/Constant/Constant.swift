@@ -105,6 +105,28 @@ var userPassword: String? {
     }
 }
 
+
+//Login User Details
+var backUPUserEmailId: String? {
+    get {
+        (UserDefaults.standard.value(forKey: "backUPUserEmailId") as? String) ?? nil
+    }
+    set {
+        UserDefaults.standard.setValue(newValue, forKey: "backUPUserEmailId")
+    }
+}
+     
+var backUPUserPassword: String? {
+    get {
+        (UserDefaults.standard.value(forKey: "backUPUserPassword") as? String) ?? nil
+    }
+    set {
+        UserDefaults.standard.setValue(newValue, forKey: "backUPUserPassword")
+    }
+}
+
+
+
 //Login User Details
 var jwtToken: String? {
     get {

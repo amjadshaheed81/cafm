@@ -88,6 +88,11 @@ class WaterOutletTempVC: UIViewController {
         self.loadData()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.adjustSpreadsheetView()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -456,6 +461,7 @@ extension WaterOutletTempVC {
     
 }
 
+//MARK: - setup views
 extension WaterOutletTempVC {
     
     func setupViews() {
@@ -776,12 +782,12 @@ extension WaterOutletTempVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate 
                             self.setupUsageFrequencyMenu(view: cell.optionXIB, index: index)
                         }
                     }else if headerText == .Floor {
-                        cell.optionXIB.lblText.text = self.selectedFloorItemArray.first(where: { $0.id == item.floor?.intValue })?.nodeName ?? placeholder
+                        cell.optionXIB.lblText.text = self.selectedFloorItemArray.first(where: { $0.nodeName == item.floor })?.nodeName ?? item.floor ?? placeholder
                         if isEditing {
                             self.setupFloorMenu(view: cell.optionXIB, index: index)
                         }
                     }else if headerText == .Room {
-                        cell.optionXIB.lblText.text = self.selectedRoomItemArray.first(where: { $0.id == item.room?.intValue })?.nodeName ?? placeholder
+                        cell.optionXIB.lblText.text = self.selectedRoomItemArray.first(where: { $0.nodeName == item.room })?.nodeName ?? item.room ?? placeholder
                         if isEditing {
                             self.setupRoomMenu(view: cell.optionXIB, index: index)
                         }

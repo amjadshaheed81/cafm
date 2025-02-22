@@ -11,6 +11,7 @@ import UIKit
 class DatePickerVC: UIViewController {
     
     @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var mainViewHeight: NSLayoutConstraint!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var buttonView: UIView!
     @IBOutlet weak var buttonViewHeight: NSLayoutConstraint!
@@ -23,6 +24,8 @@ class DatePickerVC: UIViewController {
     var minimumDate: Date?
     var maximumDate: Date?
     var hideButtons: Bool = false
+    
+    var didViewLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +42,18 @@ class DatePickerVC: UIViewController {
         }
         if let maximumDate {
             self.datePicker.maximumDate = maximumDate
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !self.didViewLayoutSubviews {
+            let minHeight = self.preferredContentSize.height-(10+10)
+            let datePickerHeight = self.datePicker.sizeThatFits(CGSize(width: self.view.frame.width, height: CGFloat.greatestFiniteMagnitude)).height+self.buttonViewHeight.constant
+            let height = max(minHeight, datePickerHeight)
+            self.mainViewHeight.constant = height
+            self.mainView.frame.size.height = height
+            self.didViewLayoutSubviews.toggle()
         }
     }
     

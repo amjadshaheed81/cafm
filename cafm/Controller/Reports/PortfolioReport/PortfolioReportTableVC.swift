@@ -365,7 +365,6 @@ extension PortfolioReportTableVC: SpreadsheetViewDataSource, SpreadsheetViewDele
         }else {
             return []
         }
-        
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, cellForItemAt indexPath: IndexPath) -> Cell? {

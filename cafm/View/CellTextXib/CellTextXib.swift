@@ -12,4 +12,7 @@ class CellTextXib: Cell {
     
     @IBOutlet weak var lblText: UILabel!
     
+    @IBOutlet weak var btnSelect: UIButton!
+    
+    
 }

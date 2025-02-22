@@ -56,12 +56,27 @@ class PortfolioReportVC: UIViewController {
     
     private var selectedArea: String?
     private var allSites: Bool = true
+    private var viewShouldLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.viewShouldLayoutSubviews = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if self.viewShouldLayoutSubviews {
+            self.setupSitesByStatusChart()
+            self.setupStaffPerActiveSiteChart()
+            self.viewShouldLayoutSubviews.toggle()
+        }
     }
     
     @IBAction func portfolioBtnClicked(_ sender: UIButton) {
@@ -220,7 +235,7 @@ extension PortfolioReportVC {
         
         self.areaXIB.lblText.text = "All Sites"
         self.setupAreaMenu()
-        self.allSites = self.siteSwitch.isOn
+        self.siteSwitch.isOn = self.allSites
         self.siteSwitchLbl.text = self.allSites ? "All Sites" : "Individual"
     }
     
@@ -285,7 +300,7 @@ extension PortfolioReportVC {
             allSites: self.allSites
         )
         
-        self.StaffPerActiveSiteChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(data.count)*20)+50)
+        self.StaffPerActiveSiteChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(data.count)*20)+50)
         self.StaffPerActiveSiteChartContainerView.frame.size.width = StaffPerActiveSiteChartContainerViewWidth.constant
         
         let view2: TitleBadgeView! = self.StaffPerActiveSiteTitleXIB

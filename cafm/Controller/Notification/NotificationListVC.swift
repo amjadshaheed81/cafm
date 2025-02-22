@@ -98,7 +98,7 @@ class NotificationListVC: UIViewController, SpreadsheetViewDataSource, Spreadshe
             var stringsArray = [headerRow[column]]
             let maxColumnWidth = getMaxLabelSize(textArray: stringsArray, font: UIFont(name: .MontserratSemiBold, size: textFontSize), minWidth: 50, widthAddition: 12+12, maxWidth: 200).width
             
-            return column == 0 ? screenWidth-113.0-4 : 113.0
+            return column == 0 ? min(screenWidth, screenHeight)-113.0-4 : 113.0
         default:
             break
         }
@@ -107,13 +107,13 @@ class NotificationListVC: UIViewController, SpreadsheetViewDataSource, Spreadshe
             if column == 0 {
                 stringsArray = itemArray.compactMap{$0.description}
                 stringsArray.append(headerRow[column])
-                return screenWidth-113.0-4
+                return min(screenWidth, screenHeight)-113.0-4
             }else if column == 1 {
                 stringsArray = itemArray.compactMap({ $0.raisedDate?.transformToNewDateString(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", newDateFormat: "dd/MM/yyyy") })
                 stringsArray.append(headerRow[column])
                 return 113.0
             }
-            let maxColumnWidth = getMaxLabelSize(textArray: stringsArray, font: UIFont(name: .MontserratSemiBold, size: textFontSize), minWidth: screenWidth-113.0-4, widthAddition: 12+12, maxWidth: 200).width
+            let maxColumnWidth = getMaxLabelSize(textArray: stringsArray, font: UIFont(name: .MontserratSemiBold, size: textFontSize), minWidth: min(screenWidth, screenHeight)-113.0-4, widthAddition: 12+12, maxWidth: 200).width
             return maxColumnWidth
         }
         return 95
@@ -159,7 +159,7 @@ class NotificationListVC: UIViewController, SpreadsheetViewDataSource, Spreadshe
                 ])
                 let textArray = optionArray.compactMap{$0}
                 let font = UIFont(name: .MontserratRegular, size: textFontSize)
-                let headerHeight = getMaxLabelSize(textArray: textArray, font: font, maxWidth: screenWidth-113.0-4, minHeight: minHeight, heightAddition: heightAddition).height
+                let headerHeight = getMaxLabelSize(textArray: textArray, font: font, maxWidth: min(screenWidth, screenHeight)-113.0-4, minHeight: minHeight, heightAddition: heightAddition).height
                 return max(headerHeight, 60)
             }
         }

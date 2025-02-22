@@ -79,12 +79,28 @@ class SiteChecksReportsVC: UIViewController {
     private let kResponseDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //"yyyy-MM-dd HH:mm:ss"
     private let yyyyMMddStr = "yyyy-MM-dd"
+    private var viewShouldLayoutSubviews: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.viewShouldLayoutSubviews = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if self.viewShouldLayoutSubviews {
+            self.setupRiskScoreboardChart()
+            self.setupSiteChecksChart()
+            self.setupActionLogChart()
+            self.viewShouldLayoutSubviews.toggle()
+        }
     }
     
     @IBAction func siteChecksBtnClicked(_ sender: UIButton) {
@@ -248,6 +264,7 @@ extension SiteChecksReportsVC {
     
 }
 
+//MARK: - setup views
 extension SiteChecksReportsVC {
     
     func setupViews() {
@@ -431,7 +448,7 @@ extension SiteChecksReportsVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.RiskScoreboardChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(itemArray.count)*20)+50)
+        self.RiskScoreboardChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(itemArray.count)*20)+50)
         view.frame.size.width = self.RiskScoreboardChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
@@ -540,7 +557,7 @@ extension SiteChecksReportsVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.SiteChecksChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(itemArray.count)*20)+50)
+        self.SiteChecksChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(itemArray.count)*20)+50)
         view.frame.size.width = self.SiteChecksChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)
@@ -670,7 +687,7 @@ extension SiteChecksReportsVC {
         view.stopSkeleton()
         view.subviews.filter { $0 is HIChartView }.forEach { $0.removeFromSuperview() }
         
-        self.ActionLogChartContainerViewWidth.constant = max(screenWidth-10-10, (CGFloat(itemArray.count)*20)+50)
+        self.ActionLogChartContainerViewWidth.constant = max(self.view.frame.width-10-10, (CGFloat(itemArray.count)*20)+50)
         view.frame.size.width = self.ActionLogChartContainerViewWidth.constant
         
         let chartView = HIChartView(frame: view.bounds)

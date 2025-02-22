@@ -1,17 +1,17 @@
 //
-//  WaterOutletTempReadingHistoryVC.swift
+//  BasicReportsTableVC.swift
 //  cafm
 //
-//  Created by NS on 13/10/24.
-//  
+//  Created by NS on 01/12/24.
+//
 //
 
 import UIKit
 import SpreadsheetView
 import SCLAlertView
 
-class WaterOutletTempReadingHistoryVC: UIViewController {
-
+class BasicReportsTableVC: UIViewController {
+    
     @IBOutlet weak var emptyView: EmptyView!
     @IBOutlet weak var mainView: UIView!
     
@@ -39,23 +39,22 @@ class WaterOutletTempReadingHistoryVC: UIViewController {
         }
     }
     
-    weak var addSiteCheckVC: AddSiteCheckVC?
-    weak var waterOutletTempVC: WaterOutletTempVC?
-    var itemArray: [SiteCheckWaterOutletTemp] = []
-    
-    private var headerColumnNames: [Fields] = Fields.allCases
-    
-    private let kResponseDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-    private let ddMMyyyyStr = "dd/MM/yyyy"
+    private var headerColumnNames: [TableFields] = []
+    var question: BasicReportsQuestion = ("", "", "")
+    var itemArrayJson: [[String: Any]] = []
+    private var itemArray: [CreateSiteRequestModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.isModalInPresentation = true
         self.configureNavigationBar()
         self.emptyView.delegate = self
         self.setupViews()
         self.loadData()
+    }
+    
+    func configureNavigationBar() {
+        self.title = "Basic Report"
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), style: .plain, target: self, action: #selector(self.exportBtnClicked(_:)))
     }
     
     override func viewDidLayoutSubviews() {
@@ -63,33 +62,51 @@ class WaterOutletTempReadingHistoryVC: UIViewController {
         self.adjustSpreadsheetView()
     }
     
-    func configureNavigationBar() {
-        self.title = "Reading History"
-
-        let closeBtn = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(self.navCloseBtnClicked(_:)))
-        self.navigationItem.leftBarButtonItem = closeBtn
-        self.configureNavigationBackButton()
-    }
-    
-    @objc func navCloseBtnClicked(_ sender: UIBarButtonItem) {
-        self.dismiss(animated: true)
+    @objc func exportBtnClicked(_ sender: UIBarButtonItem) {
+        var csvString = headerColumnNames.compactMap({ $0.rawValue }).joined(separator: ",")
+        csvString += "\n"
+        for index in 0..<self.itemArray.count {
+            if self.itemArray.count > index, self.itemArrayJson.count > index {
+                let item = self.itemArray[index]
+                let itemJson = self.itemArrayJson[index]
+                csvString += "\(item.siteId?.stringValue ?? ""),\(item.siteName ?? ""),\((itemJson[question.main] as? [String: Any])?[question.key] != nil ? "Yes" : "No"),\(item.status ?? "")\n"
+            }
+        }
+        
+        let fileName = "basic-report.csv"
+        let fileURL = documentDirectory().appendingPathComponent(fileName)
+        
+        do {
+            try csvString.write(to: fileURL, atomically: true, encoding: .utf8)
+            CAFMFileUtils.shared.shareFile(from: self, fileURL: fileURL, sender: self.view)
+        } catch {
+            print("Failed to create CSV file: \(error)")
+        }
     }
     
 }
 
 //MARK: - Fields enum
-extension WaterOutletTempReadingHistoryVC {
-    enum Fields: String, CaseIterable {
-        case TestDate = "Test Date"
-        case ExpiryDate = "Expiry Date"
-        case Reading1 = "Reading 1"
-        case Reading2 = "Reading 2"
-        case Reading3 = "Reading 3"
+extension BasicReportsTableVC {
+    enum TableFields {
+        case ID
+        case SiteName
+        case key(key: String)
+        case Status
+        
+        var rawValue: String {
+            switch self {
+            case .ID: return "ID"
+            case .SiteName: return "SiteName"
+            case .key(key: let key): return key
+            case .Status: return "Status"
+            }
+        }
     }
 }
 
 //MARK: - EmptyViewDelegate
-extension WaterOutletTempReadingHistoryVC: EmptyViewDelegate {
+extension BasicReportsTableVC: EmptyViewDelegate {
     func emptyViewDidTapView(_ view: EmptyView) {
         if self.loadingStatus.shouldReload {
             self.loadData()
@@ -104,19 +121,27 @@ extension WaterOutletTempReadingHistoryVC: EmptyViewDelegate {
 }
 
 //MARK: - load data
-extension WaterOutletTempReadingHistoryVC {
+extension BasicReportsTableVC {
     
     func loadData() {
         
     }
     
-    typealias SuccessCompletion = (() -> Void)
 }
 
 //MARK: - setup views
-extension WaterOutletTempReadingHistoryVC {
+extension BasicReportsTableVC {
     
     func setupViews() {
+        self.headerColumnNames = [
+            .ID,
+            .SiteName,
+            .key(key: question.key),
+            .Status
+        ]
+        self.itemArray = [CreateSiteRequestModel](JSONArray: self.itemArrayJson)
+        self.loadingStatus = .default
+        
         self.spreadsheetView.addCorner(value: 12)
         self.spreadsheetView.addBorder(width: 1, color: UIColor(appColor: .Separator2))
         self.spreadsheetView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -132,7 +157,7 @@ extension WaterOutletTempReadingHistoryVC {
     }
     
     func reloadViews() {
-
+        
     }
     
     func reloadSpreadsheetView() {
@@ -153,7 +178,7 @@ extension WaterOutletTempReadingHistoryVC {
 }
 
 //MARK: - SpreadsheetViewDataSource, SpreadsheetViewDelegate
-extension WaterOutletTempReadingHistoryVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
+extension BasicReportsTableVC: SpreadsheetViewDataSource, SpreadsheetViewDelegate {
     
     func numberOfColumns(in spreadsheetView: SpreadsheetView) -> Int {
         return self.headerColumnNames.count
@@ -174,7 +199,6 @@ extension WaterOutletTempReadingHistoryVC: SpreadsheetViewDataSource, Spreadshee
         }else {
             return []
         }
-        
     }
     
     func spreadsheetView(_ spreadsheetView: SpreadsheetView, cellForItemAt indexPath: IndexPath) -> Cell? {
@@ -203,42 +227,25 @@ extension WaterOutletTempReadingHistoryVC: SpreadsheetViewDataSource, Spreadshee
             return cell
         }else {
             let index = indexPath.row-1
-            if self.itemArray.count > index {
+            if self.itemArray.count > index, self.itemArrayJson.count > index {
                 let item = self.itemArray[index]
-                //let isEditing = item.isEditing ?? false
-                //let isForAddNew = item.isForAddNew ?? false
-                //let bgColor = isEditing ? UIColor.white : UIColor(appColor: .GrayStatusBG)
+                let itemJson = self.itemArrayJson[index]
                 
                 let cell = spreadsheetView.dequeueReusableCell(withReuseIdentifier: DashboardTableCell.className(), for: indexPath) as! DashboardTableCell
                 cell.setGridLines(width: 1, color: UIColor(appColor: .Separator2))
                 cell.backgroundColor = UIColor.white
+                cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
+                cell.mainLbl.textColor = UIColor.black
                 
                 switch headerText {
-                case .TestDate, .ExpiryDate:
-                    cell.mainLbl.font = UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize)
-                    cell.mainLbl.textColor = UIColor.black
-                    
-                    cell.mainLbl.text = item.r1Date?.transformToNewDateString(dateFormat: kResponseDateFormat, newDateFormat: ddMMyyyyStr) ?? ""
-                    break
-                case .Reading1, .Reading2, .Reading3:
-                    cell.mainLbl.font = UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize)
-                    
-                    var value: Int?
-                    if headerText == .Reading1 {
-                        value = item.reading1
-                    }else if headerText == .Reading2 {
-                        value = item.reading2
-                    }else if headerText == .Reading3 {
-                        value = item.reading3
-                    }
-                    
-                    cell.mainLbl.text = value?.stringValue ?? ""
-
-                    if let value {
-                        let temp = item.temperature
-                        cell.mainLbl.textColor = (temp == "Hot" && value < 50) || (temp == "Cold" && value > 20) ? UIColor.red : UIColor(hexString: "#008000")
-                    }
-                    break
+                case .ID:
+                    cell.mainLbl.text = item.siteId?.stringValue
+                case .SiteName:
+                    cell.mainLbl.text = item.siteName
+                case .key(key: _):
+                    cell.mainLbl.text = (itemJson[question.main] as? [String: Any])?[question.key] != nil ? "Yes" : "No"
+                case .Status:
+                    cell.mainLbl.text = item.status
                 }
                 
                 return cell
@@ -257,23 +264,19 @@ extension WaterOutletTempReadingHistoryVC: SpreadsheetViewDataSource, Spreadshee
             
             let headerWidth = getLabelSize(text: headerText.rawValue, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
             
+            var textArray: [String] = []
             switch headerText {
-            case .TestDate, .ExpiryDate:
-                let textArray = self.itemArray.compactMap { $0.r1Date?.transformToNewDateString(dateFormat: kResponseDateFormat, newDateFormat: ddMMyyyyStr) ?? "" }
-                let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
-                return max(headerWidth, maxColumnWidth)
-            case .Reading1, .Reading2, .Reading3:
-                var textArray: [String] = []
-                if headerText == .Reading1 {
-                    textArray = self.itemArray.compactMap { $0.reading1?.stringValue ?? "" }
-                }else if headerText == .Reading2 {
-                    textArray = self.itemArray.compactMap { $0.reading2?.stringValue ?? "" }
-                }else if headerText == .Reading3 {
-                    textArray = self.itemArray.compactMap { $0.reading3?.stringValue ?? "" }
-                }
-                let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
-                return max(headerWidth, maxColumnWidth)
+            case .ID:
+                textArray = self.itemArray.compactMap { $0.siteId?.stringValue ?? "" }
+            case .SiteName:
+                textArray = self.itemArray.compactMap { $0.siteName ?? "" }
+            case .key(key: _):
+                textArray = self.itemArrayJson.compactMap { ($0[question.main] as? [String: Any])?[question.key] != nil ? "Yes" : "No" }
+            case .Status:
+                textArray = self.itemArray.compactMap { $0.status ?? "" }
             }
+            let maxColumnWidth = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), minWidth: minWidth, widthAddition: widthAddition, maxWidth: maxWidth).width
+            return max(headerWidth, maxColumnWidth)
         }
         return 0
     }
@@ -289,20 +292,18 @@ extension WaterOutletTempReadingHistoryVC: SpreadsheetViewDataSource, Spreadshee
             return headerHeight
         }else {
             let index = row-1
-            if self.itemArray.count > index {
+            if self.itemArray.count > index, self.itemArrayJson.count > index {
                 let item = self.itemArray[index]
-                let textArray1 = [
-                    item.r1Date?.transformToNewDateString(dateFormat: kResponseDateFormat, newDateFormat: ddMMyyyyStr) ?? "",
-                    item.r1Date?.transformToNewDateString(dateFormat: kResponseDateFormat, newDateFormat: ddMMyyyyStr) ?? "",
+                let itemJson = self.itemArrayJson[index]
+                
+                let textArray = [
+                    item.siteId?.stringValue,
+                    item.siteName,
+                    (itemJson[question.main] as? [String: Any])?[question.key] != nil ? "Yes" : "No",
+                    item.status,
                 ]
-                let maxHeight1 = getMaxLabelSize(textArray: textArray1, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
-                let textArray2 = [
-                    item.reading1?.stringValue ?? "",
-                    item.reading2?.stringValue ?? "",
-                    item.reading3?.stringValue ?? "",
-                ]
-                let maxHeight2 = getMaxLabelSize(textArray: textArray2, font: UIFont(name: .MontserratSemiBold, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
-                return max(maxHeight1, maxHeight2, 10+40+10)
+                let maxHeight = getMaxLabelSize(textArray: textArray, font: UIFont(name: .MontserratRegular, size: dashboardPrimaryTextSize), maxWidth: maxWidth, minHeight: minHeight, heightAddition: heightAddition).height
+                return max(maxHeight, 10+40+10)
             }
             return 0
         }
