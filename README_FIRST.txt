@@ -1,43 +1,52 @@
-CAFM iOS — LIVE / TEST environment switch correction (21 Oct 2026)
+CAFM iOS — Monthly Audit TEST Fill — 21 October 2026
+==========================================================
 
-USE WITH THE EXISTING WORKING PHASE 1 INSTALLATION / iOS 17.6 PROJECT.
-This is NOT a complete app source archive. It changes only these 3 source files:
-  cafm/Helper/Settings/ServerConfiguration.swift
-  cafm/Helper/Settings/ServerSettingsVC.swift
-  cafm/Controller/SignUpFlow/LoginVC.swift
+Purpose
+- Adds a "Test Fill" button to the navigation bar of an editable Monthly Audit question.
+- ONLY when the authenticated user profile email is Amjad.shaheed81@gmail.com (case-insensitive).
+- ONLY when the selected API environment is TEST (testcp.corecafm.com).
+- Does not appear on LIVE, on custom servers, for another account, or for saved/read-only answers.
+- Does not save, upload or submit automatically. Use existing Save & Continue.
 
-FIXES:
-  * Admin Save and Switch no longer silently stops when the optional health endpoint fails.
-  * Admin confirmation signs out, clears tokens & caches, saves chosen server and returns to login.
-  * Login screen has LIVE / TEST buttons and shows active hostname near the bottom.
-  * TEST is visually identified. Anyone may select LIVE/TEST BEFORE logging in;
-    Custom address remains Admin-only under Settings.
-  * A previous Unite customer switching TEST -> LIVE returns to the Unite production alias;
-    a new CAFM customer returns to app.corecafm.com.
-  * Original login form scrolls so server controls do not cover the form on small phones.
-  * Late login results from an environment switched away from are ignored.
+What Test Fill enters for the CURRENT question
+- Observation and Suggested Action: explicitly labelled TEST ONLY.
+- Consequence = 1; Likelihood = 1 (sample data, not real safety scores).
+- Eligible assets only: adds all as Asset OK; leaves defective assets blank.
+- Adds a generated JPG with large "TEST DATA ONLY / NOT INSPECTION EVIDENCE" text.
+- Uses a confirmation dialog before replacing unsaved entries.
 
-MAC STEPS:
-  1) Quit Xcode and make a copy/backup of your existing cafm project.
-  2) Extract THIS ZIP into the folder containing cafm.xcworkspace:
-     /Users/Amjad/Desktop/cafm/cafm/
-  3) Terminal:
-     cd "/Users/Amjad/Desktop/cafm/cafm"
-     bash ./install_live_test_switch.command --check
-  4) If the check passes:
-     bash ./install_live_test_switch.command --apply
-     open cafm.xcworkspace
-  5) In Xcode choose Product > Clean Build Folder, then Build and Run.
+Important
+- Button appears on each Monthly Audit QUESTION detail, not on the audit question list.
+- Does NOT fill an entire audit in one tap. Each question remains a manual Save & Continue.
+- Depends on backend-provided userDetail.email being loaded; without it the button is hidden.
+- Previously saved questions are read-only in the current iOS app; the button is hidden on them.
+- No Android, Java, database, storyboard, Podfile or iOS deployment-target change.
+- The existing mobile save still uses legacy API; V2 migration remains a separate future task.
+- Never use the generated answers as genuine inspection evidence or on LIVE.
 
-TEST:
-  a) In Settings > Admin > Server Configuration choose TEST and Save and switch.
-     The app must confirm, sign out and show TEST MODE on login.
-  b) At bottom of Login press LIVE. Confirm, verify correct production address.
-  c) At bottom of Login press TEST. Confirm and enter test-system credentials.
-  d) Restart app and verify selected server persists.
-  e) Verify Site Checks, Monthly Audit, Water Checks, site list and file access
-     against the correct environment, with different accounts if available.
+On your Mac: BACK UP and QUIT Xcode first.
 
-WARNING: This change is only locally syntax-checked, not compiled with Xcode here.
-No changes to backend, Site Service, deployment target, CocoaPods, signed IPA or Apple release.
-If preflight reports local merge conflict, STOP and share the named Mac Swift file.
+  cd "/Users/Amjad/Desktop/cafm/cafm"
+  unzip -o "$HOME/Downloads/CAFM_iOS_Monthly_Audit_Test_Fill_2026-10-21.zip" -d .
+  bash ./install_monthly_audit_test_fill.command --check
+  # Only if preflight says PASS:
+  bash ./install_monthly_audit_test_fill.command --apply
+  open cafm.xcworkspace
+
+Xcode > Product > Clean Build Folder > Command-B; then run on TEST.
+
+The script patches one Swift file in place, checks syntax when swiftc exists,
+creates a timestamped backup and refuses conflicts without writing files.
+If it reports a CONFLICT, send the current MonthlyAuditQuestionResponseVC.swift.
+
+Testing:
+1. Log into TEST using the specified account; open an unsaved Monthly Audit question.
+2. "Test Fill" should be visible at the top right.
+3. Tap, confirm, and check sample notes, scores, eligible asset tags and TEST jpg.
+4. Press Save & Continue; check the actual server response.
+5. Repeat for another question. Reopen saved question: button hidden.
+6. Switch to LIVE or log in as a different user: button hidden.
+7. Check that only TEST environment data was written.
+
+Validation: parse, pure Swift gating checks and installer simulations only.
+Full iOS compilation and backend acceptance testing must run on your Mac.

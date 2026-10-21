@@ -1,0 +1,22 @@
+[
+  {
+    "name": "test_user_gate",
+    "old": "class MonthlyAuditQuestionResponseVC: UIViewController {",
+    "new": "// CAFM TEST ONLY: Keep the test-fill shortcut unavailable to everyone except\n// the specified authenticated user, and never enable it on production servers.\nprivate enum MonthlyAuditTestFillAccess {\n    static func enabled(profileEmail: String?, onTestServer: Bool, editable: Bool) -> Bool {\n        guard onTestServer, editable, let profileEmail else { return false }\n        return profileEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ==\n            \"amjad.shaheed81@gmail.com\"\n    }\n}\n// END MonthlyAuditTestFillAccess\n\nclass MonthlyAuditQuestionResponseVC: UIViewController {"
+  },
+  {
+    "name": "appear_refresh",
+    "old": "    override func viewWillAppear(_ animated: Bool) {\n        super.viewWillAppear(animated)\n",
+    "new": "    override func viewWillAppear(_ animated: Bool) {\n        super.viewWillAppear(animated)\n        self.configureTestFillButton()\n"
+  },
+  {
+    "name": "navigation_button",
+    "old": "    func configureNavigationBar() {\n        self.title = self.question?.order ?? \"Question\"\n    }\n",
+    "new": "    func configureNavigationBar() {\n        self.title = self.question?.order ?? \"Question\"\n        self.configureTestFillButton()\n    }\n"
+  },
+  {
+    "name": "refresh_after_save",
+    "old": "        self.downloadAttachmentBtn.isHidden = !self.saveContinueBtn.isHidden\n",
+    "new": "        self.downloadAttachmentBtn.isHidden = !self.saveContinueBtn.isHidden\n        self.configureTestFillButton()\n"
+  }
+]

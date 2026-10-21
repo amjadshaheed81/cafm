@@ -9,6 +9,79 @@
 import UIKit
 import SCLAlertView
 
+// Monthly Audit asset filtering must agree with Site Service's
+// MonthlyAuditCategoryMatcher (21 October 2026). It applies ONLY to this
+// inspection type; the server remains authoritative on save.
+private enum MonthlyAuditMobileCategoryMatcher {
+    private static let holdOpen = "Electrical,Access Controls,Internal Access Controls,Door Hold Open Device"
+    private static let wcLegacy = "Mechanical,Sanitary,Toilet/Urinal"
+    private static let wcCurrent = [
+        "Mechanical,Sanitary,Toilet / 6 Litre Toilet",
+        "Mechanical,Sanitary,Toilet / 9 Litre Toilet",
+        "Mechanical,Sanitary,Urinal"
+    ]
+
+    static func matches(order: String?, rule: String?, path: [String?]) -> Bool {
+        let value = (rule ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard path.count == 4 else { return false }
+
+        if order == "9.1.1" && value == wcLegacy {
+            return exact(wcLegacy, path: path) || wcCurrent.contains(where: { exact($0, path: path) })
+        }
+        if order == "8.1.2" && value == holdOpen { return exact(value, path: path) }
+        if value.hasPrefix("exact:") {
+            return exact(String(value.dropFirst(6)).trimmingCharacters(in: .whitespacesAndNewlines), path: path)
+        }
+        if value.contains("|") {
+            return value.split(separator: "|", omittingEmptySubsequences: false)
+                .contains { exact(String($0).trimmingCharacters(in: .whitespacesAndNewlines), path: path) }
+        }
+
+        let parts = value.split(separator: ",", omittingEmptySubsequences: false)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        switch parts.count {
+        case 4:
+            // Historical four-value category definitions can mean two level-3 alternatives.
+            return eq(path[0], parts[0]) && eq(path[1], parts[1]) &&
+                (eq(path[2], parts[2]) || eq(path[2], parts[3]))
+        case 3:
+            return eq(path[0], parts[0]) && eq(path[1], parts[1]) && eq(path[2], parts[2])
+        case 2:
+            // Keep the backend's exact level-one match for two-part definitions.
+            return path[0] == parts[0] && eq(path[1], parts[1])
+        case 1:
+            return parts[0].isEmpty || eq(path[0], parts[0])
+        default:
+            return true
+        }
+    }
+
+    private static func exact(_ rule: String, path: [String?]) -> Bool {
+        let parts = rule.split(separator: ",", omittingEmptySubsequences: false)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard !parts.isEmpty && parts.count <= 4 else { return false }
+        return parts.enumerated().allSatisfy { i, expected in
+            !expected.isEmpty && eq(path[i], expected)
+        }
+    }
+
+    private static func eq(_ current: String?, _ expected: String) -> Bool {
+        return current?.trimmingCharacters(in: .whitespacesAndNewlines) == expected
+    }
+}
+// END MonthlyAuditMobileCategoryMatcher
+
+// CAFM TEST ONLY: Keep the test-fill shortcut unavailable to everyone except
+// the specified authenticated user, and never enable it on production servers.
+private enum MonthlyAuditTestFillAccess {
+    static func enabled(profileEmail: String?, onTestServer: Bool, editable: Bool) -> Bool {
+        guard onTestServer, editable, let profileEmail else { return false }
+        return profileEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ==
+            "amjad.shaheed81@gmail.com"
+    }
+}
+// END MonthlyAuditTestFillAccess
+
 class MonthlyAuditQuestionResponseVC: UIViewController {
     
     @IBOutlet weak var emptyView: EmptyView!
@@ -55,6 +128,7 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     private var filteredAssetOKItemArray: [AssetDetailsResponse] = []
     private var selectedDefectiveAssetItemArray: [AssetDetailsResponse] = []
     private var filteredDefectiveAssetItemArray: [AssetDetailsResponse] = []
+    private var eligibleAssetIDs: Set<Int> = []
     
     private let loadingSCLAlertView = SCLAlertView(appearance: loadingSCLAppearance)
     private var loadingStatus: LoadingStatus = .default {
@@ -104,6 +178,7 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.configureTestFillButton()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -116,6 +191,7 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     
     func configureNavigationBar() {
         self.title = self.question?.order ?? "Question"
+        self.configureTestFillButton()
     }
     
     @IBAction func downloadAttachmentBtnClicked(_ sender: ActionButton) {
@@ -386,7 +462,7 @@ extension MonthlyAuditQuestionResponseVC {
     }
     
     func reloadViews() {
-        guard let response else { return }
+        guard let response, let question else { return }
         
         let bgColor = self.fieldBGColor
         self.TotalAssetXIB.isUserInteractionEnabled = false
@@ -406,28 +482,18 @@ extension MonthlyAuditQuestionResponseVC {
         self.DefectiveAssetXIB.isUserInteractionEnabled = self.isFieldsEditable
         self.DefectiveAssetXIB.textField.backgroundColor = bgColor
         
-        var catAsset: [AssetDetailsResponse] = []
-        let assetCategory = question?.assetCategory?.split(separator: ",") ?? []
-        let siteAssets = self.assetsItemArray
-        if assetCategory.count == 3 {
-            catAsset = siteAssets.filter {
-                ($0.category ?? "") == assetCategory[0] &&
-                ($0.subCategory ?? "") == assetCategory[1] &&
-                ($0.subCategory2 ?? "") == assetCategory[2]
-            }
-        } else if assetCategory.count == 2 {
-            catAsset = siteAssets.filter {
-                ($0.category ?? "") == assetCategory[0] &&
-                ($0.subCategory ?? "") == assetCategory[1]
-            }
-        } else if assetCategory.count == 1 && assetCategory[0] != "" {
-            catAsset = siteAssets.filter { ($0.category ?? "") == assetCategory[0] }
-        } else {
-            catAsset = siteAssets
+        // The previous implementation filtered only the displayed count,
+        // while the drop-down still offered every asset at the site.
+        // Keep the complete list for displaying historical references, but
+        // restrict NEW selections to the applicable assets for this question.
+        let catAsset = self.assetsItemArray.filter { asset in
+            asset.assetId != nil && MonthlyAuditMobileCategoryMatcher.matches(
+                order: question.order, rule: question.assetCategory,
+                path: [asset.category, asset.subCategory, asset.subCategory2, asset.subCategory3])
         }
-        
+        self.eligibleAssetIDs = Set(catAsset.compactMap { $0.assetId })
         self.TotalAssetXIB.text = "\(catAsset.count)"
-        self.RemainingAssetXIB.text = "\(catAsset.count - (response.assets?.split(separator: ",") ?? []).count - (response.faultassets?.split(separator: ",") ?? []).count)"
+        self.updateRemainingAssetCount()
         if let assets = response.assets {
             let idArray = assets.components(separatedBy: ",").compactMap({ Int($0) })
             self.selectedAssetOKItemArray = self.assetsItemArray.filter({ idArray.contains($0.assetId ?? -1) })
@@ -449,6 +515,7 @@ extension MonthlyAuditQuestionResponseVC {
         self.adjustClickToUploadMainView()
         self.saveContinueBtn.isHidden = !self.isFieldsEditable
         self.downloadAttachmentBtn.isHidden = !self.saveContinueBtn.isHidden
+        self.configureTestFillButton()
     }
     
     func reloadClickToUploadCV() {
@@ -711,11 +778,11 @@ extension MonthlyAuditQuestionResponseVC {
         if let text = textField.text?.trimmingSpacesAndLinesLowercased() {
             if textField == self.AssetOKXIB.textField {
                 self.filteredAssetOKItemArray = self.assetsItemArray.filter { asset in
-                    return !self.selectedAssetOKItemArray.contains { $0.assetId == asset.assetId } && !self.selectedDefectiveAssetItemArray.contains { $0.assetId == asset.assetId } && (text.isEmpty || getAssetDisplayStrForSiteCheck(asset)?.trimmingSpacesAndLinesLowercased().contains(text) ?? false)
+                    return self.eligibleAssetIDs.contains(asset.assetId ?? -1) && !self.selectedAssetOKItemArray.contains { $0.assetId == asset.assetId } && !self.selectedDefectiveAssetItemArray.contains { $0.assetId == asset.assetId } && (text.isEmpty || getAssetDisplayStrForSiteCheck(asset)?.trimmingSpacesAndLinesLowercased().contains(text) ?? false)
                 }
             }else if textField == self.DefectiveAssetXIB.textField {
                 self.filteredDefectiveAssetItemArray = self.assetsItemArray.filter { asset in
-                    return !self.selectedDefectiveAssetItemArray.contains { $0.assetId == asset.assetId } && !self.selectedAssetOKItemArray.contains { $0.assetId == asset.assetId } && (text.isEmpty || getAssetDisplayStrForSiteCheck(asset)?.trimmingSpacesAndLinesLowercased().contains(text) ?? false)
+                    return self.eligibleAssetIDs.contains(asset.assetId ?? -1) && !self.selectedDefectiveAssetItemArray.contains { $0.assetId == asset.assetId } && !self.selectedAssetOKItemArray.contains { $0.assetId == asset.assetId } && (text.isEmpty || getAssetDisplayStrForSiteCheck(asset)?.trimmingSpacesAndLinesLowercased().contains(text) ?? false)
                 }
             }
             if textField.isEditing {
@@ -728,7 +795,8 @@ extension MonthlyAuditQuestionResponseVC {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             
-            if let assetId, let item = self.assetsItemArray.first(where: { $0.assetId == assetId }) {
+            if let assetId, self.eligibleAssetIDs.contains(assetId),
+               let item = self.assetsItemArray.first(where: { $0.assetId == assetId }) {
                 if textField == self.AssetOKXIB.textField {
                     self.selectedAssetOKItemArray.insert(item, at: 0)
                 }else if textField == self.DefectiveAssetXIB.textField {
@@ -769,9 +837,16 @@ extension MonthlyAuditQuestionResponseVC {
                     completion?()
                 }
             }
+            self.updateRemainingAssetCount()
         }
     }
-    
+
+    private func updateRemainingAssetCount() {
+        let assigned = Set((self.selectedAssetOKItemArray + self.selectedDefectiveAssetItemArray)
+            .compactMap { $0.assetId }).intersection(self.eligibleAssetIDs)
+        self.RemainingAssetXIB.text = "\(max(0, self.eligibleAssetIDs.count - assigned.count))"
+    }
+
 }
 
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -923,3 +998,117 @@ extension MonthlyAuditQuestionResponseVC: CAFMFilePickerDelegate {
     }
     
 }
+
+// MARK: - TEST-only Monthly Audit draft helper
+// UI-only shortcut: never saves, uploads, submits or bypasses server validation.
+// Only visible to the authenticated Amjad email while connected to TEST.
+private extension MonthlyAuditQuestionResponseVC {
+    var canTestFillQuestion: Bool {
+        return MonthlyAuditTestFillAccess.enabled(
+            profileEmail: UserConstants.shared.userDetail?.email,
+            onTestServer: ServerConfiguration.shared.kind == .test,
+            editable: response != nil && question != nil && isFieldsEditable
+        )
+    }
+
+    func configureTestFillButton() {
+        navigationItem.rightBarButtonItem = canTestFillQuestion
+            ? UIBarButtonItem(title: "Test Fill", style: .plain, target: self,
+                              action: #selector(testFillQuestionTapped(_:)))
+            : nil
+    }
+
+    @objc func testFillQuestionTapped(_ sender: UIBarButtonItem) {
+        guard canTestFillQuestion else { return }
+        let alert = UIAlertController(
+            title: "TEST ONLY — Fill Sample Answers",
+            message: "Fill this question with clearly marked sample answers, eligible assets and a TEST ONLY image? Existing unsaved entries on this screen will be replaced. Nothing will be saved until you tap Save & Continue.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Fill Test Answers", style: .default) { [weak self] _ in
+            self?.fillTestAnswersForCurrentQuestion()
+        })
+        present(alert, animated: true)
+    }
+
+    func fillTestAnswersForCurrentQuestion() {
+        // Re-check on action; UI visibility alone must not authorize a test shortcut.
+        guard canTestFillQuestion, let response, let question else { return }
+        view.endEditing(true)
+        hideSearchTableView()
+
+        let questionNumber = question.order ?? "this question"
+        let sampleObservation = "TEST ONLY - Sample answer for Q\(questionNumber). No physical inspection performed."
+        let sampleAction = "TEST ONLY - No corrective action assessed."
+        ObservationXIB.textView.text = sampleObservation
+        SuggestedActionXIB.textView.text = sampleAction
+
+        // Use only the actual eligible assets for THIS question. No invented asset IDs.
+        // The server still applies its own matching rules and validation on Save.
+        let hasRule = !(question.assetCategory ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        selectedAssetOKItemArray = hasRule ? assetsItemArray.filter {
+            guard let assetId = $0.assetId else { return false }
+            return eligibleAssetIDs.contains(assetId)
+        } : []
+        selectedDefectiveAssetItemArray = []
+        AssetOKXIB.textField.text = ""
+        DefectiveAssetXIB.textField.text = ""
+        reloadSearchAssetCV(textField: AssetOKXIB.textField, assetId: nil)
+        reloadSearchAssetCV(textField: DefectiveAssetXIB.textField, assetId: nil)
+        reloadSearchTableItemArray(textField: AssetOKXIB.textField)
+        reloadSearchTableItemArray(textField: DefectiveAssetXIB.textField)
+
+        // Exercise the existing consequence/likelihood fields without claiming a risk assessment.
+        response.consequence = "1"
+        response.likelihood = "1"
+        ConsequenceXIB.text = "1"
+        LikelihoodXIB.text = "1"
+        setupConsequenceMenu()
+        setupLikelihoodMenu()
+        updateRiskScoreCardLbl()
+
+        // The legacy mobile Save flow requires an attachment. Use a visibly fake
+        // test image rather than inventing photographic inspection evidence.
+        response.selectedFile = FilePickerModel(
+            fileName: "TEST_ONLY_MonthlyAudit_\(question.qid ?? 0).jpg",
+            image: makeTestOnlyAttachment(questionNumber: questionNumber),
+            fileURL: nil
+        )
+        reloadClickToUploadCV()
+    }
+
+    func makeTestOnlyAttachment(questionNumber: String) -> UIImage {
+        let size = CGSize(width: 800, height: 360)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { imageContext in
+            UIColor.systemYellow.setFill()
+            imageContext.fill(CGRect(origin: .zero, size: size))
+
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .center
+            paragraph.lineBreakMode = .byWordWrapping
+
+            let heading = "TEST DATA ONLY"
+            (heading as NSString).draw(
+                in: CGRect(x: 30, y: 65, width: 740, height: 90),
+                withAttributes: [
+                    .font: UIFont.boldSystemFont(ofSize: 55),
+                    .foregroundColor: UIColor.black,
+                    .paragraphStyle: paragraph
+                ]
+            )
+            let detail = "NOT INSPECTION EVIDENCE\nMonthly Audit: \(questionNumber)\nGenerated for software testing only"
+            (detail as NSString).draw(
+                in: CGRect(x: 50, y: 166, width: 700, height: 160),
+                withAttributes: [
+                    .font: UIFont.boldSystemFont(ofSize: 25),
+                    .foregroundColor: UIColor.black,
+                    .paragraphStyle: paragraph
+                ]
+            )
+        }
+    }
+}
+// END TEST-only Monthly Audit draft helper

@@ -1,0 +1,113 @@
+// MARK: - TEST-only Monthly Audit draft helper
+// UI-only shortcut: never saves, uploads, submits or bypasses server validation.
+// Only visible to the authenticated Amjad email while connected to TEST.
+private extension MonthlyAuditQuestionResponseVC {
+    var canTestFillQuestion: Bool {
+        return MonthlyAuditTestFillAccess.enabled(
+            profileEmail: UserConstants.shared.userDetail?.email,
+            onTestServer: ServerConfiguration.shared.kind == .test,
+            editable: response != nil && question != nil && isFieldsEditable
+        )
+    }
+
+    func configureTestFillButton() {
+        navigationItem.rightBarButtonItem = canTestFillQuestion
+            ? UIBarButtonItem(title: "Test Fill", style: .plain, target: self,
+                              action: #selector(testFillQuestionTapped(_:)))
+            : nil
+    }
+
+    @objc func testFillQuestionTapped(_ sender: UIBarButtonItem) {
+        guard canTestFillQuestion else { return }
+        let alert = UIAlertController(
+            title: "TEST ONLY — Fill Sample Answers",
+            message: "Fill this question with clearly marked sample answers, eligible assets and a TEST ONLY image? Existing unsaved entries on this screen will be replaced. Nothing will be saved until you tap Save & Continue.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Fill Test Answers", style: .default) { [weak self] _ in
+            self?.fillTestAnswersForCurrentQuestion()
+        })
+        present(alert, animated: true)
+    }
+
+    func fillTestAnswersForCurrentQuestion() {
+        // Re-check on action; UI visibility alone must not authorize a test shortcut.
+        guard canTestFillQuestion, let response, let question else { return }
+        view.endEditing(true)
+        hideSearchTableView()
+
+        let questionNumber = question.order ?? "this question"
+        let sampleObservation = "TEST ONLY - Sample answer for Q\(questionNumber). No physical inspection performed."
+        let sampleAction = "TEST ONLY - No corrective action assessed."
+        ObservationXIB.textView.text = sampleObservation
+        SuggestedActionXIB.textView.text = sampleAction
+
+        // Use only the actual eligible assets for THIS question. No invented asset IDs.
+        // The server still applies its own matching rules and validation on Save.
+        let hasRule = !(question.assetCategory ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        selectedAssetOKItemArray = hasRule ? assetsItemArray.filter {
+            guard let assetId = $0.assetId else { return false }
+            return eligibleAssetIDs.contains(assetId)
+        } : []
+        selectedDefectiveAssetItemArray = []
+        AssetOKXIB.textField.text = ""
+        DefectiveAssetXIB.textField.text = ""
+        reloadSearchAssetCV(textField: AssetOKXIB.textField, assetId: nil)
+        reloadSearchAssetCV(textField: DefectiveAssetXIB.textField, assetId: nil)
+        reloadSearchTableItemArray(textField: AssetOKXIB.textField)
+        reloadSearchTableItemArray(textField: DefectiveAssetXIB.textField)
+
+        // Exercise the existing consequence/likelihood fields without claiming a risk assessment.
+        response.consequence = "1"
+        response.likelihood = "1"
+        ConsequenceXIB.text = "1"
+        LikelihoodXIB.text = "1"
+        setupConsequenceMenu()
+        setupLikelihoodMenu()
+        updateRiskScoreCardLbl()
+
+        // The legacy mobile Save flow requires an attachment. Use a visibly fake
+        // test image rather than inventing photographic inspection evidence.
+        response.selectedFile = FilePickerModel(
+            fileName: "TEST_ONLY_MonthlyAudit_\(question.qid ?? 0).jpg",
+            image: makeTestOnlyAttachment(questionNumber: questionNumber),
+            fileURL: nil
+        )
+        reloadClickToUploadCV()
+    }
+
+    func makeTestOnlyAttachment(questionNumber: String) -> UIImage {
+        let size = CGSize(width: 800, height: 360)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { imageContext in
+            UIColor.systemYellow.setFill()
+            imageContext.fill(CGRect(origin: .zero, size: size))
+
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .center
+            paragraph.lineBreakMode = .byWordWrapping
+
+            let heading = "TEST DATA ONLY"
+            (heading as NSString).draw(
+                in: CGRect(x: 30, y: 65, width: 740, height: 90),
+                withAttributes: [
+                    .font: UIFont.boldSystemFont(ofSize: 55),
+                    .foregroundColor: UIColor.black,
+                    .paragraphStyle: paragraph
+                ]
+            )
+            let detail = "NOT INSPECTION EVIDENCE\nMonthly Audit: \(questionNumber)\nGenerated for software testing only"
+            (detail as NSString).draw(
+                in: CGRect(x: 50, y: 166, width: 700, height: 160),
+                withAttributes: [
+                    .font: UIFont.boldSystemFont(ofSize: 25),
+                    .foregroundColor: UIColor.black,
+                    .paragraphStyle: paragraph
+                ]
+            )
+        }
+    }
+}
+// END TEST-only Monthly Audit draft helper

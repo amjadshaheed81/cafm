@@ -1,0 +1,11 @@
+--- a/cafm/Controller/SiteCheck/MonthlyAudit/MonthlyAuditQuestionResponseVC.swift
++++ b/cafm/Controller/SiteCheck/MonthlyAudit/MonthlyAuditQuestionResponseVC.swift
+@@ -449,7 +449,7 @@
+     }
+     
+     func reloadViews() {
+-        guard let response else { return }
++        guard let response, let question else { return }
+         
+         let bgColor = self.fieldBGColor
+         self.TotalAssetXIB.isUserInteractionEnabled = false
