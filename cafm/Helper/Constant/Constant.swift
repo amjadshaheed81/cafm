@@ -68,7 +68,7 @@ let navTitleTextAttributes: [NSAttributedString.Key: Any] = [
 enum LoadingStatus: String {
     case `default` = ""
     case loading = "Loading..."
-    case failed = "Failed to get response, Tap to retry!"
+    case failed = "Unable to load data. Tap to retry."
     case noResponse = "No records!"
     case noInternet = "Unable to connect to the internet"
     
@@ -96,16 +96,6 @@ var userEmailId: String? {
     }
 }
      
-var userPassword: String? {
-    get {
-        (UserDefaults.standard.value(forKey: "userPassword") as? String) ?? nil
-    }
-    set {
-        UserDefaults.standard.setValue(newValue, forKey: "userPassword")
-    }
-}
-
-
 //Login User Details
 var backUPUserEmailId: String? {
     get {
@@ -116,32 +106,13 @@ var backUPUserEmailId: String? {
     }
 }
      
-var backUPUserPassword: String? {
-    get {
-        (UserDefaults.standard.value(forKey: "backUPUserPassword") as? String) ?? nil
-    }
-    set {
-        UserDefaults.standard.setValue(newValue, forKey: "backUPUserPassword")
-    }
-}
-
-
-
 //Login User Details
 var jwtToken: String? {
-    get {
-        (UserDefaults.standard.value(forKey: "jwtToken") as? String) ?? nil
-    }
-    set {
-        UserDefaults.standard.setValue(newValue, forKey: "jwtToken")
-    }
+    get { SecureCredentials.get("jwtToken") }
+    set { _ = SecureCredentials.set(newValue, for: "jwtToken") }
 }
 
 var sasToken: String? {
-    get {
-        (UserDefaults.standard.value(forKey: "sasToken") as? String) ?? nil
-    }
-    set {
-        UserDefaults.standard.setValue(newValue, forKey: "sasToken")
-    }
+    get { SecureCredentials.get("sasToken") }
+    set { _ = SecureCredentials.set(newValue, for: "sasToken") }
 }

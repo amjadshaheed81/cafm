@@ -1532,6 +1532,22 @@ extension AddSiteCheckVC {
             return
         }
         
+        // The current Monthly Audit service owns risk-score calculation per
+        // inspection period. Opening its questions must NEVER issue the old
+        // risk-counter PUT (which was a read-flow side effect in the iPhone app).
+        // The preceding legacy GET has already established the server-side
+        // current-period snapshot needed for safe answer submissions.
+        if self.siteCheckModel?.type == "Audit" && self.siteCheckModel?.subType == "Monthly Audit" {
+            if let vc = monthlyAuditQuestionResponseVC {
+                vc.reloadAfterGetSiteCheckAssessmentResponseByCheckId(
+                    questionItemArray: self.assessmentQuestionItemArray,
+                    responseItemArray: self.assessmentResponseItemArray)
+            } else {
+                self.loadingStatus = .default
+            }
+            return
+        }
+
         let itemArray = self.assessmentResponseItemArray
         let model = SiteCheckModel()
         model.riskScoreGreen = itemArray.filter { [Int](1...4).contains($0.totalRiskScore ?? 0) }.count
@@ -1751,10 +1767,11 @@ extension AddSiteCheckVC {
                 }
             case .failure(let error):
                 print(apiService.api(), "Error:", error.localizedDescription)
+                // A failed refresh is not an empty audit. Keep unsaved answers intact.
                 if let vc {
-                    vc.reloadAfterGetSiteCheckAssessmentResponseByCheckId(questionItemArray: [], responseItemArray: [])
+                    vc.hideLoadingAndShowError(message: error.localizedDescription)
                 }else if let vc1 {
-                    vc1.reloadAfterGetSiteCheckAssessmentResponseByCheckId(questionItemArray: [], responseItemArray: [])
+                    vc1.hideLoadingAndShowError(message: error.localizedDescription)
                 }else {
                     self.loadingStatus = .failed
                 }

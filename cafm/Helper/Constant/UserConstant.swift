@@ -59,8 +59,18 @@ final class UserConstants {
     }
     
     func logoutUser() {
+        // Remove host-matching cookies as well as explicit Keychain JWT tokens.
+        // A cookie set by the backend must not silently reauthenticate a new user.
+        if let host = URL(string: ServerConfiguration.shared.baseURL)?.host?.lowercased() {
+            for cookie in HTTPCookieStorage.shared.cookies ?? [] {
+                let domain = cookie.domain.trimmingCharacters(in: CharacterSet(charactersIn: ".")).lowercased()
+                if host == domain || host.hasSuffix("." + domain) {
+                    HTTPCookieStorage.shared.deleteCookie(cookie)
+                }
+            }
+        }
+        URLCache.shared.removeAllCachedResponses()
         userEmailId = nil
-        userPassword = nil
         jwtToken = nil
         sasToken = nil
         UserDefaults.standard.setValue(nil, forKey: "UserRole")

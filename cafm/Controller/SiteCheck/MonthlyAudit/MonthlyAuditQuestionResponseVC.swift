@@ -293,7 +293,7 @@ extension MonthlyAuditQuestionResponseVC {
                 break
             case .failure(let error):
                 print(apiService.api(), "Error:", error.localizedDescription)
-                self.hideLoadingAndShowError()
+                self.hideLoadingAndShowError(message: error.localizedDescription)
             }
         }
     }
@@ -319,7 +319,7 @@ extension MonthlyAuditQuestionResponseVC {
                 }
             case .failure(let error):
                 print(apiService.api(), "Error:", error.localizedDescription)
-                self.hideLoadingAndShowError()
+                self.hideLoadingAndShowError(message: error.localizedDescription)
             }
         }
     }

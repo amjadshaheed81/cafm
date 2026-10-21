@@ -7,18 +7,6 @@
 
 import UIKit
 
-let isNeedLogOutKey = "isNeedLogOutForPro"
-var isNeedLogOut: Bool {
-    get {
-        if UserDefaults.standard.value(forKey: isNeedLogOutKey) == nil {
-            return true
-        }
-        return false
-    }set {
-        UserDefaults.standard.setValue(false, forKey: isNeedLogOutKey)
-    }
-}
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
@@ -30,23 +18,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the UIWindow using the windowScene
         let window = UIWindow(windowScene: windowScene)
         
-        // Instantiate the storyboard and the view controller
+        ServerConfiguration.shared.bootstrap()
+        SecureCredentials.migrateLegacyDefaults()
+        // Keep the old marker to correctly recognise upgrades from published builds.
+        UserDefaults.standard.set(false, forKey: "isNeedLogOutForPro")
         let vc: UIViewController
-        if isNeedLogOut {
-            isNeedLogOut = false
-            userEmailId = nil
-            userPassword = nil
-            jwtToken = nil
-            sasToken = nil
-        }
-        if userEmailId == nil, userPassword == nil {
-            vc = loginSB.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
-        }else {
-            backUPUserEmailId = userEmailId
-            backUPUserPassword = userPassword
+        if let token = jwtToken, !token.isEmpty,
+           userEmailId != nil, UserConstants.shared.currentUserID != nil,
+           !SecureCredentials.sessionExpired {
             vc = generalSB.instantiateViewController(withIdentifier: "HomeVC") as! HomeVC
+        } else {
+            if SecureCredentials.sessionExpired { UserConstants.shared.logoutUser() }
+            vc = loginSB.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         }
-        
         // Embed the view controller in a UINavigationController
         let navigationController = UINavigationController(rootViewController: vc)
         navigationController.delegate = self
@@ -58,6 +42,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Set the window as key and visible
         self.window = window
         self.window?.makeKeyAndVisible()
+        EnvironmentBadge.shared.update(in: window)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshEnvironmentBanner),
+            name: ServerConfiguration.changedNotification, object: nil)
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -67,7 +54,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
     
+    @objc func refreshEnvironmentBanner() {
+        EnvironmentBadge.shared.update(in: window)
+    }
+
     func sceneDidBecomeActive(_ scene: UIScene) {
+        refreshEnvironmentBanner()
+        if jwtToken != nil && SecureCredentials.sessionExpired {
+            UserConstants.shared.logoutUser()
+            logOutScreen()
+        }
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     }
@@ -97,6 +93,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate: UINavigationControllerDelegate {
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        refreshEnvironmentBanner()
         if viewController is LoginVC {
             navigationController.navigationBar.isHidden = true
         }else {

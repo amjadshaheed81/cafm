@@ -269,6 +269,10 @@
 		AD4B8A042CA1723100BCC8B0 /* InspectionCertificateVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4B8A032CA1723100BCC8B0 /* InspectionCertificateVC.swift */; };
 		AD4B8A072CA17D4F00BCC8B0 /* ClickToUploadXIB.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4B8A062CA17D4F00BCC8B0 /* ClickToUploadXIB.swift */; };
 		AD4B8A092CA17D5600BCC8B0 /* ClickToUploadXIB.xib in Resources */ = {isa = PBXBuildFile; fileRef = AD4B8A082CA17D5600BCC8B0 /* ClickToUploadXIB.xib */; };
+		F0A100000000000000000201 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A100000000000000000101 /* ServerConfiguration.swift */; };
+		F0A100000000000000000202 /* SecureCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A100000000000000000102 /* SecureCredentials.swift */; };
+		F0A100000000000000000203 /* EnvironmentBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A100000000000000000103 /* EnvironmentBadge.swift */; };
+		F0A100000000000000000204 /* ServerSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A100000000000000000104 /* ServerSettingsVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -551,6 +555,10 @@
 		AD4B8A032CA1723100BCC8B0 /* InspectionCertificateVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCertificateVC.swift; sourceTree = "<group>"; };
 		AD4B8A062CA17D4F00BCC8B0 /* ClickToUploadXIB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickToUploadXIB.swift; sourceTree = "<group>"; };
 		AD4B8A082CA17D5600BCC8B0 /* ClickToUploadXIB.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClickToUploadXIB.xib; sourceTree = "<group>"; };
+		F0A100000000000000000101 /* ServerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfiguration.swift; sourceTree = "<group>"; };
+		F0A100000000000000000102 /* SecureCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentials.swift; sourceTree = "<group>"; };
+		F0A100000000000000000103 /* EnvironmentBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBadge.swift; sourceTree = "<group>"; };
+		F0A100000000000000000104 /* ServerSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingsVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1506,6 +1514,10 @@
 			isa = PBXGroup;
 			children = (
 				962EC1302C7651A6001EE1B9 /* SettingsVC.swift */,
+				F0A100000000000000000101 /* ServerConfiguration.swift */,
+				F0A100000000000000000102 /* SecureCredentials.swift */,
+				F0A100000000000000000103 /* EnvironmentBadge.swift */,
+				F0A100000000000000000104 /* ServerSettingsVC.swift */,
 			);
 			name = Settings;
 			path = ../Helper/Settings;
@@ -1947,6 +1959,10 @@
 				19827DA82C704D950044C126 /* AppDelegate.swift in Sources */,
 				19827DAA2C704D950044C126 /* SceneDelegate.swift in Sources */,
 				962EC1312C7651A6001EE1B9 /* SettingsVC.swift in Sources */,
+				F0A100000000000000000201 /* ServerConfiguration.swift in Sources */,
+				F0A100000000000000000202 /* SecureCredentials.swift in Sources */,
+				F0A100000000000000000203 /* EnvironmentBadge.swift in Sources */,
+				F0A100000000000000000204 /* ServerSettingsVC.swift in Sources */,
 				966D2BD52C95B73200D6CADE /* ViewActionBtnXIB.swift in Sources */,
 				96087A1A2D075ED1001839AC /* QRScannerViewController.swift in Sources */,
 				190FFD182C7285980053879C /* EventCalendarVC.swift in Sources */,
@@ -2146,7 +2162,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2203,7 +2219,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2235,7 +2251,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2272,7 +2288,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

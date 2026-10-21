@@ -15,7 +15,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Preserve the old property server on upgrades before touching legacy keys.
+        let defaults = UserDefaults.standard
+        let originalInstallKeys = ["isNeedLogOutForPro", "userEmailId", "userPassword",
+                                   "backUPUserEmailId", "jwtToken", "currentUserID"]
+        let newInstallation = defaults.object(forKey: "CAFM.Server.Migrated.v2") == nil &&
+            !originalInstallKeys.contains(where: { defaults.object(forKey: $0) != nil })
+        if newInstallation {
+            // iOS Keychain can survive deleting and reinstalling an app.
+            // Never reuse a token left behind by an earlier installation.
+            _ = SecureCredentials.set(nil, for: "jwtToken")
+            _ = SecureCredentials.set(nil, for: "sasToken")
+        }
+        ServerConfiguration.shared.bootstrap()
+        SecureCredentials.migrateLegacyDefaults()
         IQKeyboardManager.shared().isEnabled = true
         HIChartView.preload()
         setNavigationBarAppearance()

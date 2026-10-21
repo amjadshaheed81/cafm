@@ -71,39 +71,44 @@ class AddNewCategoryAdminVC: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    // Function to send POST requests with error handling
-    func post(_ url: String, _ body: [String: Any]) async throws {
-        guard let url = URL(string: url) else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let cookieValue = jwtToken ?? ""
-        request.setValue(cookieValue, forHTTPHeaderField: "Cookie")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-            throw NSError(domain: "", code: (response as? HTTPURLResponse)?.statusCode ?? 0, userInfo: [NSLocalizedDescriptionKey: "Request failed with status: \((response as? HTTPURLResponse)?.statusCode)"])
+    // Unlike the old direct URLSession calls, category changes enforce the active
+    // CAFM API origin and never forward authentication through off-host redirects.
+    private func sendCategoryChange(_ method: String, _ address: String, _ body: [String: Any]) async throws {
+        guard let url = URL(string: address),
+              ServerConfiguration.shared.canSendSessionCookie(to: url) else {
+            throw NSError(domain: "CAFM.API", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "The address is not the selected CAFM server."])
         }
-        print("Request succeeded with response code: \(httpResponse.statusCode)")
-    }
-    
-    func put(_ url: String, _ body: [String: Any]) async throws {
-        guard let url = URL(string: url) else { return }
         var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        let cookieValue = jwtToken ?? ""
-        request.setValue(cookieValue, forHTTPHeaderField: "Cookie")
+        request.httpMethod = method
+        request.httpShouldHandleCookies = false
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-            throw NSError(domain: "", code: (response as? HTTPURLResponse)?.statusCode ?? 0, userInfo: [NSLocalizedDescriptionKey: "Request failed with status: \((response as? HTTPURLResponse)?.statusCode)"])
+        if let cookie = jwtToken, !cookie.isEmpty {
+            request.setValue(cookie, forHTTPHeaderField: "Cookie")
         }
-        print("PUT request succeeded with response code: \(httpResponse.statusCode)")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpCookieStorage = nil
+        configuration.httpShouldSetCookies = false
+        let session = URLSession(configuration: configuration, delegate: SameHostRedirectBlocker(), delegateQueue: nil)
+        defer { session.finishTasksAndInvalidate() }
+        let (_, response) = try await session.data(for: request)
+        let code = (response as? HTTPURLResponse)?.statusCode
+        APIClient.noteUnauthorized(code, request: request)
+        guard CAFMHTTPStatus.isSuccess(code) else {
+            throw NSError(domain: "CAFM.API", code: code ?? -1,
+                userInfo: [NSLocalizedDescriptionKey: "Category update failed (HTTP \(code ?? -1))."])
+        }
     }
 
+    func post(_ url: String, _ body: [String: Any]) async throws {
+        try await sendCategoryChange("POST", url, body)
+    }
+
+    func put(_ url: String, _ body: [String: Any]) async throws {
+        try await sendCategoryChange("PUT", url, body)
+    }
 
     // Main function equivalent to `handleSubmit` with error handling
     // Main function with conditional PUT and POST requests based on model ID presence

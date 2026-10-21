@@ -71,6 +71,7 @@ class SettingsVC: UIViewController {
             adminSection.items.append((index: 21, name: "Categories", image: "person.badge.shield.checkmark.fill"))
             adminSection.items.append((index: 22, name: "Dropdowns", image: "lanyardcard.fill"))
             adminSection.items.append((index: 23, name: "Company", image: "building.columns.fill"))
+            adminSection.items.append((index: 24, name: "Server Configuration", image: "network"))
             self.itemArray.append(adminSection)
         }
         
@@ -391,6 +392,11 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
                 case "Company":
                     let vc = CompanyManagementSB.instantiateViewController(withIdentifier: "CompanyManagementVC") as! CompanyManagementVC
                     self.navigationController?.pushViewController(vc, animated: true)
+                    break
+                case "Server Configuration":
+                    if UserDefaults.standard.userRole == .admin {
+                        self.navigationController?.pushViewController(ServerSettingsVC(), animated: true)
+                    }
                     break
                 default:
                     break

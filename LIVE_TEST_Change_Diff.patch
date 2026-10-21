@@ -1,0 +1,440 @@
+--- a/cafm/Helper/Settings/ServerConfiguration.swift
++++ b/cafm/Helper/Settings/ServerConfiguration.swift
+@@ -32,6 +32,7 @@
+ 
+     private let addressKey = "CAFM.Server.BaseURL.v2"
+     private let migratedKey = "CAFM.Server.Migrated.v2"
++    private let preferredLiveKey = "CAFM.Server.PreferredLiveURL.v2"
+     private let defaults: UserDefaults
+ 
+     init(defaults: UserDefaults = .standard) { self.defaults = defaults }
+@@ -50,6 +51,15 @@
+             defaults.set(isUpgrade ? Self.legacyProductionURL : Self.buildDefaultURL, forKey: addressKey)
+         }
+         defaults.set(true, forKey: migratedKey)
++        // Preserve the Unite alias for installed customers, including when they
++        // later visit the TEST server and return to LIVE.
++        if let initial = defaults.string(forKey: addressKey), Self.isLiveAddress(initial) {
++            defaults.set(initial, forKey: preferredLiveKey)
++        }
++    }
++
++    private static func isLiveAddress(_ address: String) -> Bool {
++        address == productionURL || address == legacyProductionURL
+     }
+ 
+     // Can be customised in another customer's app build without changing endpoint code.
+@@ -71,6 +81,17 @@
+     }
+ 
+     var displayServer: String { URL(string: baseURL)?.host ?? baseURL }
++
++    /// LIVE remembers whether this installation originally used the Unite alias
++    /// or the CAFM-branded domain. TEST -> LIVE never silently moves Unite users.
++    var preferredLiveURL: String {
++        bootstrap()
++        if let saved = defaults.string(forKey: preferredLiveKey), Self.isLiveAddress(saved) {
++            return saved
++        }
++        if Self.isLiveAddress(baseURL) { return baseURL }
++        return Self.productionURL
++    }
+ 
+     // Restrict authentication headers to this exact HTTPS API origin.
+     func canSendSessionCookie(to requestURL: URL?) -> Bool {
+@@ -103,19 +124,25 @@
+     /// Callers must sign out/reset user-specific data BEFORE persisting a different server.
+     func saveValidatedURL(_ url: String) throws {
+         let normalized = try Self.normalizedURL(url)
++        bootstrap()
++        let previous = defaults.string(forKey: addressKey)
++        if let previous = previous, Self.isLiveAddress(previous) {
++            defaults.set(previous, forKey: preferredLiveKey)
++        }
++        if Self.isLiveAddress(normalized) {
++            defaults.set(normalized, forKey: preferredLiveKey)
++        }
+         defaults.set(normalized, forKey: addressKey)
+         NotificationCenter.default.post(name: Self.changedNotification, object: nil)
+     }
+ 
+-    /// Recovery from login: users may choose either trusted LIVE alias only.
+-    /// The property and app domains currently point to the same production Azure services.
++    /// Recovery from login: only trusted LIVE addresses, never arbitrary hosts.
+     func restoreTrustedProductionURL(_ url: String) {
+-        guard url == Self.productionURL || url == Self.legacyProductionURL else { return }
+-        defaults.set(url, forKey: addressKey)
+-        NotificationCenter.default.post(name: Self.changedNotification, object: nil)
++        guard Self.isLiveAddress(url) else { return }
++        try? saveValidatedURL(url)
+     }
+ 
+-    func restoreLiveURL() { restoreTrustedProductionURL(Self.buildDefaultURL) }
++    func restoreLiveURL() { restoreTrustedProductionURL(preferredLiveURL) }
+ 
+     /// Deliberately unauthenticated; no cookies, tokens or user data leave this request.
+     static func checkConnection(to address: String, completion: @escaping (Result<Void, Error>) -> Void) {
+--- a/cafm/Helper/Settings/ServerSettingsVC.swift
++++ b/cafm/Helper/Settings/ServerSettingsVC.swift
+@@ -62,7 +62,7 @@
+         picker.addTarget(self, action: #selector(selectionChanged), for: .valueChanged)
+         stack.addArrangedSubview(picker)
+ 
+-        stack.addArrangedSubview(makeLabel("LIVE: app.corecafm.com (same Azure service as property.unitetheunion.org)\nTEST: testcp.corecafm.com\nCUSTOM: another HTTPS CAFM API", .footnote))
++        stack.addArrangedSubview(makeLabel("LIVE: \(ServerConfiguration.shared.preferredLiveURL)\nTEST: \(ServerConfiguration.testingURL)\nCUSTOM: another HTTPS CAFM API", .footnote))
+         customField.borderStyle = .roundedRect
+         customField.autocorrectionType = .no
+         customField.autocapitalizationType = .none
+@@ -119,14 +119,14 @@
+ 
+     @objc private func selectionChanged() {
+         customField.isHidden = picker.selectedSegmentIndex != 2
+-        statusLabel.text = "This change affects only this device."
++        statusLabel.text = "Select Test connection to check this URL (optional). Save and switch will sign you out."
+     }
+ 
+     @objc private func editingFinished() { view.endEditing(true) }
+ 
+     private func candidateURL() throws -> String {
+         switch picker.selectedSegmentIndex {
+-        case 0: return ServerConfiguration.productionURL
++        case 0: return ServerConfiguration.shared.preferredLiveURL
+         case 1: return ServerConfiguration.testingURL
+         case 2: return try ServerConfiguration.normalizedURL(customField.text ?? "")
+         default: throw ServerConfigurationError.invalidURL
+@@ -165,18 +165,10 @@
+             statusLabel.text = "Already connected to this server."
+             return
+         }
+-        setBusy(true)
+-        statusLabel.text = "Verifying new server before saving…"
+-        ServerConfiguration.checkConnection(to: target) { [weak self] result in
+-            guard let self = self else { return }
+-            self.setBusy(false)
+-            switch result {
+-            case .failure(let error):
+-                self.statusLabel.text = "Not changed: \(error.localizedDescription)"
+-            case .success:
+-                self.confirmSwitch(to: target)
+-            }
+-        }
++        // A failed or unavailable health endpoint must NOT silently prevent
++        // an admin switching servers. The Test connection button remains optional.
++        // Confirmation makes the sign-out and change of environment explicit.
++        confirmSwitch(to: target)
+     }
+ 
+     private func confirmSwitch(to url: String) {
+@@ -192,23 +184,26 @@
+     }
+ 
+     private func switchServer(to target: String) {
+-        // Capture previous host before changing. Never re-use a session across servers.
+-        let oldHost = URL(string: ServerConfiguration.shared.baseURL)?.host
++        do {
++            try CAFMServerSessionSwitch.switchTo(target)
++            logOutScreen()
++        } catch {
++            statusLabel.text = "Server not changed: \(error.localizedDescription)"
++        }
++    }
++}
++
++/// Shared by Admin Settings and the LIVE / TEST login chooser.
++/// A session must never be carried from one CAFM host to another.
++enum CAFMServerSessionSwitch {
++    static func switchTo(_ target: String) throws {
++        let normalized = try ServerConfiguration.normalizedURL(target)
++        guard normalized != ServerConfiguration.shared.baseURL else { return }
++        AF.session.getAllTasks { tasks in tasks.forEach { $0.cancel() } }
++        URLSession.shared.getAllTasks { tasks in tasks.forEach { $0.cancel() } }
+         UserConstants.shared.logoutUser()
+         backUPUserEmailId = nil
+         URLCache.shared.removeAllCachedResponses()
+-        if let oldHost = oldHost {
+-            HTTPCookieStorage.shared.cookies?.filter { $0.domain.contains(oldHost) }.forEach {
+-                HTTPCookieStorage.shared.deleteCookie($0)
+-            }
+-        }
+-        AF.session.getAllTasks { $0.forEach { $0.cancel() } }
+-        URLSession.shared.getAllTasks { $0.forEach { $0.cancel() } }
+-        do {
+-            try ServerConfiguration.shared.saveValidatedURL(target)
+-            logOutScreen()
+-        } catch {
+-            statusLabel.text = error.localizedDescription
+-        }
++        try ServerConfiguration.shared.saveValidatedURL(normalized)
+     }
+ }
+--- a/cafm/Controller/SignUpFlow/LoginVC.swift
++++ b/cafm/Controller/SignUpFlow/LoginVC.swift
+@@ -20,54 +20,212 @@
+     @IBOutlet weak var passwordLbl: UILabel!
+     @IBOutlet weak var forgotPasswordLbl: UILabel!
+     
++    private let environmentPicker = UISegmentedControl(items: ["LIVE", "TEST"])
++    private let environmentLabel = UILabel()
++    private var loginAttemptID = UUID()
++    private weak var loginScrollView: UIScrollView?
++    private weak var loginFormWidth: NSLayoutConstraint?
++
+     override func viewDidLoad() {
+         super.viewDidLoad()
+         self.tfEmail.delegate = self
+         self.tfPassword.delegate = self
+         self.initialViewSetup()
+         self.tfEmail.text = backUPUserEmailId
+-        self.installRecoveryButtonIfNeeded()
+-    }
+-
+-    // No password is saved or autofilled. Apple Password AutoFill remains available.
+-    private func installRecoveryButtonIfNeeded() {
+-        let button = UIButton(type: .system)
+-        button.translatesAutoresizingMaskIntoConstraints = false
+-        button.setTitle("Connection help / restore LIVE server", for: .normal)
+-        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
+-        button.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.94)
+-        button.layer.cornerRadius = 8
+-        button.addTarget(self, action: #selector(restoreServerTapped), for: .touchUpInside)
+-        view.addSubview(button)
++        installEnvironmentChooser()
++        NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameChanged(_:)),
++                                               name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
++    }
++
++    deinit { NotificationCenter.default.removeObserver(self) }
++
++    override func viewWillAppear(_ animated: Bool) {
++        super.viewWillAppear(animated)
++        refreshEnvironmentChooser()
++    }
++
++    override func viewDidLayoutSubviews() {
++        super.viewDidLayoutSubviews()
++        // The original storyboard hardcodes a 350pt form width. Avoid horizontal
++        // clipping on small devices without changing the existing storyboard.
++        loginFormWidth?.constant = min(350, max(260, view.bounds.width - 36))
++    }
++
++    /// The LOGIN screen intentionally permits LIVE / TEST selection before
++    /// authentication. Arbitrary custom URLs remain Admin-only after login.
++    private func installEnvironmentChooser() {
++        guard let loginForm = tfEmail.superview else { return }
++        let previousLayout = view.constraints.filter {
++            ($0.firstItem as? UIView) === loginForm || ($0.secondItem as? UIView) === loginForm
++        }
++        NSLayoutConstraint.deactivate(previousLayout)
++        loginForm.removeFromSuperview()
++
++        let bottomPanel = UIView()
++        bottomPanel.translatesAutoresizingMaskIntoConstraints = false
++        bottomPanel.backgroundColor = .secondarySystemBackground
++        bottomPanel.layer.cornerRadius = 12
++        bottomPanel.layer.borderColor = UIColor.separator.cgColor
++        bottomPanel.layer.borderWidth = 0.5
++        view.addSubview(bottomPanel)
++
++        environmentPicker.accessibilityLabel = "Login server: LIVE or TEST"
++        environmentPicker.addTarget(self, action: #selector(environmentPickerChanged), for: .valueChanged)
++        environmentPicker.heightAnchor.constraint(greaterThanOrEqualToConstant: 36).isActive = true
++
++        let helpButton = UIButton(type: .system)
++        helpButton.setTitle("Options", for: .normal)
++        helpButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
++        helpButton.accessibilityLabel = "Server options and recovery"
++        helpButton.addTarget(self, action: #selector(serverOptionsTapped), for: .touchUpInside)
++        helpButton.setContentHuggingPriority(.required, for: .horizontal)
++
++        environmentLabel.font = .systemFont(ofSize: 11, weight: .medium)
++        environmentLabel.textAlignment = .center
++        environmentLabel.textColor = .secondaryLabel
++        environmentLabel.adjustsFontSizeToFitWidth = true
++        environmentLabel.minimumScaleFactor = 0.75
++        environmentLabel.numberOfLines = 1
++
++        let topRow = UIStackView(arrangedSubviews: [environmentPicker, helpButton])
++        topRow.axis = .horizontal
++        topRow.alignment = .center
++        topRow.distribution = .fill
++        topRow.spacing = 12
++        let panelStack = UIStackView(arrangedSubviews: [topRow, environmentLabel])
++        panelStack.axis = .vertical
++        panelStack.spacing = 5
++        panelStack.translatesAutoresizingMaskIntoConstraints = false
++        bottomPanel.addSubview(panelStack)
+         NSLayoutConstraint.activate([
+-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+-            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+-            button.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
+-            button.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
+-            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 40)
++            bottomPanel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
++            bottomPanel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
++            bottomPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
++            panelStack.topAnchor.constraint(equalTo: bottomPanel.topAnchor, constant: 8),
++            panelStack.bottomAnchor.constraint(equalTo: bottomPanel.bottomAnchor, constant: -8),
++            panelStack.leadingAnchor.constraint(equalTo: bottomPanel.leadingAnchor, constant: 12),
++            panelStack.trailingAnchor.constraint(equalTo: bottomPanel.trailingAnchor, constant: -12)
+         ])
+-    }
+-
+-    @objc private func restoreServerTapped() {
+-        let alert = UIAlertController(title: "CAFM connection help",
+-            message: "Current: \(ServerConfiguration.shared.displayServer)\n\nYou can restore either trusted LIVE address. These both point to the same production Azure services. Your current session will be cleared.",
++
++        // Scroll only the original storyboard form. The footer stays visible,
++        // even on compact iPhones. The content centres vertically when space allows.
++        let scroll = UIScrollView()
++        scroll.translatesAutoresizingMaskIntoConstraints = false
++        scroll.showsVerticalScrollIndicator = false
++        scroll.keyboardDismissMode = .interactive
++        view.addSubview(scroll)
++        loginScrollView = scroll
++        let canvas = UIView()
++        canvas.translatesAutoresizingMaskIntoConstraints = false
++        scroll.addSubview(canvas)
++        canvas.addSubview(loginForm)
++        loginForm.translatesAutoresizingMaskIntoConstraints = false
++        loginFormWidth = loginForm.constraints.first(where: {
++            $0.firstAttribute == .width && $0.secondItem == nil
++        })
++        NSLayoutConstraint.activate([
++            scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
++            scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
++            scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
++            scroll.bottomAnchor.constraint(equalTo: bottomPanel.topAnchor, constant: -5),
++            canvas.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor),
++            canvas.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
++            canvas.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
++            canvas.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
++            canvas.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor),
++            canvas.heightAnchor.constraint(greaterThanOrEqualTo: scroll.frameLayoutGuide.heightAnchor),
++            loginForm.centerXAnchor.constraint(equalTo: canvas.centerXAnchor),
++            loginForm.centerYAnchor.constraint(equalTo: canvas.centerYAnchor),
++            loginForm.topAnchor.constraint(greaterThanOrEqualTo: canvas.topAnchor, constant: 12),
++            loginForm.bottomAnchor.constraint(lessThanOrEqualTo: canvas.bottomAnchor, constant: -12)
++        ])
++        refreshEnvironmentChooser()
++    }
++
++    private func refreshEnvironmentChooser() {
++        let config = ServerConfiguration.shared
++        switch config.kind {
++        case .live:
++            environmentPicker.selectedSegmentIndex = 0
++            environmentLabel.textColor = .secondaryLabel
++            environmentLabel.text = "LIVE · \(config.displayServer)"
++        case .test:
++            environmentPicker.selectedSegmentIndex = 1
++            environmentLabel.textColor = .systemOrange
++            environmentLabel.text = "TEST MODE · \(config.displayServer) · Not production"
++        case .custom:
++            environmentPicker.selectedSegmentIndex = UISegmentedControl.noSegment
++            environmentLabel.textColor = .systemOrange
++            environmentLabel.text = "CUSTOM · \(config.displayServer)"
++        }
++    }
++
++    @objc private func environmentPickerChanged() {
++        let config = ServerConfiguration.shared
++        let target = environmentPicker.selectedSegmentIndex == 1
++            ? ServerConfiguration.testingURL : config.preferredLiveURL
++        guard target != config.baseURL else { refreshEnvironmentChooser(); return }
++        let targetLabel = environmentPicker.selectedSegmentIndex == 1 ? "TEST" : "LIVE"
++        refreshEnvironmentChooser() // only show the new environment once saved
++        let alert = UIAlertController(title: "Switch to \(targetLabel)?",
++            message: "Server: \(target)\n\nThis signs out any existing session. Unsaved work will be lost. You can switch back from this screen.",
+             preferredStyle: .alert)
+         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+-        alert.addAction(UIAlertAction(title: "Use app.corecafm.com", style: .default) { [weak self] _ in
+-            self?.restoreTrustedServer(ServerConfiguration.productionURL)
+-        })
+-        alert.addAction(UIAlertAction(title: "Use property.unitetheunion.org", style: .default) { [weak self] _ in
+-            self?.restoreTrustedServer(ServerConfiguration.legacyProductionURL)
++        alert.addAction(UIAlertAction(title: "Switch", style: .destructive) { [weak self] _ in
++            self?.switchFromLogin(to: target)
+         })
+         present(alert, animated: true)
+     }
+ 
+-    private func restoreTrustedServer(_ url: String) {
+-        UserConstants.shared.logoutUser()
+-        backUPUserEmailId = nil
+-        URLCache.shared.removeAllCachedResponses()
+-        ServerConfiguration.shared.restoreTrustedProductionURL(url)
+-        logOutScreen()
++    @objc private func serverOptionsTapped() {
++        let alert = UIAlertController(title: "Server options",
++            message: "Current: \(ServerConfiguration.shared.displayServer)\nChoose a trusted LIVE address or use the LIVE / TEST buttons below the login form.",
++            preferredStyle: .alert)
++        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
++        alert.addAction(UIAlertAction(title: "Use app.corecafm.com (LIVE)", style: .default) { [weak self] _ in
++            self?.switchFromLogin(to: ServerConfiguration.productionURL)
++        })
++        alert.addAction(UIAlertAction(title: "Use property.unitetheunion.org (LIVE)", style: .default) { [weak self] _ in
++            self?.switchFromLogin(to: ServerConfiguration.legacyProductionURL)
++        })
++        present(alert, animated: true)
++    }
++
++    private func switchFromLogin(to target: String) {
++        guard target != ServerConfiguration.shared.baseURL else { refreshEnvironmentChooser(); return }
++        do {
++            try CAFMServerSessionSwitch.switchTo(target)
++            loginAttemptID = UUID() // Reject late replies from the previous server.
++            tfPassword.text = nil
++            tfEmail.text = nil
++            view.endEditing(true)
++            refreshEnvironmentChooser()
++            EnvironmentBadge.shared.update(in: view.window)
++        } catch {
++            refreshEnvironmentChooser()
++            let alert = UIAlertController(title: "Unable to change server",
++                message: error.localizedDescription, preferredStyle: .alert)
++            alert.addAction(UIAlertAction(title: "OK", style: .default))
++            present(alert, animated: true)
++        }
++    }
++
++    @objc private func keyboardFrameChanged(_ notification: Notification) {
++        guard let scroll = loginScrollView,
++              let endFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
++        let keyboardInView = view.convert(endFrame, from: nil)
++        let covered = max(0, view.bounds.maxY - keyboardInView.minY)
++        let panelArea = max(0, view.bounds.maxY - scroll.frame.maxY)
++        let extraInset = max(0, covered - panelArea) + (covered > 0 ? 14 : 0)
++        scroll.contentInset.bottom = extraInset
++        scroll.verticalScrollIndicatorInsets.bottom = extraInset
++        if covered > 0 {
++            let focusedField: UITextField? = tfPassword.isFirstResponder ? tfPassword : (tfEmail.isFirstResponder ? tfEmail : nil)
++            if let field = focusedField {
++                let rect = field.convert(field.bounds, to: scroll).insetBy(dx: 0, dy: -16)
++                scroll.scrollRectToVisible(rect, animated: true)
++            }
++        }
+     }
+ 
+     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+@@ -216,6 +374,8 @@
+         requestModel.password = password
+         requestModel.email = email
+         
++        let loginServerAtStart = ServerConfiguration.shared.baseURL
++        let attemptAtStart = loginAttemptID
+         let loginService = ApiService.loginApi(model: requestModel)
+                 
+         let appearance = SCLAlertView.SCLAppearance(
+@@ -224,6 +384,12 @@
+         let sclAlert = SCLAlertView(appearance: appearance)
+         sclAlert.showWait("", subTitle: "Getting Everything Ready...", closeButtonTitle: "")
+         APIClient.loginRequest(loginService) { (result: Result<APIClient.MappableResult<LoginUserDetail>, Error>) in
++            // Ignore a late response from a server the user has since left.
++            guard attemptAtStart == self.loginAttemptID &&
++                  loginServerAtStart == ServerConfiguration.shared.baseURL else {
++                sclAlert.hideView()
++                return
++            }
+             switch result {
+             case .success(let mappableResult):
+                 switch mappableResult {

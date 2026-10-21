@@ -163,7 +163,7 @@ enum ApiService {
     case getSITE_CHECK_CATEGORY
     case getSiteAssetsAllV2(area: String?, fromDate: String?, toDate: String?, siteId: Int?)
     
-    static let baseApi = "https://property.unitetheunion.org"
+    static var baseApi: String { ServerConfiguration.shared.baseURL }
     
     func api() -> String {
         switch self {
@@ -182,10 +182,11 @@ enum ApiService {
         case .actionSummaryAPI(let siteId):
             return ApiService.baseApi+"/api/action/\(siteId)/summary"
         case .userCalendarEventsAPI(userId: let userId, siteId: let siteId):
-            var api = ApiService.baseApi+"/api/user/calendar/events"
-            if let userId { api += "?userId=\(userId)" }
-            if let siteId { api += "??siteId=\(siteId)" }
-            return api
+            let api = ApiService.baseApi+"/api/user/calendar/events"
+            return apiWithQueryParameters(string: api, queryItems: [
+                URLQueryItem(name: "userId", value: userId),
+                URLQueryItem(name: "siteId", value: siteId)
+            ])
         case .putUserCalendarAPI(model: let model):
             return ApiService.baseApi+"/api/user/calendar"
         case .userDetailsAPI(let userId):
@@ -1037,13 +1038,13 @@ enum ApiService {
     
 }
 
-var headersNew: HTTPHeaders {
-    return ["Cookie": jwtToken ?? ""]
+// Only attach the CAFM session cookie to the active CAFM API host.
+// External address lookup services must NEVER receive this session cookie.
+private func headersFor(_ service: ApiService) -> HTTPHeaders {
+    guard ServerConfiguration.shared.canSendSessionCookie(to: URL(string: service.api())),
+          let cookie = jwtToken, !cookie.isEmpty else { return HTTPHeaders() }
+    return HTTPHeaders(["Cookie": cookie])
 }
-
-//var headersNew: HTTPHeaders = [
-//    "Cookie": jwtToken ?? ""
-//]
 
 
 func logOutScreen() {
@@ -1052,12 +1053,70 @@ func logOutScreen() {
         let navigationController = UINavigationController(rootViewController: vc)
         navigationController.delegate = sceneDelegate
         sceneDelegate.window?.rootViewController = navigationController
+        EnvironmentBadge.shared.update(in: sceneDelegate.window)
+    }
+}
+
+
+// Allow harmless HTTPS redirects within the SAME origin only. Never forward a
+// CAFM session Cookie to a different host or port (or to HTTP).
+private let CAFMSafeRedirector = Redirector(behavior: .modify { task, newRequest, _ in
+    guard let original = task.originalRequest?.url, let destination = newRequest.url,
+          destination.scheme?.lowercased() == "https",
+          destination.host?.lowercased() == original.host?.lowercased(),
+          destination.port == original.port else { return nil }
+    return newRequest
+})
+
+final class SameHostRedirectBlocker: NSObject, URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        let original = task.originalRequest?.url
+        if request.url?.scheme == "https",
+           request.url?.host?.lowercased() == original?.host?.lowercased(),
+           request.url?.port == original?.port {
+            completionHandler(request)
+        } else {
+            completionHandler(nil)
+        }
     }
 }
 
 class APIClient {
     
     
+
+    private static func apiError(code: Int?) -> NSError {
+        let message: String
+        switch code ?? -1 {
+        case 400: message = "The server rejected this request. Check the form data and try again."
+        case 401: message = "Your CAFM session has expired. Sign in again."
+        case 403: message = "You do not have permission to perform this action."
+        case 404: message = "The requested item could not be found on this server."
+        case 409: message = "This record changed on the server. Reload it before saving again."
+        case 500...599: message = "The server could not complete this request. Try again or contact support."
+        default: message = "Unable to load or save the requested data. Please retry."
+        }
+        return NSError(domain: "CAFM.API", code: code ?? -1,
+                       userInfo: [NSLocalizedDescriptionKey: message])
+    }
+
+    static func noteUnauthorized(_ code: Int?, request: URLRequest?) {
+        guard code == 401,
+              ServerConfiguration.shared.canSendSessionCookie(to: request?.url),
+              let tokenSent = request?.value(forHTTPHeaderField: "Cookie"),
+              !tokenSent.isEmpty, tokenSent == jwtToken else { return }
+        DispatchQueue.main.async {
+            // Ignore late 401 responses from previous environments or sessions.
+            guard ServerConfiguration.shared.canSendSessionCookie(to: request?.url),
+                  tokenSent == jwtToken else { return }
+            UserConstants.shared.logoutUser()
+            logOutScreen()
+        }
+    }
+
     enum MappableResult<T: Mappable> {
         case single(T)
         case array([T])
@@ -1066,7 +1125,8 @@ class APIClient {
     // Generic function for API request
     static func request<T: Mappable>(_ service: ApiService, completion: @escaping (Result<MappableResult<T>, Error>) -> Void) {
         
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersNew).responseJSON { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseJSON { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if let jsonArray = value as? [[String: Any]], response.response?.statusCode == 200 {
@@ -1076,15 +1136,9 @@ class APIClient {
                 }else if let json = value as? [String: Any], let object = T(JSON: json), response.response?.statusCode == 200 || response.response?.statusCode == 201 {
                     // Mapping a single Mappable object
                     completion(.success(.single(object)))
-                }else if let json = value as? [String: Any], let object = T(JSON: json), response.response?.statusCode == 401 {
-                    UserConstants.shared.logoutUser()
-                    logOutScreen()
-                    completion(.success(.single(object)))
+
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1094,7 +1148,7 @@ class APIClient {
     
     // Generic function for API request
     static func loginRequest<T: Mappable>(_ service: ApiService, completion: @escaping (Result<MappableResult<T>, Error>) -> Void) {
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default).responseJSON { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default).redirect(using: CAFMSafeRedirector).responseJSON { response in
             switch response.result {
             case .success(let value):
                 if let json = value as? [String: Any], let object = T(JSON: json), response.response?.statusCode == 200 || response.response?.statusCode == 201 {
@@ -1103,7 +1157,7 @@ class APIClient {
                 }else if let json = value as? [String: Any], let object = T(JSON: json), response.response?.statusCode == 401 {
                     completion(.success(.single(object)))
                 }else {
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1113,17 +1167,15 @@ class APIClient {
     
     static func request<T: Mappable>(_ service: ApiService, completion: @escaping (Result<T, Error>) -> Void) {
         
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: URLEncoding.default, headers: headersNew).responseJSON { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: URLEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseJSON { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             
             switch response.result {
             case .success(let value):
                 if let json = value as? [String: Any], let object = T(JSON: json) {
                     completion(.success(object))
                 } else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1132,16 +1184,14 @@ class APIClient {
     }
     
     static func requestDelete(_ service: ApiService, completion: @escaping(_ isSucess: Bool) -> Void) {
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersNew).response(completionHandler: { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response(completionHandler: { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 //rk-pd in this put the condition of the 200 code
                 if response.response?.statusCode == 200 || response.response?.statusCode == 204 {
                     completion(true)
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
                     completion(false)
                 }
                 break
@@ -1157,8 +1207,9 @@ class APIClient {
         
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append(fileURL, withName: "file", fileName: fileURL.lastPathComponent, mimeType: APIClient.mimeType(for: fileURL))
-        }, to: apiURL, headers: headersNew)
-        .response { response in
+        }, to: apiURL, headers: headersFor(service))
+        .redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if let value = value {
@@ -1170,16 +1221,16 @@ class APIClient {
                             if let object = object {
                                 completion(.success(.single(object)))
                             } else {
-                                completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                                completion(.failure(apiError(code: response.response?.statusCode)))
                             }
                         } else {
-                            completion(.failure(NSError(domain: "JSON Parsing Error", code: 1, userInfo: nil)))
+                            completion(.failure(apiError(code: response.response?.statusCode)))
                         }
                     } catch {
                         completion(.failure(error))
                     }
                 }else {
-                    completion(.failure(NSError(domain: "JSON Parsing Error", code: 1, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1189,7 +1240,8 @@ class APIClient {
     
     // Function for handling string responses
     static func requestString(_ service: ApiService, completion: @escaping (Result<String, Error>) -> Void) {
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersNew).responseString { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseString { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 completion(.success(value))
@@ -1200,7 +1252,8 @@ class APIClient {
     }
     
     static func requestResponse(_ service: ApiService, completion: @escaping (_ isSucess: Bool) -> Void) {
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersNew).response { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(_):
                 if response.response?.statusCode == 200 {
@@ -1217,25 +1270,19 @@ class APIClient {
     // Function for handling multipart form data
     static func requestMultipart<T: Mappable>(_ service: ApiService, multipartData: @escaping (MultipartFormData) -> Void, completion: @escaping (Result<MappableResult<T>, Error>) -> Void) {
         
-        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersNew).responseJSON { response in
+        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseJSON { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if let jsonArray = value as? [[String: Any]] {
                     // Mapping the array of Mappable objects
                     let objects = jsonArray.compactMap { T(JSON: $0) }
-                    if objects.isEmpty {
-                        if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                            logOutScreen()
-                        }
-                        completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
-                    } else {
-                        completion(.success(.array(objects)))
-                    }
+                    completion(.success(.array(objects)))
                 } else if let json = value as? [String: Any], let object = T(JSON: json) {
                     // Mapping a single Mappable object
                     completion(.success(.single(object)))
                 } else {
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1245,16 +1292,14 @@ class APIClient {
 
     static func requestMultipart1(_ service: ApiService, multipartData: @escaping (MultipartFormData) -> Void, completion: @escaping (Result<Bool, Error>) -> Void) {
         
-        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersNew).response { response in
+        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if response.response?.statusCode == 200 {
                     completion(.success(true))
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1263,16 +1308,14 @@ class APIClient {
     }
     
     static func requestMultipartString(_ service: ApiService, multipartData: @escaping (MultipartFormData) -> Void, completion: @escaping (Result<String, Error>) -> Void) {
-        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersNew).responseString { response in
+        AF.upload(multipartFormData: multipartData, to: service.api(), method: service.method(), headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseString { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if response.response?.statusCode == 200 {
                     completion(.success(value))
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
-                    completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1305,8 +1348,10 @@ class APIClient {
         var request = URLRequest(url: URL(string: service.api())!)
         request.httpMethod = service.method().rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let cookieValue = jwtToken ?? ""
-        request.setValue(cookieValue, forHTTPHeaderField: "Cookie")
+        request.httpShouldHandleCookies = false
+        if let cookie = headersFor(service)["Cookie"] {
+            request.setValue(cookie, forHTTPHeaderField: "Cookie")
+        }
 
         if service.parameters() != nil {
             let jsonData = try? JSONSerialization.data(withJSONObject: parameters)
@@ -1314,25 +1359,17 @@ class APIClient {
         }
 
         // Send the request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error:", error ?? "Unknown error")
-                completion(false, nil)
-                return
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpCookieStorage = nil
+        let session = URLSession(configuration: configuration, delegate: SameHostRedirectBlocker(), delegateQueue: nil)
+        session.dataTask(with: request) { _, response, error in
+            let code = (response as? HTTPURLResponse)?.statusCode
+            noteUnauthorized(code, request: request)
+            DispatchQueue.main.async {
+                completion(error == nil && CAFMHTTPStatus.isSuccess(code), code)
             }
-
-            // Check for HTTP response status
-            if let httpResponse = response as? HTTPURLResponse {
-                print("Status code: \(httpResponse.statusCode)")
-                completion(true, httpResponse.statusCode)
-                return
-            }else {
-                completion(false, nil)
-                return
-
-            }
-        }
-        task.resume()
+            session.finishTasksAndInvalidate()
+        }.resume()
     }
     
     static func requestWithArray(_ service: ApiService, parameters: [[String: Any]]? = nil, completion: @escaping(_ isSucess: Bool, _ code: Int?) -> Void) {
@@ -1343,18 +1380,20 @@ class APIClient {
             let jsonData = try? JSONSerialization.data(withJSONObject: parameters)
             request.httpBody = jsonData
         }
-        let cookieValue = jwtToken ?? ""
-        request.setValue(cookieValue, forHTTPHeaderField: "Cookie")
+        request.httpShouldHandleCookies = false
+        if let cookie = headersFor(service)["Cookie"] {
+            request.setValue(cookie, forHTTPHeaderField: "Cookie")
+        }
 
         // Use Alamofire to send the request
-        AF.request(request).responseString { response in
+        AF.request(request).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseString { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
-                print("Response: \(value)")
-                completion(true, response.response?.statusCode ?? -1)
+                let code = response.response?.statusCode
+                completion(CAFMHTTPStatus.isSuccess(code), code)
             case .failure(let error):
-                print("Error: \(error)")
-                completion(false, nil)
+                completion(false, response.response?.statusCode)
             }
         }
     }
@@ -1368,8 +1407,9 @@ class APIClient {
             if let requestData = documentRequestString?.data(using: .utf8) {
                 multipartFormData.append(requestData, withName: "documentRequestString")
             }
-        }, to: service.api(), method: .post, headers: headersNew)
-        .response { response in
+        }, to: service.api(), method: .post, headers: headersFor(service))
+        .redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if let value = value {
@@ -1377,26 +1417,23 @@ class APIClient {
                         // Try to parse the data as JSON
                         if let json = try JSONSerialization.jsonObject(with: value, options: []) as? [String: Any], response.response?.statusCode == 200 {
                             
-                            print("uploadFileInFolder \(json)")
+                            // Do not print potentially sensitive CAFM form data.
                             // Map JSON to object using ObjectMapper
                             let object = T(JSON: json)
                             if let object = object {
                                 completion(.success(.single(object)))
                             } else {
-                                completion(.failure(NSError(domain: "Mapping Error", code: 0, userInfo: nil)))
+                                completion(.failure(apiError(code: response.response?.statusCode)))
                             }
                         } else {
-                            if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                                logOutScreen()
-                            }
 
-                            completion(.failure(NSError(domain: "JSON Parsing Error", code: 1, userInfo: nil)))
+                            completion(.failure(apiError(code: response.response?.statusCode)))
                         }
                     } catch {
                         completion(.failure(error))
                     }
                 }else {
-                    completion(.failure(NSError(domain: "JSON Parsing Error", code: 1, userInfo: nil)))
+                    completion(.failure(apiError(code: response.response?.statusCode)))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -1413,16 +1450,14 @@ class APIClient {
             if let requestData = documentRequestString?.data(using: .utf8) {
                 multipartFormData.append(requestData, withName: "documentRequestString")
             }
-        }, to: service.api(), method: service.method(), headers: headersNew)
-        .response { response in
+        }, to: service.api(), method: service.method(), headers: headersFor(service))
+        .redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).response { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if response.response?.statusCode == 200 {
                     completion(true)
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
                     completion(false)
                 }
             case .failure(let error):
@@ -1433,15 +1468,13 @@ class APIClient {
     
     static func requestWithStringArray(_ service: ApiService, completion: @escaping ([String]?, Error?) -> Void) {
         
-        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersNew).responseJSON { response in
+        AF.request(service.api(), method: service.method(), parameters: service.parameters(), encoding: JSONEncoding.default, headers: headersFor(service)).redirect(using: CAFMSafeRedirector).validate(statusCode: 200..<300).responseJSON { response in
+            noteUnauthorized(response.response?.statusCode, request: response.request)
             switch response.result {
             case .success(let value):
                 if let jsonArray = value as? [String?], response.response?.statusCode == 200 {
                     completion(jsonArray.compactMap({$0}), nil)
                 }else {
-                    if let json = value as? [String: Any], let object = APIErrorResponse(JSON: json), let message = object.message, message.lowercased().contains("JWT".lowercased()), (response.response?.statusCode == 500 || response.response?.statusCode == 401) {
-                        logOutScreen()
-                    }
                     completion(nil, nil)
                 }
             case .failure(let error):
