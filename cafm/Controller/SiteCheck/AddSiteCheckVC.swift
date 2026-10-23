@@ -72,6 +72,7 @@ class AddSiteCheckVC: UIViewController {
         return self.isForCreateNew
     }
     var siteCheckModel: SiteCheckModel?
+    var monthlyAuditV2: MonthlyAuditV2Client?
     
     var userBySiteIdItemArray: [User] = []
     var SITE_CHECK_TYPE_ItemArray: [LOV_Model] = []
@@ -1262,6 +1263,7 @@ extension AddSiteCheckVC: UITableViewDataSource, UITableViewDelegate {
                     vc.assetsItemArray = self.assetsItemArray
                     vc.SITE_CHECK_AUDIT_HEADER_ItemArray = self.asbestosLOVDict[.SITE_CHECK_AUDIT_HEADER] ?? []
                     vc.questionCat = "monthly-inspection"
+                    vc.monthlyV2 = self.monthlyAuditV2
                     let nav = UINavigationController(rootViewController: vc)
                     self.present(nav, animated: true)
                 }else if type == "Audit" && subType == "Annual Winter Audit" {
@@ -1745,6 +1747,42 @@ extension AddSiteCheckVC {
             return
         }
         
+        // Monthly Audit uses V2 for current-period answers, not the legacy
+        // response endpoint. Other forms (including Annual Winter) stay unchanged.
+        if self.siteCheckModel?.type == "Audit" && self.siteCheckModel?.subType == "Monthly Audit" {
+            let client: MonthlyAuditV2Client
+            if let existing = self.monthlyAuditV2, existing.checkId == checkId {
+                client = existing
+            } else {
+                client = MonthlyAuditV2Client(checkId: checkId)
+                self.monthlyAuditV2 = client
+            }
+            client.load { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let answers):
+                    self.assessmentResponseItemArray = answers
+                    self.monthlyAuditV2DidRefresh()
+                    if let vc1 {
+                        vc1.reloadAfterGetSiteCheckAssessmentResponseByCheckId(
+                            questionItemArray: self.assessmentQuestionItemArray,
+                            responseItemArray: answers)
+                    } else {
+                        self.loadingStatus = .default
+                    }
+                case .failure(let error):
+                    print("Monthly Audit V2 load:", error.localizedDescription)
+                    if let vc1 {
+                        vc1.hideLoadingAndShowError(message: error.localizedDescription)
+                    } else {
+                        self.loadingStatus = .failed
+                        self.hideLoadingAndShowError(message: error.localizedDescription)
+                    }
+                }
+            }
+            return
+        }
+
         let apiService = ApiService.getSiteCheckAssessmentResponseBy(checkId: checkId)
         APIClient.request(apiService) { [weak self] (result: Result<APIClient.MappableResult<SiteCheckAssessmentResponse>, Error>) in
             guard let self else { return }
@@ -2178,6 +2216,14 @@ extension AddSiteCheckVC {
 
 //MARK: - Audit - Monthly Audit
 extension AddSiteCheckVC {
+
+    func monthlyAuditV2DidRefresh() {
+        guard let client = monthlyAuditV2, let context = client.context else { return }
+        assessmentResponseItemArray = client.answers
+        if let start = context.inspectionDate { siteCheckModel?.startDate = start }
+        if let due = context.nextDueDate { siteCheckModel?.dueDate = due }
+        siteCheckModel?.status = context.status == "SUBMITTED" ? .done : .open
+    }
     
     func get_lov_SITE_CHECK_AUDIT_HEADER(vc1: MonthlyAuditQuestionResponseVC? = nil) {
         let lovType: LOVTypeEnum = .SITE_CHECK_AUDIT_HEADER

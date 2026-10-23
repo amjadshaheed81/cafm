@@ -12,7 +12,7 @@ import SCLAlertView
 // Monthly Audit asset filtering must agree with Site Service's
 // MonthlyAuditCategoryMatcher (21 October 2026). It applies ONLY to this
 // inspection type; the server remains authoritative on save.
-private enum MonthlyAuditMobileCategoryMatcher {
+enum MonthlyAuditMobileCategoryMatcher {
     private static let holdOpen = "Electrical,Access Controls,Internal Access Controls,Door Hold Open Device"
     private static let wcLegacy = "Mechanical,Sanitary,Toilet/Urinal"
     private static let wcCurrent = [
@@ -150,6 +150,9 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     }
     
     private var isFieldsEditable: Bool {
+        if monthlyAuditQuestionsVC?.questionCat == "monthly-inspection" {
+            return monthlyAuditQuestionsVC?.monthlyV2?.context?.canEdit == true
+        }
         return self.response?.responseId == nil
     }
     private var fieldBGColor: UIColor {
@@ -163,6 +166,7 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     var assetsItemArray: [AssetDetailsResponse] = []
     
     private let uploadImageFileTag = 1
+    private var pendingMonthlyUploadedURL: String?
     private let kResponseDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     private let kRequestDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     private let ddMMyyyyStr = "dd/MM/yyyy"
@@ -204,6 +208,10 @@ class MonthlyAuditQuestionResponseVC: UIViewController {
     }
     
     @IBAction func saveContinueBtnClicked(_ sender: PrimaryButton) {
+        if monthlyAuditQuestionsVC?.questionCat == "monthly-inspection" {
+            saveMonthlyAuditV2()
+            return
+        }
         guard let response else { return }
         let model = SiteCheckAssessmentResponse()
         
@@ -514,7 +522,11 @@ extension MonthlyAuditQuestionResponseVC {
         
         self.adjustClickToUploadMainView()
         self.saveContinueBtn.isHidden = !self.isFieldsEditable
-        self.downloadAttachmentBtn.isHidden = !self.saveContinueBtn.isHidden
+        if monthlyAuditQuestionsVC?.questionCat == "monthly-inspection" {
+            self.downloadAttachmentBtn.isHidden = response.file?.isEmpty != false
+        } else {
+            self.downloadAttachmentBtn.isHidden = !self.saveContinueBtn.isHidden
+        }
         self.configureTestFillButton()
     }
     
@@ -991,6 +1003,7 @@ extension MonthlyAuditQuestionResponseVC: CAFMFilePickerDelegate {
     
     func filePickerDidSelectFile(_ fileData: FilePickerModel, tag: Int) {
         self.response?.selectedFile = fileData
+        self.pendingMonthlyUploadedURL = nil
         self.reloadClickToUploadCV()
     }
     
@@ -1012,10 +1025,45 @@ private extension MonthlyAuditQuestionResponseVC {
     }
 
     func configureTestFillButton() {
-        navigationItem.rightBarButtonItem = canTestFillQuestion
-            ? UIBarButtonItem(title: "Test Fill", style: .plain, target: self,
-                              action: #selector(testFillQuestionTapped(_:)))
-            : nil
+        var buttons: [UIBarButtonItem] = []
+        if canTestFillQuestion {
+            buttons.append(UIBarButtonItem(title: "Test Fill", style: .plain, target: self,
+                                           action: #selector(testFillQuestionTapped(_:))))
+        }
+        if monthlyAuditQuestionsVC?.questionCat == "monthly-inspection",
+           let qid = question?.qid, let client = monthlyAuditQuestionsVC?.monthlyV2 {
+            let images = client.state(for: qid)?.images ?? []
+            if !images.isEmpty || response?.file?.isEmpty == false {
+                buttons.append(UIBarButtonItem(title: "Photos", style: .plain, target: self,
+                                               action: #selector(showMonthlyPhotos)))
+            }
+        }
+        navigationItem.rightBarButtonItems = buttons
+    }
+
+    @objc func showMonthlyPhotos() {
+        guard let qid = question?.qid, let client = monthlyAuditQuestionsVC?.monthlyV2 else { return }
+        var urls = (client.state(for: qid)?.images ?? []).map(\.imageUrl)
+        if let file = response?.file, !file.isEmpty, !urls.contains(file) { urls.append(file) }
+        let sheet = UIAlertController(title: "Saved Audit Photos", message: "Choose an attachment to view or share.",
+                                      preferredStyle: .actionSheet)
+        for (number, link) in urls.enumerated() {
+            sheet.addAction(UIAlertAction(title: "Attachment \(number + 1)", style: .default) { [weak self] _ in
+                guard let self else { return }
+                var path = link
+                if !path.contains("?"), let sas = UserConstants.shared.sasToken, !sas.isEmpty {
+                    path += "?" + sas.trimmingCharacters(in: CharacterSet(charactersIn: "?"))
+                }
+                CAFMFileUtils.shared.downloadAndShareFile(path, from: self, sender: self.view,
+                                                         shouldDeleteAfterSharing: true)
+            })
+        }
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        if let popover = sheet.popoverPresentationController {
+            popover.sourceView = view
+            popover.sourceRect = CGRect(x: view.bounds.midX, y: 0, width: 1, height: 1)
+        }
+        present(sheet, animated: true)
     }
 
     @objc func testFillQuestionTapped(_ sender: UIBarButtonItem) {
@@ -1112,3 +1160,190 @@ private extension MonthlyAuditQuestionResponseVC {
     }
 }
 // END TEST-only Monthly Audit draft helper
+
+// MARK: - Monthly Audit V2 saving and explicit faulty-asset Action selection
+// Annual Winter Audit continues through the existing legacy save branch above.
+private extension MonthlyAuditQuestionResponseVC {
+    func saveMonthlyAuditV2() {
+        guard let client = monthlyAuditQuestionsVC?.monthlyV2,
+              client.context?.canEdit == true, let question, let qid = question.qid,
+              let response else {
+            hideLoadingAndShowError(message: "Reload the current Monthly Audit before saving.")
+            return
+        }
+        view.endEditing(true)
+        let okIds = selectedAssetOKItemArray.compactMap(\.assetId).sorted()
+        let failedIds = selectedDefectiveAssetItemArray.compactMap(\.assetId).sorted()
+        guard Set(okIds).count == okIds.count, Set(failedIds).count == failedIds.count,
+              Set(okIds).isDisjoint(with: Set(failedIds)) else {
+            hideLoadingAndShowError(message: "An asset cannot be selected twice or both pass and fail.")
+            return
+        }
+        // Server requires notes, action and risk scores only when an asset fails.
+        let observation = ObservationXIB.textView.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let action = SuggestedActionXIB.textView.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !failedIds.isEmpty {
+            guard !observation.isEmpty, !action.isEmpty,
+                  let consequence = response.consequence?.intValue, (1...5).contains(consequence),
+                  let likelihood = response.likelihood?.intValue, (1...5).contains(likelihood) else {
+                hideLoadingAndShowError(message: "Failed assets require an observation, suggested action and risk scores from 1 to 5.")
+                return
+            }
+        }
+        let answer = SiteCheckAssessmentResponse()
+        answer.checkId = client.checkId
+        answer.qid = qid
+        answer.responseId = response.responseId
+        answer.assets = okIds.map { String($0) }.joined(separator: ",")
+        answer.faultassets = failedIds.map { String($0) }.joined(separator: ",")
+        answer.position = observation
+        answer.action = action
+        answer.consequence = response.consequence
+        answer.likelihood = response.likelihood
+        answer.file = response.file
+
+        // Never silently open a new Action: Paul needs an explicit same-fault choice.
+        chooseMonthlyFaultActions(failedIds, index: 0, selected: []) { [weak self] choices in
+            guard let self else { return }
+            self.uploadAndSaveMonthlyAnswer(answer, choices: choices)
+        }
+    }
+
+    func chooseMonthlyFaultActions(_ ids: [Int], index: Int,
+                                   selected: [MonthlyAuditV2ActionChoice],
+                                   finished: @escaping ([MonthlyAuditV2ActionChoice]) -> Void) {
+        guard index < ids.count else { finished(selected); return }
+        guard let client = monthlyAuditQuestionsVC?.monthlyV2 else { return }
+        let assetId = ids[index]
+        let assetName = assetsItemArray.first(where: { $0.assetId == assetId })
+            .flatMap { getAssetDisplayStrForSiteCheck($0) } ?? "Asset #\(assetId)"
+        let dialog = UIAlertController(title: "Fault Action — \(assetName)",
+                                       message: "Is this the same outstanding fault or a new fault? Select for each failed asset.",
+                                       preferredStyle: .actionSheet)
+        // The candidates come from GET /actions and are already restricted to this site.
+        let candidates = client.actionCandidates.filter { $0.assetIds.contains(assetId) }
+        for candidate in candidates {
+            let detail = (candidate.observation ?? "").prefix(60)
+            dialog.addAction(UIAlertAction(title: "Reuse #\(candidate.actionId) — \(detail)", style: .default) { [weak self] _ in
+                self?.chooseMonthlyFaultActions(ids, index: index + 1,
+                    selected: selected + [MonthlyAuditV2ActionChoice(assetId: assetId, mode: "EXISTING", actionId: candidate.actionId)],
+                    finished: finished)
+            })
+        }
+        // V2 deliberately permits keeping an Action that this exact answer already
+        // linked while it was outstanding, even if that Action has since closed.
+        let prior = client.state(for: question?.qid ?? -1)?.actionChoices.first { $0.assetId == assetId }
+        if let prior, prior.mode == "EXISTING", let previousId = prior.actionId,
+           !candidates.contains(where: { $0.actionId == previousId }) {
+            dialog.addAction(UIAlertAction(title: "Keep previously linked Action #\(previousId)", style: .default) { [weak self] _ in
+                self?.chooseMonthlyFaultActions(ids, index: index + 1,
+                    selected: selected + [MonthlyAuditV2ActionChoice(assetId: assetId, mode: "EXISTING", actionId: previousId)],
+                    finished: finished)
+            })
+        }
+        dialog.addAction(UIAlertAction(title: "New fault — create Action", style: .default) { [weak self] _ in
+            self?.chooseMonthlyFaultActions(ids, index: index + 1,
+                selected: selected + [MonthlyAuditV2ActionChoice(assetId: assetId, mode: "NEW", actionId: nil)],
+                finished: finished)
+        })
+        dialog.addAction(UIAlertAction(title: "Cancel Save", style: .cancel))
+        if let popover = dialog.popoverPresentationController {
+            popover.sourceView = saveContinueBtn
+            popover.sourceRect = saveContinueBtn.bounds
+        }
+        present(dialog, animated: true)
+    }
+
+    func uploadAndSaveMonthlyAnswer(_ answer: SiteCheckAssessmentResponse,
+                                    choices: [MonthlyAuditV2ActionChoice]) {
+        guard let client = monthlyAuditQuestionsVC?.monthlyV2 else { return }
+        if let picked = response?.selectedFile {
+            if let uploaded = pendingMonthlyUploadedURL, !uploaded.isEmpty {
+                answer.file = uploaded
+                saveMonthlyAnswer(answer, files: [uploaded], choices: choices)
+                return
+            }
+            guard let siteId = UserConstants.shared.selectedSiteID,
+                  let fileName = picked.fileName, !fileName.isEmpty else {
+                hideLoadingAndShowError(message: "The selected attachment or site is missing.")
+                return
+            }
+            loadingSCLAlertView.showLoading()
+            APIClient.requestMultipartString(.postSiteCheckFileUpload, multipartData: { form in
+                if let image = picked.image, let data = image.jpegData(compressionQuality: 0.8) {
+                    form.append(data, withName: "file", fileName: fileName, mimeType: "image/jpeg")
+                } else if let url = picked.fileURL {
+                    form.append(url, withName: "file", fileName: fileName, mimeType: APIClient.mimeType(for: url))
+                }
+                if let name = fileName.data(using: .utf8) { form.append(name, withName: "fileName") }
+                if let site = String(siteId).data(using: .utf8) { form.append(site, withName: "siteId") }
+            }) { [weak self] result in
+                guard let self else { return }
+                self.loadingSCLAlertView.hideView()
+                switch result {
+                case .failure(let error): self.hideLoadingAndShowError(message: "Attachment upload failed: \(error.localizedDescription)")
+                case .success(let raw):
+                    // The legacy upload endpoint has returned both JSON string
+                    // literals and plain URL strings in different clients.
+                    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let decoded = (try? JSONSerialization.jsonObject(with: Data(trimmed.utf8))) as? String
+                    let url = decoded ?? trimmed
+                    guard let parsed = URL(string: url), parsed.scheme?.lowercased() == "https" else {
+                        self.hideLoadingAndShowError(message: "The server did not return a valid HTTPS attachment address.")
+                        return
+                    }
+                    self.pendingMonthlyUploadedURL = url
+                    answer.file = url
+                    self.saveMonthlyAnswer(answer, files: [url], choices: choices)
+                }
+            }
+        } else {
+            saveMonthlyAnswer(answer, files: [], choices: choices)
+        }
+    }
+
+    func saveMonthlyAnswer(_ answer: SiteCheckAssessmentResponse, files: [String],
+                           choices: [MonthlyAuditV2ActionChoice]) {
+        guard let client = monthlyAuditQuestionsVC?.monthlyV2 else { return }
+        loadingSCLAlertView.showLoading()
+        client.save(response: answer, uploadedFiles: files, actionChoices: choices) { [weak self] result in
+            guard let self else { return }
+            self.loadingSCLAlertView.hideView()
+            switch result {
+            case .failure(let error):
+                self.hideLoadingAndShowError(message: error.localizedDescription)
+            case .success(let saved):
+                self.response = saved
+                self.response?.selectedFile = nil
+                self.pendingMonthlyUploadedURL = nil
+                // Refresh Actions AFTER every save. Creating an Action can make it
+                // eligible for reuse in the next question; stale candidates risk duplicates.
+                client.load { [weak self] refreshed in
+                    guard let self else { return }
+                    let refreshedOK: Bool
+                    switch refreshed {
+                    case .success(let answers):
+                        refreshedOK = true
+                        if let list = self.monthlyAuditQuestionsVC {
+                            list.responseItemArray = answers
+                            list.addSiteCheckVC?.monthlyAuditV2DidRefresh()
+                            list.reloadViews()
+                        }
+                    case .failure:
+                        refreshedOK = false
+                    }
+                    let message = refreshedOK
+                        ? "The Monthly Audit answer was saved, and outstanding Actions were refreshed."
+                        : "Your answer was saved, but the Action list could not be refreshed. Reopen the audit before the next save."
+                    let dialog = UIAlertController(title: "Saved", message: message, preferredStyle: .alert)
+                    dialog.addAction(UIAlertAction(title: "Continue", style: .default) { [weak self] _ in
+                        guard let self else { return }
+                        self.navigationController?.popViewController(animated: true)
+                        if !refreshedOK { self.monthlyAuditQuestionsVC?.loadData() }
+                    })
+                    self.present(dialog, animated: true)
+                }
+            }
+        }
+    }
+}
